@@ -1,2 +1,2 @@
-# multiple-disciplinary-project
+# Front-end
 UI/UX, Front-end components.
