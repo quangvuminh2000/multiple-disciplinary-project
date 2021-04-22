@@ -5,8 +5,8 @@ export default function App ({navigation}){
     <View style={styles.container}>
     <Text style={styles.welcomeText}>Make your garden smarter with ACGS!</Text>
     
-    <TouchableOpacity style={styles.loginBtn} onPress={() => {navigation.navigate('Login')}}>
-    <Text style={styles.text1}> Get Started ! </Text>
+    <TouchableOpacity style = {styles.loginBtn} onPress = {() => navigation.openDrawer()}>
+            <Text style = {styles.text1}> Menu </Text>
     </TouchableOpacity>
     </View>
   );
@@ -20,13 +20,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'powderblue'
   },
   welcomeText: {
-    fontSize: 29,
+    fontSize: 30,
     textAlign: 'center',
     color:'indigo'
   },
   text1: {
     color: '#ffffff',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 20
   },
   signupBtn: {
     backgroundColor: 'blueviolet',
@@ -38,10 +39,10 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     backgroundColor: 'blue',
-    width: 100,
-    height: 40,
+    width: 110,
+    height: 45,
     borderRadius: 25,
-    marginTop: 10,
+    marginTop: 20,
     justifyContent: 'center'
   },
   fbBtn: {
