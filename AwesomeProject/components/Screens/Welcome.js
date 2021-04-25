@@ -1,13 +1,13 @@
 import React from 'react';
-import {View, Text, TouchableOpacity,Image, StyleSheet } from 'react-native';
+import {View, Text, TouchableOpacity,Image, StyleSheet} from 'react-native';
 export default function App ({navigation}){
   return(
     <View style={styles.container}>
-    <Text style={styles.welcomeText}>Make your garden smarter with ACGS!</Text>
-    
-    <TouchableOpacity style = {styles.loginBtn} onPress = {() => navigation.openDrawer()}>
-            <Text style = {styles.text1}> Menu </Text>
-    </TouchableOpacity>
+    <Image source = {require('./pap-logo.png')} 
+           style = {{width:100,height:100}}
+    />
+    <Text style={styles.welcomeText}>Welcome to AGCS!</Text>
+    <Text style={styles.welcomeText}>Your Garden's personal Caretaker</Text>
     </View>
   );
 }
@@ -17,12 +17,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'powderblue'
+    backgroundColor: 'black'
   },
   welcomeText: {
-    fontSize: 30,
+    fontSize: 20,
     textAlign: 'center',
-    color:'indigo'
+    color:'grey'
   },
   text1: {
     color: '#ffffff',
