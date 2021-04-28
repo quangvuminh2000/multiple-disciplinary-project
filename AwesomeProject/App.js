@@ -4,11 +4,11 @@ import { StyleSheet, Text, View, Button,Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import {Container,Content,Header,Left,Body} from 'native-base';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {createDrawerNavigator, DrawerContentScrollView, DrawerItemList,DrawerItem} from '@react-navigation/drawer';
 
-import Welcome from './components/Screens/welcome'
+import Login from './components/Screens/login';
+import Welcome from './components/Screens/welcome';
+import Home from './components/Screens/home';
 import Devices from './components/Services/Devices';
 import Humidity from './components/Services/Humidity';
 import Temperature from './components/Services/temperature';
@@ -30,13 +30,23 @@ function MyDrawer(){
             activeBackgroundColor: `rgba(0,200,170,255)`,
 
         }}
+        drawerContent = {props => {
+          return(
+            <DrawerContentScrollView {...props}>
+              <DrawerItemList {...props} />
+              <DrawerItem label={() => <Text style = {{color:'white'}}> Sign out </Text>} 
+                          style={{backgroundColor:'blue'}}
+                          onPress={()=>props.navigation.navigate("Login")}/>
+            </DrawerContentScrollView>
+          )
+        }}
     > 
-        <Drawer.Screen name = "Home" component = {Welcome} options = {{drawerLabel:'Home',
+        <Drawer.Screen name = "Home" component = {Home} options = {{drawerLabel:'Home',
                                                                        headerShown:true,
                                                                        headerStyle:{backgroundColor:`rgba(0,200,170,255)`},
                                                                        drawerIcon: ({tintColor}) => (
                                                                        <Image 
-                                                                          source={require('./home1.png')}
+                                                                          source={require('./home12.png')}
                                                                           style={[styles.icon,{tintColor:tintColor}]}
                                                                       />)
                                                                       }}
@@ -56,7 +66,7 @@ function MyDrawer(){
                                                                                   headerStyle:{backgroundColor:`rgba(0,200,170,255)`},
                                                                                   drawerIcon: ({tintColor}) => (
                                                                                     <Image 
-                                                                                       source={require('./temp1.png')}
+                                                                                       source={require('./thermo1.png')}
                                                                                        style={[styles.icon,{tintColor:tintColor}]}
                                                                                    />)
                                                                                 }}
@@ -66,21 +76,38 @@ function MyDrawer(){
                                                                               headerStyle:{backgroundColor:`rgba(0,200,170,255)`},
                                                                               drawerIcon: ({tintColor}) => (
                                                                                 <Image 
-                                                                                   source={require('./light1.png')}
+                                                                                   source={require('./bulb1.png')}
                                                                                    style={[styles.icon,{tintColor:tintColor}]}
                                                                                />)
                                                                               }}
         />
         <Drawer.Screen name = "Devices" component = {Devices} options = {{drawerLabel: 'Devices',headerShown:true,headerStyle:{backgroundColor:`rgba(0,200,170,255)`}}}/>
-        <Drawer.Screen name = "Settings" component = {Settings} options = {{drawerLabel: 'Settings',headerShown:true,headerStyle:{backgroundColor:`rgba(0,200,170,255)`}}}/>        
+        <Drawer.Screen name = "Settings" component = {Settings} options = {{drawerLabel: 'Settings',
+                                                                            headerShown:true,
+                                                                            headerStyle:{backgroundColor:`rgba(0,200,170,255)`},
+                                                                            drawerIcon: ({tintColor}) => (
+                                                                              <Image 
+                                                                                 source={require('./settings1.png')}
+                                                                                 style={[styles.icon,{tintColor:tintColor}]}
+                                                                             />)
+                                                                          }}/>        
       </Drawer.Navigator>
   )
 }
 
+function MyStack(){
+    return(
+      <Stack.Navigator>
+          <Stack.Screen name = "Login" component = {Login}/>
+          <Stack.Screen name = "My App" component = {MyDrawer}
+                        options = {{headerLeft:() => null}}/>
+      </Stack.Navigator>
+    )
+  }
 export default function App() {
   return (
       <NavigationContainer>
-        <MyDrawer/>
+        <MyStack/>
       </NavigationContainer>    
   );
 }
