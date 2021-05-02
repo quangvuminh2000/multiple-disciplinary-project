@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Text,View,TextInput,TouchableOpacity,StyleSheet} from 'react-native';
+import {Text,View,TextInput,TouchableOpacity,StyleSheet,Image} from 'react-native';
 
 
 export default function App({navigation}){
@@ -8,6 +8,8 @@ export default function App({navigation}){
     const [password, setPass] = useState();
     return(
         <View style = {styles.container}>
+        <Image  source = {require('./pap-logo.png')}
+                style = {{width:100,height:100}}/>
         <Text style = {styles.title}>Automated Care-Taking Gardening System</Text>
         <TextInput
             placeholder = {'Username'}
@@ -30,6 +32,10 @@ export default function App({navigation}){
             <Text style = {styles.text}> Login </Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style = {styles.forgetBtn}>
+            <Text style = {styles.text}> Forget password ?</Text>
+        </TouchableOpacity>
+
         </View>
     );
     function validation(){
@@ -46,8 +52,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'powderblue'
-
+        backgroundColor:  `rgba(33,35,39,255)`
     },
     chBoxContainer: {
         flexDirection: 'row',
@@ -55,31 +60,39 @@ const styles = StyleSheet.create({
         marginRight: 160
     },
     title: {
-        color:'#00008b',
+        color:`rgba(0,200,170,255)`,
         textAlign: 'center',
         fontSize: 30
     },
     text: {
         color: '#ffffff',
         marginTop: 10,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontSize:14
     },
     text1: {
         marginLeft: 5,
         fontSize: 15
     },
     userInput: {
-        backgroundColor: 'orange',
+        backgroundColor: `rgba(0,200,170,255)`,
         height: 40,
         marginTop: 10,
         width: 300,
         borderRadius: 25
     },
     loginBtn: {
-        backgroundColor: 'indigo',
+        backgroundColor: 'green',
         marginTop: 30,
         height: 40,
         width: 80,
+        borderRadius: 25
+    },
+    forgetBtn:{
+        backgroundColor: 'indigo',
+        marginTop: 20,
+        height: 40,
+        width: 130,
         borderRadius: 25
     }
 });

@@ -35,8 +35,11 @@ function MyDrawer(){
             <DrawerContentScrollView {...props}>
               <DrawerItemList {...props} />
               <DrawerItem label={() => <Text style = {{color:'white'}}> Sign out </Text>} 
-                          style={{backgroundColor:'blue'}}
-                          onPress={()=>props.navigation.navigate("Login")}/>
+                          style={{backgroundColor:`rgba(33,35,39,255)`}}
+                          onPress={()=>props.navigation.navigate("Login")}
+                          icon={()=><Image source={require('./signout1.png')} style={styles.icon}/>}
+                          />
+                          
             </DrawerContentScrollView>
           )
         }}
@@ -81,23 +84,27 @@ function MyDrawer(){
                                                                                />)
                                                                               }}
         />
-        <Drawer.Screen name = "Devices" component = {Devices} options = {{drawerLabel: 'Devices',headerShown:true,headerStyle:{backgroundColor:`rgba(0,200,170,255)`}}}/>
-        <Drawer.Screen name = "Settings" component = {Settings} options = {{drawerLabel: 'Settings',
-                                                                            headerShown:true,
-                                                                            headerStyle:{backgroundColor:`rgba(0,200,170,255)`},
-                                                                            drawerIcon: ({tintColor}) => (
-                                                                              <Image 
-                                                                                 source={require('./settings1.png')}
-                                                                                 style={[styles.icon,{tintColor:tintColor}]}
-                                                                             />)
-                                                                          }}/>        
+        <Drawer.Screen name = "Devices" component = {Devices} options = {{drawerLabel: 'Devices',
+                                                                          headerShown:true,
+                                                                          headerStyle:{backgroundColor:`rgba(0,200,170,255)`},
+                                                                          drawerIcon: ({tintColor}) => (
+                                                                            <Image 
+                                                                               source={require('./device.png')}
+                                                                               style={[styles.icon,{tintColor:tintColor}]}
+                                                                           />)
+                                                                          }}
+        /> 
       </Drawer.Navigator>
   )
 }
 
 function MyStack(){
     return(
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown:false
+        }}
+      >
           <Stack.Screen name = "Login" component = {Login}/>
           <Stack.Screen name = "My App" component = {MyDrawer}
                         options = {{headerLeft:() => null}}/>

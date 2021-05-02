@@ -8,6 +8,17 @@ export default function App ({navigation}){
     />
     <Text style={styles.welcomeText}>Welcome to AGCS!</Text>
     <Text style={styles.welcomeText}>Your Garden's personal Caretaker</Text>
+    <View style={styles.btnContainer}>
+      <TouchableOpacity style={styles.soilBtn}>
+        <Text style={styles.text1}>Soil irrigation</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.mistBtn}>
+        <Text style={styles.text2}>Mist spray</Text>
+      </TouchableOpacity>
+    </View>
+    <TouchableOpacity style={styles.netBtn}>
+        <Text style={styles.text3}>Shading net</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -24,46 +35,50 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color:'grey'
   },
-  text1: {
-    color: '#ffffff',
-    textAlign: 'center',
-    fontSize: 20
+  soilBtn:{
+    width:100,
+    height:100,
+    borderRadius:100,
+    borderWidth:5,
+    borderColor:`rgba(0,200,170,255)`,
+    backgroundColor:'black',
+    alignItems:'center',
+    justifyContent:'center',
+    marginRight:90
   },
-  signupBtn: {
-    backgroundColor: 'blueviolet',
-    width: 225,
-    height: 40,
-    borderRadius: 25,
-    marginTop: 30,
-    justifyContent: 'center'
+  mistBtn:{
+    width:100,
+    height:100,
+    borderRadius:100,
+    borderWidth:5,
+    borderColor:'blue',
+    backgroundColor:'black',
+    alignItems:'center',
+    justifyContent:'center',
+    
   },
-  loginBtn: {
-    backgroundColor: 'blue',
-    width: 110,
-    height: 45,
-    borderRadius: 25,
-    marginTop: 20,
-    justifyContent: 'center'
+  btnContainer:{
+    flexDirection:'row',
+    marginTop:20
   },
-  fbBtn: {
-    marginTop: 10,
-    backgroundColor: '#ffffff',
-    height: 40,
-    borderRadius: 25,
-    width: 200,
-    justifyContent: 'center'
+  netBtn:{
+    width:100,
+    height:100,
+    borderRadius:100,
+    backgroundColor:'black',
+    borderColor:'yellow',
+    borderWidth:5,
+    alignItems:'center',
+    justifyContent:'center',
+    marginTop:10
   },
-  text2: {
-    color: '#191970',
-    marginTop: 10,
-    marginLeft: 50
+  text1:{
+    color:`rgba(0,200,170,255)`
   },
-  photo: {
-    width: 30,
-    height: 30,
-    marginTop: -21,
-    marginLeft: 10,
-    borderRadius: 10
+  text2:{
+    color:'blue'
+  },
+  text3:{
+    color:'yellow'
   }
-
 })

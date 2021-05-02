@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,Text,Dimensions,StyleSheet,TouchableOpacity} from 'react-native';
+import {View,Text,Dimensions,StyleSheet,TouchableOpacity, SafeAreaView,FlatList,Image} from 'react-native';
 import {
     LineChart,
     BarChart,
@@ -7,7 +7,9 @@ import {
     ProgressChart,
     ContributionGraph,
     StackedBarChart
-  } from 'react-native-chart-kit';
+} from 'react-native-chart-kit';
+import { ScrollView } from 'react-native-gesture-handler';
+import ProgressCircle from 'react-native-progress-circle';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -20,42 +22,80 @@ const chartConfig = {
     barPercentage: 0.5,
     useShadowColorFromDataset: false
 }
-const data = {
-    labels: ["Brightness"],
-    data: [0.65],
+const chartConfig2 = {
+    color: (opacity = 1) => `rgba(255,255,0,${opacity})`,
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false
 }
+const data = [
+    {
+        id: "1",
+        title: "DHT11",
+        source: require('./DHT11.jpg')
+    },
+    
+    {
+        id: "2",
+        title: "RC Servo",
+        source: require('./servo.jpg')
+    }
+]
+const Item = ({source,title}) => (
+    <View style={styles.item}>
+    <Image 
+        source={source}
+        style={{height:30,width:30}}/>
+    <Text style={styles.title}>{title}</Text>
+    </View>
+);
+
 const data2 = {
     labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
     datasets: [
         {
             data: [65,70,85,80,75,55,75]
         }
-    ]
+    ],
+    legend:["Light level"]
 };
 export default function App({navigation}){
+    const renderItem = ({item}) => (
+        <Item title={item.title} source={item.source}/>
+    );
     return(
-        <View style = {styles.container}>
-            <ProgressChart
-                data = {data}
-                width = {screenWidth}
-                height = {screenHeight/3.5}
-                strokeWidth = {10}
-                radius = {50}
-                chartConfig = {chartConfig}
-                hideLegend = {false}
-            />
-            
+        <SafeAreaView style = {styles.container}>
+        <ScrollView>
+            <View style={styles.progress}>
+            <ProgressCircle
+                percent={65}
+                radius={50}
+                borderWidth={8}
+                color={'yellow'}
+                shadowColor="#999"
+                bgColor={'black'}
+            >
+            <Text style={{color:'yellow'}}>{'65%'}</Text>  
+            </ProgressCircle>
+            <Text style={{color:'yellow',marginTop:10}}>Soil moisture</Text>
+            </View>        
             <LineChart
                 data = {data2}
                 width = {screenWidth}
-                height = {screenHeight/3.5}
+                height = {screenHeight/4}
                 strokeWidth = {5}
                 chartConfig = {chartConfig}
+                yAxisLabel="%"
             />
-        <TouchableOpacity style = {styles.button}>
-            <Text style = {styles.text}> PDF Report </Text>
-        </TouchableOpacity>
+        <Text style={styles.text}>Devices</Text> 
+        <View style={styles.devices}>
+        <FlatList
+           data={data}
+           renderItem={renderItem}
+           keyExtractor={(item) => item.id}
+        />
         </View>
+        </ScrollView>
+        </SafeAreaView>
     )
 }
 
@@ -75,10 +115,28 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     text: {
-        color: '#ffffff',
-        textAlign: 'center',
+        fontSize: 20,
+        marginTop: 10,
+        color:'grey'
     },
-    text1: {
-        color:'#ffffff'
+    progress:{
+        alignItems:'center',
+        justifyContent:'center',
+        marginTop: 50,
+        marginBottom: 20
+    },
+    devices:{
+        flex: 1
+    },
+    item:{
+        backgroundColor:'#ffffff',
+        padding: 20,
+        marginVertical: 8,
+        marginHorizontal: 16,
+        flexDirection:'row'
+    },
+    title:{
+        fontSize: 20,
+        marginLeft:10
     }
 })
