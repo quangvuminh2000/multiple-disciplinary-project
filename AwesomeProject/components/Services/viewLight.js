@@ -13,6 +13,11 @@ import ProgressCircle from 'react-native-progress-circle';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
+const Separator = () => {
+    return(
+        <View style={styles.separator}/>
+    )
+}
 const chartConfig = {
     backgroundGradientFrom: `rgba(33,35,39,255)`,
     backgroundGradientFromOpacity: 1,
@@ -76,8 +81,9 @@ export default function App({navigation}){
             >
             <Text style={{color:'yellow'}}>{'65%'}</Text>  
             </ProgressCircle>
-            <Text style={{color:'yellow',marginTop:10}}>Soil moisture</Text>
+            <Text style={{color:'yellow',marginTop:10}}>Light level</Text>
             </View>        
+            <Separator/>
             <LineChart
                 data = {data2}
                 width = {screenWidth}
@@ -86,6 +92,7 @@ export default function App({navigation}){
                 chartConfig = {chartConfig}
                 yAxisLabel="%"
             />
+           
         <Text style={styles.text}>Devices</Text> 
         <View style={styles.devices}>
         <FlatList
@@ -129,7 +136,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     item:{
-        backgroundColor:'#ffffff',
+        backgroundColor:`rgba(33,35,39,255)`,
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
@@ -137,6 +144,13 @@ const styles = StyleSheet.create({
     },
     title:{
         fontSize: 20,
-        marginLeft:10
+        marginLeft:10,
+        color:'springgreen'
+    },
+    separator:{
+        borderBottomColor: 'azure',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        marginTop:11,
+        marginBottom: 15
     }
 })

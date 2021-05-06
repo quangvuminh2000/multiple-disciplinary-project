@@ -5,6 +5,12 @@ import { ScrollView } from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
+
+const Separator = () => {
+    return(
+        <View style={styles.separator}/>
+    )
+}
 const chartConfig = {
     backgroundGradientFrom: `rgba(33,35,39,255)`,
     backgroundGradientFromOpacity: 1,
@@ -66,7 +72,7 @@ export default function App({navigation}){
                 percent={30}
                 radius={50}
                 borderWidth={8}
-                co lor={'red'}
+                color={'red'}
                 shadowColor="#999"
                 bgColor={'black'}
                 style={styles.progress}
@@ -75,12 +81,14 @@ export default function App({navigation}){
             </ProgressCircle>
             <Text style={{color:'red',marginTop:10}}>Temperature</Text>
         </View>
+        <Separator/>
         <LineChart
             data = {data2}
             width = {screenWidth}
             height = {screenHeight/4}
             chartConfig = {chartConfig}
         />
+        
         <Text style={styles.text}>Devices</Text> 
         <View style={styles.devices}>
         <FlatList
@@ -124,7 +132,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     item:{
-        backgroundColor:'#ffffff',
+        backgroundColor:`rgba(33,35,39,255)`,
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
@@ -132,6 +140,13 @@ const styles = StyleSheet.create({
     },
     title:{
         fontSize: 20,
-        marginLeft:10
+        marginLeft:10,
+        color:'springgreen'
+    },
+    separator:{
+        borderBottomColor: 'azure',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        marginTop:11,
+        marginBottom: 15
     }
 })

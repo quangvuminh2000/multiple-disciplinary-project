@@ -3,6 +3,12 @@ import {View,Text,TouchableOpacity,StyleSheet,Dimensions,SafeAreaView,ScrollView
 import {LineChart} from 'react-native-chart-kit'
 import ProgressCircle from 'react-native-progress-circle';
 
+const Separator = () => {
+    return(
+        <View style={styles.separator}/>
+    )
+}
+
 const chartConfig3 = {
     backgroundGradientFrom: `rgba(33,35,39,255)`,
     backgroundGradientFromOpacity: 1,
@@ -113,6 +119,9 @@ export default function App({navigation}){
         <Text style={{color:'blue',marginTop:10}}>Atmosphere moisture</Text>
         </View>
         </View>
+
+        <Separator/>
+
         <View style = {styles.lineContainer}>
         <LineChart
             data = {data3}
@@ -129,6 +138,7 @@ export default function App({navigation}){
             verticalLabelRotation = {30}
         />
         </View>
+        
         <Text style={styles.text}>Devices</Text>
         <View style={styles.devices}>
         <FlatList
@@ -190,7 +200,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     item:{
-        backgroundColor:'#ffffff',
+        backgroundColor:`rgba(33,35,39,255)`,
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
@@ -198,6 +208,13 @@ const styles = StyleSheet.create({
     },
     title:{
         fontSize: 20,
-        marginLeft:10
+        marginLeft:10,
+        color:'springgreen'
+    },
+    separator:{
+        marginVertical: 8,
+        borderBottomColor: 'azure',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        marginBottom: 15
     }
 })

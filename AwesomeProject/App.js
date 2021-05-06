@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, Button,Image} from 'react-native';
+import { StyleSheet, Text, View, Button,Image,BackHandler} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -14,6 +14,7 @@ import Humidity from './components/Services/Humidity';
 import Temperature from './components/Services/temperature';
 import viewLight from './components/Services/viewLight';
 import Settings from './components/Screens/settings';
+import Forget from './components/Screens/forget';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -106,6 +107,7 @@ function MyStack(){
         }}
       >
           <Stack.Screen name = "Login" component = {Login}/>
+          <Stack.Screen name = "Forget" component = {Forget}/>
           <Stack.Screen name = "My App" component = {MyDrawer}
                         options = {{headerLeft:() => null}}/>
       </Stack.Navigator>
