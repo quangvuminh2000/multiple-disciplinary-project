@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Text,View,TextInput,TouchableOpacity,CheckBox,StyleSheet} from 'react-native';
+import {Text,View,TextInput,TouchableOpacity,StyleSheet} from 'react-native';
 
 
 export default function App({navigation}){
@@ -25,24 +25,20 @@ export default function App({navigation}){
             value = {password}
             style = {styles.userInput}
         />
-        <View style = {styles.chBoxContainer}>
-        <CheckBox
-            value = {isSelected}
-            onValueChange = {setSelection}
-            style = {styles.chBox}
-        />
-        <Text style = {styles.text1}> Remember me </Text>
-        </View>
-        <TouchableOpacity style = {styles.loginBtn} onPress = {() => {navigation.navigate('View Soil')}}>
-            <Text style = {styles.text}> View Soil </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style = {styles.loginBtn} onPress = {() => {navigation.navigate('Manage Soil')}}>
-            <Text style = {styles.text}> Manage Soil </Text>
+        
+        <TouchableOpacity style = {styles.loginBtn} onPress = {validation}>
+            <Text style = {styles.text}> Login </Text>
         </TouchableOpacity>
 
         </View>
     );
+    function validation(){
+        if(username === 'thanh' && password === '123') {
+            navigation.navigate('My App')
+        } else {
+            alert('Invalid input')
+        }
+    }
 }
 
 const styles = StyleSheet.create({

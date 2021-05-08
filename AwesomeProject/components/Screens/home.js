@@ -8,10 +8,6 @@ export default function App ({navigation}){
     />
     <Text style={styles.welcomeText}>Welcome to AGCS!</Text>
     <Text style={styles.welcomeText}>Your Garden's personal Caretaker</Text>
-
-    <TouchableOpacity onPress = {() => {navigation.navigate("My App")}}>
-      <Text style={styles.welcomeText}>Get started</Text>
-    </TouchableOpacity>
     </View>
   );
 }

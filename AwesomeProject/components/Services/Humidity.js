@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import {View,Text,TouchableOpacity,StyleSheet,Dimensions} from 'react-native';
-import {ProgressChart,BarChart} from 'react-native-chart-kit'
+import {View,Text,TouchableOpacity,StyleSheet,Dimensions,SafeAreaView,ScrollView} from 'react-native';
+import {ProgressChart,BarChart,LineChart} from 'react-native-chart-kit'
 
 const chartConfig1 = {
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: '#ffffff',
-    backgroundGradientToOpacity: 0.5,
+    backgroundGradientFrom: `rgba(33,35,39,255)`,
+    backgroundGradientFromOpacity: 1,
+    backgroundGradientTo: `rgba(33,35,39,255)`,
+    backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(0,255,0,${opacity})`,
     strokeWidth: 2,
     barPercentage: 0.5,
@@ -14,14 +14,14 @@ const chartConfig1 = {
 }
 
 const chartConfig2 = {
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: '#ffffff',
-    backgroundGradientToOpacity: 0.5,
+    backgroundGradientFrom: `rgba(33,35,39,255)`,
+    backgroundGradientFromOpacity: 1,
+    backgroundGradientTo: `rgba(33,35,39,255)`,
+    backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(0,0,255,${opacity})`,
     strokeWidth: 2,
     barPercentage: 0.5,
-    useShadowColorFromDataset: false
+    useShadowColorFromDataset: false,
 }
 
 const data1 = {
@@ -30,14 +30,14 @@ const data1 = {
 }
 
 const data2 = {
-    labels: 'Air humidity',
+    labels: 'Air',
     data: [0.8]
 }
 
 const data3 = {
     datasets: [
         {
-            data: [65,70,85,80,75,55,75]
+            data: [40,50,65,60,70,55,75]
         }
     ]
 }
@@ -52,43 +52,46 @@ const data4 = {
 
 
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 export default function App({navigation}){
     return(
-        <View style = {styles.container}>
+        <SafeAreaView style = {styles.container}>
         <View style = {styles.progressContainer}>
         <ProgressChart
             data = {data1}
             width = {screenWidth/2}
-            height = {220}
-            strokeWidth = {16}
-            radius = {40}
+            height = {screenHeight/4.5}
+            strokeWidth = {10}
+            radius = {50}
             chartConfig = {chartConfig1}
             hideLegend = {false}
         />
         <ProgressChart
             data = {data2}
             width = {screenWidth/2}
-            height = {220}
-            strokeWidth = {16}
-            radius = {40}
+            height = {screenHeight/4.5}
+            strokeWidth = {10}
+            radius = {50}
             chartConfig = {chartConfig2}
             hideLegend = {false}
         />
         </View>
         <View style = {styles.barContainer}>
-        <BarChart
+        <LineChart
             data = {data3}
             width = {screenWidth/2}
-            height = {220}
+            height = {screenHeight/4.5}
             chartConfig = {chartConfig1}
+            strokeWidth = {5}
             verticalLabelRotation = {30}
         />
-        <BarChart
+        <LineChart
             data = {data4}
             width = {screenWidth/2}
-            height = {220}
+            height = {screenHeight/4.5}
             chartConfig = {chartConfig2}
+            strokeWidth = {5}
             verticalLabelRotation = {30}
         />
         </View>
@@ -96,10 +99,7 @@ export default function App({navigation}){
         <TouchableOpacity style = {styles.button}>
             <Text style = {styles.text}> PDF Report </Text>
         </TouchableOpacity>
-        <TouchableOpacity style = {styles.button} onPress = {() => navigation.openDrawer()}>
-            <Text style = {styles.text}> Menu </Text>
-        </TouchableOpacity>
-    </View>
+    </SafeAreaView>
     ) 
 }
 
@@ -107,17 +107,28 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: 'black'
     },
+    grContainer:{
+        
+    }
+    ,
+    textContainer:{
+        flexDirection:'row'
+    }
+    ,
     progressContainer: {
         flexDirection: 'row',
+
     },
     barContainer: {
         flexDirection: 'row',
+        marginBottom:45
         
     },
     button: {
-        backgroundColor: 'indigo',
+        backgroundColor: 'green',
         height: 40,
         width: 110,
         borderRadius: 30,

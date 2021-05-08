@@ -10,26 +10,26 @@ import {
   } from 'react-native-chart-kit';
 
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const chartConfig = {
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: '#ffffff',
-    backgroundGradientToOpacity: 0.5,
+    backgroundGradientFrom: `rgba(33,35,39,255)`,
+    backgroundGradientFromOpacity: 1,
+    backgroundGradientTo: `rgba(33,35,39,255)`,
+    backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(255,0,0,${opacity})`,
-    strokeWidth: 2,
     barPercentage: 0.5,
     useShadowColorFromDataset: false
 }
 
 const data = {
-    labels: ["Temperature"],
+    labels: ["Temp"],
     data: [0.4]
 }
 const data2 = {
-    labels: [],
+    labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
     datasets: [
         {
-            data: [5,10,15,20,25,30,35]
+            data: [30,29,32,35,25,30,35]
         }
     ]
 };
@@ -39,25 +39,23 @@ export default function App({navigation}){
             <ProgressChart
                 data = {data}
                 width = {screenWidth}
-                height = {220}
-                strokeWidth = {16}
-                radius = {40}
+                height = {screenHeight/3.5}
+                strokeWidth = {10}
+                radius = {50}
                 chartConfig = {chartConfig}
                 hideLegend = {false}
             />
-            <BarChart
+            <LineChart
                 data = {data2}
-                width = {screenWidth}
-                height = {220}
+                width = {screenWidth*1.05}
+                height = {screenHeight/3.5}
+                strokeWidth = {10}
                 chartConfig = {chartConfig}
-                verticalLabelRotation = {30}
             />
             <TouchableOpacity style = {styles.button}>
                 <Text style = {styles.text}> PDF Report </Text>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.button} onPress = {() => navigation.openDrawer()}>
-                <Text style = {styles.text}> Menu </Text>
-            </TouchableOpacity>
+    
         </View>
     )
 }
@@ -66,10 +64,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor:'black'
     },
     button: {
-        backgroundColor: 'indigo',
+        backgroundColor: 'green',
         height: 40,
         width: 110,
         borderRadius: 30,

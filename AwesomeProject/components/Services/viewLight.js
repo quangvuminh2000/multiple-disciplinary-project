@@ -10,22 +10,22 @@ import {
   } from 'react-native-chart-kit';
 
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const chartConfig = {
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: '#ffffff',
-    backgroundGradientToOpacity: 0.5,
-    color: (opacity = 1) => `rgba(255,200,0,${opacity})`,
-    strokeWidth: 2,
+    backgroundGradientFrom: `rgba(33,35,39,255)`,
+    backgroundGradientFromOpacity: 1,
+    backgroundGradientTo: `rgba(33,35,39,255)`,
+    backgroundGradientToOpacity: 1,
+    color: (opacity = 1) => `rgba(255,255,0,${opacity})`,
     barPercentage: 0.5,
     useShadowColorFromDataset: false
 }
 const data = {
     labels: ["Brightness"],
-    data: [0.65]
+    data: [0.65],
 }
 const data2 = {
-    labels: [],
+    labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
     datasets: [
         {
             data: [65,70,85,80,75,55,75]
@@ -38,24 +38,22 @@ export default function App({navigation}){
             <ProgressChart
                 data = {data}
                 width = {screenWidth}
-                height = {220}
-                strokeWidth = {16}
-                radius = {40}
+                height = {screenHeight/3.5}
+                strokeWidth = {10}
+                radius = {50}
                 chartConfig = {chartConfig}
                 hideLegend = {false}
             />
-            <BarChart
+            
+            <LineChart
                 data = {data2}
                 width = {screenWidth}
-                height = {220}
+                height = {screenHeight/3.5}
+                strokeWidth = {5}
                 chartConfig = {chartConfig}
-                verticalLabelRotation = {30}
             />
         <TouchableOpacity style = {styles.button}>
             <Text style = {styles.text}> PDF Report </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style = {styles.button} onPress = {() => navigation.openDrawer()}>
-            <Text style = {styles.text}> Menu </Text>
         </TouchableOpacity>
         </View>
     )
@@ -65,10 +63,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: 'black'
     },
     button: {
-        backgroundColor: 'indigo',
+        backgroundColor: 'green',
         height: 40,
         width: 110,
         borderRadius: 30,
@@ -78,5 +77,8 @@ const styles = StyleSheet.create({
     text: {
         color: '#ffffff',
         textAlign: 'center',
+    },
+    text1: {
+        color:'#ffffff'
     }
 })
