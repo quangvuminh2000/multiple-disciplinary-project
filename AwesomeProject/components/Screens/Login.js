@@ -61,6 +61,10 @@ export default function App({navigation}){
                     <Text style = {styles.text}> Forget password ?</Text>
                 </TouchableOpacity>
 
+                <TouchableOpacity style = {styles.signUp} onPress = {() => {navigation.navigate("Sign Up")}}>
+                    <Text style = {styles.text}> Don't have an account ? Sign up here</Text>                    
+                </TouchableOpacity>
+
             </View>
         </SafeAreaView>   
     );
@@ -137,7 +141,14 @@ const styles = StyleSheet.create({
         backgroundColor: 'indigo',
         marginTop: 20,
         height: 40,
-        width: 130,
+        width: 150,
+        borderRadius: 25
+    },
+    signUp:{
+        backgroundColor:'orange',
+        height: 40,
+        width: 270,
+        marginTop: 20,
         borderRadius: 25
     }
 });

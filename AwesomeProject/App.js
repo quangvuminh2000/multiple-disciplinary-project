@@ -3,20 +3,18 @@ import React, {useState} from 'react';
 import { StyleSheet, Text, View, Button,Image,BackHandler} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createDrawerNavigator, DrawerContentScrollView, DrawerItemList,DrawerItem} from '@react-navigation/drawer';
 
 import Login from './components/Screens/login';
-import Welcome from './components/Screens/welcome';
 import Home from './components/Screens/home';
 import Devices from './components/Services/Devices';
 import Humidity from './components/Services/Humidity';
 import Temperature from './components/Services/temperature';
 import viewLight from './components/Services/viewLight';
-import Settings from './components/Screens/settings';
 import Forget from './components/Screens/forget';
+import SignUp from './components/Screens/signUp';
+
 const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function MyDrawer(){
@@ -85,7 +83,7 @@ function MyDrawer(){
                                                                                />)
                                                                               }}
         />
-        <Drawer.Screen name = "Devices" component = {Devices} options = {{drawerLabel: 'Devices',
+        <Drawer.Screen name = "Devices manager" component = {Devices} options = {{drawerLabel: 'Devices manager',
                                                                           headerShown:true,
                                                                           headerStyle:{backgroundColor:`rgba(0,200,170,255)`},
                                                                           drawerIcon: ({tintColor}) => (
@@ -108,6 +106,7 @@ function MyStack(){
       >
           <Stack.Screen name = "Login" component = {Login}/>
           <Stack.Screen name = "Forget" component = {Forget}/>
+          <Stack.Screen name = "Sign Up" component = {SignUp}/>
           <Stack.Screen name = "My App" component = {MyDrawer}
                         options = {{headerLeft:() => null}}/>
       </Stack.Navigator>
