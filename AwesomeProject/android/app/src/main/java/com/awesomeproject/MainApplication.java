@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
-
+  MQTTService mqttservice;
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
         @Override
@@ -47,6 +47,42 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    
+    mqttService = new MQTTService(this);
+    mqttService.setCallback(new MqttCallbackExtended(){
+      @Override
+      public void connectComplete(boolean reconnect, String serverURI){
+
+      }
+      @Override
+      public void connectionLost(Throwable cause){
+        
+      }
+      @Override
+      public void messageArrived(String topic, MqttMessage message) throws Exception{
+        String data_to_microbit = message. toString();
+        port. write( data_to_microbit. getBytes() ,1000);
+      }
+      @Override
+      public void deliveryComplete(IMqttDeliveryToken token){
+
+      }
+    });
+  }
+  private void sendDataMQTT(String Data){
+    MqttMessage msg = new MqttMessage();
+    msg.setId(1234);
+    msg.setQos(0);
+    msg.setRetained(true);
+    byte[] b = data.getBytes(Charset.forName("UTF-8"));
+    msg.setPayload(b);
+    Log.d("ABC","Publish:" + msg );
+    try{
+      mqttService.mqttAndroidClient.publish("[You subscriptiontopic]", msg);
+
+    } catch (MqttException e){
+      
+    }
   }
 
   /**
