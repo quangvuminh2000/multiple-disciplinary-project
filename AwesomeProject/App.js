@@ -1,21 +1,21 @@
 import 'react-native-gesture-handler';
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, Button,Image} from 'react-native';
+import { StyleSheet, Text, View, Button,Image,BackHandler} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createDrawerNavigator, DrawerContentScrollView, DrawerItemList,DrawerItem} from '@react-navigation/drawer';
 
-import Login from './components/Screens/login';
-import Welcome from './components/Screens/welcome';
-import Home from './components/Screens/home';
+import Login from './components/Screens/Login';
+import Login0 from './components/Screens/Login0';
+import Home from './components/Screens/Home';
 import Devices from './components/Services/Devices';
 import Humidity from './components/Services/Humidity';
-import Temperature from './components/Services/temperature';
+import Temperature from './components/Services/Temperature';
 import viewLight from './components/Services/viewLight';
-import Settings from './components/Screens/settings';
+import Forget from './components/Screens/Forget';
+import SignUp from './components/Screens/signUp';
+
 const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function MyDrawer(){
@@ -35,8 +35,11 @@ function MyDrawer(){
             <DrawerContentScrollView {...props}>
               <DrawerItemList {...props} />
               <DrawerItem label={() => <Text style = {{color:'white'}}> Sign out </Text>} 
-                          style={{backgroundColor:'blue'}}
-                          onPress={()=>props.navigation.navigate("Login")}/>
+                          style={{backgroundColor:`rgba(33,35,39,255)`}}
+                          onPress={()=>props.navigation.navigate("Login")}
+                          icon={()=><Image source={require('./signout1.png')} style={styles.icon}/>}
+                          />
+                          
             </DrawerContentScrollView>
           )
         }}
@@ -81,24 +84,31 @@ function MyDrawer(){
                                                                                />)
                                                                               }}
         />
-        <Drawer.Screen name = "Devices" component = {Devices} options = {{drawerLabel: 'Devices',headerShown:true,headerStyle:{backgroundColor:`rgba(0,200,170,255)`}}}/>
-        <Drawer.Screen name = "Settings" component = {Settings} options = {{drawerLabel: 'Settings',
-                                                                            headerShown:true,
-                                                                            headerStyle:{backgroundColor:`rgba(0,200,170,255)`},
-                                                                            drawerIcon: ({tintColor}) => (
-                                                                              <Image 
-                                                                                 source={require('./settings1.png')}
-                                                                                 style={[styles.icon,{tintColor:tintColor}]}
-                                                                             />)
-                                                                          }}/>        
+        <Drawer.Screen name = "Devices manager" component = {Devices} options = {{drawerLabel: 'Devices manager',
+                                                                          headerShown:true,
+                                                                          headerStyle:{backgroundColor:`rgba(0,200,170,255)`},
+                                                                          drawerIcon: ({tintColor}) => (
+                                                                            <Image 
+                                                                               source={require('./device.png')}
+                                                                               style={[styles.icon,{tintColor:tintColor}]}
+                                                                           />)
+                                                                          }}
+        /> 
       </Drawer.Navigator>
   )
 }
 
 function MyStack(){
     return(
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown:false
+        }}
+      >
           <Stack.Screen name = "Login" component = {Login}/>
+          <Stack.Screen name = "Email login" component = {Login0}/>
+          <Stack.Screen name = "Forget" component = {Forget}/>
+          <Stack.Screen name = "Sign Up" component = {SignUp}/>
           <Stack.Screen name = "My App" component = {MyDrawer}
                         options = {{headerLeft:() => null}}/>
       </Stack.Navigator>

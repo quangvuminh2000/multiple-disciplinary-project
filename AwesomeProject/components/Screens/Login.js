@@ -1,36 +1,77 @@
 import React, {useState} from 'react';
-import {Text,View,TextInput,TouchableOpacity,StyleSheet} from 'react-native';
+import {Text,View,TextInput,TouchableOpacity,StyleSheet,Image, SafeAreaView,Dimensions} from 'react-native';
+import {Icon} from 'react-native-elements';
 
+
+const screenWidth = Dimensions.get("window").width
+const screenHeight = Dimensions.get("window").height
 
 export default function App({navigation}){
-    const [isSelected, setSelection] = useState();
     const [username, setUser] = useState();
     const [password, setPass] = useState();
-    return(
-        <View style = {styles.container}>
-        <Text style = {styles.title}>Automated Care-Taking Gardening System</Text>
-        <TextInput
-            placeholder = {'Username'}
-            placeholderTextColor = {'black'}
-            //secureTextEntry = {true}
-            onChangeText = {setUser}
-            value = {username}
-            style = {styles.userInput}
-        />
-        <TextInput
-            placeholder = {'Password'}
-            placeholderTextColor = {'black'}
-            secureTextEntry = {true}
-            onChangeText = {setPass}
-            value = {password}
-            style = {styles.userInput}
-        />
-        
-        <TouchableOpacity style = {styles.loginBtn} onPress = {validation}>
-            <Text style = {styles.text}> Login </Text>
-        </TouchableOpacity>
 
-        </View>
+    return(
+        <SafeAreaView style={{flex:1}}>
+            <View style = {styles.container}>
+                <Image  source = {require('./pap-logo.png')}
+                        style = {{width:100,height:100}}/>
+                <Text style = {styles.title}>Automated Care-Taking Gardening System</Text>
+                <View style = {styles.loginSec}>
+                    <Icon
+                        name = 'user-circle'
+                        type = 'font-awesome-5'
+                        color = 'black'         
+                        style = {styles.loginIcon}
+                    />
+                    <TextInput
+                        placeholder = {'Username'}
+                        placeholderTextColor = {'black'}
+                        //secureTextEntry = {true}
+                        onChangeText = {setUser}
+                        value = {username}
+                        style = {styles.userInput1}
+                        autoCapitalize = "none"
+                        underlineColorAndroid = "transparent"
+                    />
+                </View>
+                
+                <View style = {styles.loginSec}>
+                    <Icon
+                        name = 'lock'
+                        type = 'font-awesome-5'
+                        color = 'black'         
+                        style = {styles.loginIcon}
+                    />
+                    <TextInput
+                        placeholder = {'Password'}
+                        placeholderTextColor = {'black'}
+                        secureTextEntry = {true}
+                        onChangeText = {setPass}
+                        value = {password}
+                        style = {styles.userInput2}
+                    />
+                </View>
+                
+                <View style={{flexDirection:'row'}}>
+                <TouchableOpacity style = {styles.loginBtn} onPress = {validation}>
+                    <Text style = {styles.text}> Login </Text>
+                </TouchableOpacity>
+                <Text style={{color: '#ffffff',marginTop:40,marginLeft:5,fontSize:14}}> Or </Text>
+                <TouchableOpacity style = {styles.emailBtn} onPress = {() => {navigation.navigate("Email login")}}>
+                    <Text style = {styles.text}>Login with email</Text>
+                </TouchableOpacity>
+                </View>
+            
+                <TouchableOpacity style = {styles.forgetBtn} onPress = {() => {navigation.navigate("Forget")}}>
+                    <Text style = {styles.text}> Forget password ?</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style = {styles.signUp} onPress = {() => {navigation.navigate("Sign Up")}}>
+                    <Text style = {styles.text}> Don't have an account ? Sign up here</Text>                    
+                </TouchableOpacity>
+
+            </View>
+        </SafeAreaView>   
     );
     function validation(){
         if(username === 'thanh' && password === '123') {
@@ -46,40 +87,81 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'powderblue'
-
-    },
-    chBoxContainer: {
-        flexDirection: 'row',
-        marginTop: 10,
-        marginRight: 160
+        backgroundColor:  'black'
     },
     title: {
-        color:'#00008b',
+        color:`rgba(0,200,170,255)`,
         textAlign: 'center',
-        fontSize: 30
+        fontSize: 30,
+        fontWeight: "bold"
     },
     text: {
         color: '#ffffff',
         marginTop: 10,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontSize:14
     },
     text1: {
         marginLeft: 5,
         fontSize: 15
     },
-    userInput: {
-        backgroundColor: 'orange',
+    userInput1: {
+        backgroundColor: `rgba(0,200,170,255)`,
         height: 40,
-        marginTop: 10,
-        width: 300,
-        borderRadius: 25
+        width: 295,
+        borderRadius: 25,
+        flex:1
+    },
+    userInput2: {
+        backgroundColor: `rgba(0,200,170,255)`,
+        height: 40,
+        width: 295,
+        borderRadius: 25,
+        flex:1
     },
     loginBtn: {
-        backgroundColor: 'indigo',
+        backgroundColor: 'green',
         marginTop: 30,
         height: 40,
         width: 80,
         borderRadius: 25
+    },
+    loginIcon: {
+        padding: 11,
+        height: 47,
+        width: 46,
+        resizeMode: 'stretch'
+    },
+    loginSec:{
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: `rgba(0,200,170,255)`,
+        height: 50,
+        borderRadius: 5,
+        width: screenWidth/1.1,
+        margin: 10,
+    },
+    forgetBtn:{
+        backgroundColor: 'indigo',
+        marginTop: 20,
+        height: 40,
+        width: 150,
+        borderRadius: 25
+    },
+    signUp:{
+        backgroundColor:'orange',
+        height: 40,
+        width: 270,
+        marginTop: 20,
+        borderRadius: 25
+    },
+    emailBtn:{
+        backgroundColor: 'green',
+        marginTop: 30,
+        height: 40,
+        width: 120,
+        borderRadius: 25,
+        marginLeft:10
     }
 });
