@@ -12,85 +12,77 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class MQTTService {
         final String serverUri ="tcp://io.adafruit.com:1883";
-        final String clientId ="[YourclientID]";
-        final String subscriptionTopic ="[Yoursubscriptiontopic]";21
-        final String username ="[Yourusername]";
-        final String password ="[Yourpassword]";
+        final String clientId ="aio_atNP67yCNWakTjSOUHXJ2WpLiIdG";
+        final String subscriptionTopic ="https://io.adafruit.com/Group12/feeds/test-moisture";
+        final String username ="Group12";
+        final String password ="group12";
 
         public MqttAndroidClient mqttAndroidClient;
         public MQTTService(Context context){
-                mqttAndroidClient = new MqttAndroidClient(context , serverUri, clientId);
-                mqttAndroidClient. setCallback( new MqttCallbackExtended(){
+                mqttAndroidClient = new MqttAndroidClient(context, serverUri, clientId);
+                mqttAndroidClient.setCallback(new MqttCallbackExtended() {
                         @Override
-                        public void connectComplete( boolean b, String s) {
-                                Log.w("mqtt", s);
-                        }
+                        public void connectComplete( boolean b, String s) { Log.w("mqtt", s); }
+
                         @Override
-                        public void connectionLost( Throwable throwable) {
-                                }
+                        public void connectionLost( Throwable throwable){ }
+
                         @Override
-                        public void messageArrived( String topic , MqttMessage
-                                mqttMessage) throws Exception {
-                                Log.w("Mqtt", mqttMessage. toString());
-                                }
-                        @Override 
-                        public void deliveryComplete( IMqttDeliveryToken
-                                iMqttDeliveryToken) {
-                                }
+                        public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception { Log.w("Mqtt", mqttMessage.toString()); }
+
+                        @Override
+                        public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) { }
                 });
+
                 connect();
         }
-        public void setCallback( MqttCallbackExtended callback) {
-        mqttAndroidClient. setCallback( callback);
-        }
+        
+        public void setCallback( MqttCallbackExtended callback) { mqttAndroidClient.setCallback(callback); }
+        
         private void connect(){
                 MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
                 mqttConnectOptions.setAutomaticReconnect(true);
-                mqttConnectOptions.setCleanSession( false);
-                mqttConnectOptions.setUserName( username);
-                mqttConnectOptions. setPassword(password.toCharArray());
-                try {
-                mqttAndroidClient.connect(mqttConnectOptions, null, new
-                        IMqttActionListener() {
-                        @Override
-                        public void onSuccess( IMqttToken asyncActionToken)
-                        {
-                        DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
-                        disconnectedBufferOptions.setBufferEnabled(true);
-                        disconnectedBufferOptions.setBufferSize (100);
-                        disconnectedBufferOptions.setPersistBuffer(false);
-                        disconnectedBufferOptions.setDeleteOldestMessages( false);
-                        mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
-                        subscribeToTopic();
-                        }
-                        @Override
-                        public void onFailure( IMqttToken asyncActionToken ,Throwable exception) {
-                                Log.w("Mqtt","Failedtoconnectto:"+serverUri + exception. toString());
+                mqttConnectOptions.setCleanSession(false);
+                mqttConnectOptions.setUserName(username);
+                mqttConnectOptions.setPassword(password.toCharArray());
 
-                        }
-                });
+                try {
+                mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
+
+                                @Override
+                                public void onSuccess( IMqttToken asyncActionToken) {
+                                        DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
+                                        disconnectedBufferOptions.setBufferEnabled(true);
+                                        disconnectedBufferOptions.setBufferSize(100);
+                                        disconnectedBufferOptions.setPersistBuffer( false);
+                                        disconnectedBufferOptions.setDeleteOldestMessages(false);
+                                        mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
+                                        subscribeToTopic();
+                                }
+
+                                @Override
+                                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                                        Log.w("Mqtt","Failedtoconnectto:"+ serverUri + exception. toString());
+                                }
+
+                        });
+                } catch (MqttException ex) { ex.printStackTrace(); }
+        }
+        
+        private void subscribeToTopic() {
+                try {
+                        mqttAndroidClient.subscribe(subscriptionTopic, 0, null, new IMqttActionListener() {
+                                @Override
+                                public void onSuccess( IMqttToken asyncActionToken) { Log.w("Mqtt","Subscribed!"); }
+
+                                @Override
+                                public void onFailure(IMqttToken asyncActionToken, Throwable exception) { Log.w("Mqtt","Subscribedfail!"); }
+                        });
+
                 } catch (MqttException ex) {
-                ex. printStackTrace();
+                        System.err.println("Exceptionstsubscribing");
+                        ex.printStackTrace();
                 }
         }
-        private void subscribeToTopic(){
-                try {
-                mqttAndroidClient. subscribe( subscriptionTopic , 0, null , new IMqttActionListener() {
-                        @Override
-                        public void onSuccess( IMqttToken asyncActionToken){
-                                Log.w("Mqtt","Subscribed!");
-                        }
-
-                        @Override
-                        public void onFailure( IMqttToken asyncActionToken ,Throwable exception) {
-                                Log.w("Mqtt","Subscribedfail!");
-                        }
-                });
-                } catch ( MqttException ex) {
-                System. err. println("Exceptionstsubscribing");
-                ex. printStackTrace();
-                }
-        }
-
 }
         
