@@ -1,23 +1,39 @@
-import 'react-native-gesture-handler';
-import React, {useState} from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Button,Image,BackHandler} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {createDrawerNavigator, DrawerContentScrollView, DrawerItemList,DrawerItem} from '@react-navigation/drawer';
-
+import { createStackNavigator } from '@react-navigation/stack';
+import {createDrawerNavigator,DrawerContentScrollView, DrawerItemList,DrawerItem} from '@react-navigation/drawer';
 import Login from './components/Screens/Login';
-import Login0 from './components/Screens/Login0';
+import Register from './components/Screens/Register';
 import Home from './components/Screens/Home';
-import Devices from './components/Services/Devices';
+import Reset from './components/Screens/Reset';
 import Humidity from './components/Services/Humidity';
 import Temperature from './components/Services/Temperature';
 import viewLight from './components/Services/viewLight';
-import Forget from './components/Screens/Forget';
-import SignUp from './components/Screens/signUp';
+import Devices from './components/Services/Devices';
+import { NavigationContainer } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
+//const RootStack = createStackNavigator(
+//  {
+//    Login: Login,
+//    Register: Register,
+//    Home: Home,
+//    Reset: Reset,
+//  },
+ // {
+  //  initialRouteName: 'Home',
+    //defaultNavigationOptions: {
+      //headerStyle: {
+        //backgroundColor: '#19AC52',
+      //},
+      //headerTintColor: '#fff',
+      //headerTitleStyle: {
+      //  fontWeight: 'bold',
+      //},
+    //},
+  //},
+//);
 function MyDrawer(){
   return(
     <Drawer.Navigator
@@ -97,30 +113,29 @@ function MyDrawer(){
       </Drawer.Navigator>
   )
 }
-
 function MyStack(){
-    return(
-      <Stack.Navigator
-        screenOptions={{
-          headerShown:false
-        }}
-      >
-          <Stack.Screen name = "Login" component = {Login}/>
-          <Stack.Screen name = "Email login" component = {Login0}/>
-          <Stack.Screen name = "Forget" component = {Forget}/>
-          <Stack.Screen name = "Sign Up" component = {SignUp}/>
-          <Stack.Screen name = "My App" component = {MyDrawer}
-                        options = {{headerLeft:() => null}}/>
-      </Stack.Navigator>
-    )
-  }
-export default function App() {
-  return (
-      <NavigationContainer>
-        <MyStack/>
-      </NavigationContainer>    
-  );
+  return(
+    <Stack.Navigator
+      screenOptions={{
+        headerShown:false
+      }}
+    >
+        <Stack.Screen name = "Login" component = {Login}/>
+        <Stack.Screen name = "Register" component = {Register}/>
+        <Stack.Screen name = "Reset" component = {Reset}/>
+        <Stack.Screen name = "My App" component = {MyDrawer}
+                      options = {{headerLeft:() => null}}/>
+    </Stack.Navigator>
+  )
 }
+export default function App(){
+  return(
+  <NavigationContainer>
+      <MyStack/>
+  </NavigationContainer>
+  )
+}
+
 const styles = StyleSheet.create({
   icon:{
     width: 30,

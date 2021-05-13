@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
-import { StyleSheet, ActivityIndicator, View, Text, Alert, 
-         Dimensions, TextInput, Image,SafeAreaView,TouchableOpacity} from 'react-native';
+import { StyleSheet, ActivityIndicator, View, Text, Alert, SafeAreaView, TextInput,Dimensions, TouchableOpacity } from 'react-native';
+import { Button, Input, Icon } from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
-import {Icon} from 'react-native-elements';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const screenWidth = Dimensions.get('window').width
-export default function Login({ navigation }) {
+export default function Register({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showLoading, setShowLoading] = useState(false);
-    const login = async() => {
+    const register = async() => {
         setShowLoading(true);
         try {
-            const doLogin = await auth().signInWithEmailAndPassword(email, password);
+            const doRegister = await auth().createUserWithEmailAndPassword(email, password);
             setShowLoading(false);
-            if(doLogin.user) {
-                navigation.navigate('My App');
+            if(doRegister.user) {
+                navigation.navigate('Home');
             }
         } catch (e) {
             setShowLoading(false);
@@ -28,27 +26,24 @@ export default function Login({ navigation }) {
     return (
         <SafeAreaView style={{flex:1}}>
         <View style={styles.container}>
-            <Image
-                source = {require('./pap-logo.png')}
-                style = {{width: 100,height:100}}
-            />
-            <Text style={styles.title}> Automated Care-Taking Gardening System </Text>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 28, height: 50 ,color:'lightgray'}}>Register Here!</Text>
+            </View>
             <View style={styles.subContainer}>
                 <Icon
-                    name = 'user-circle'
-                    type = 'font-awesome-5'
+                    name = 'mail'
+                    type = 'feather'
                     color = 'black'         
                     style = {styles.loginIcon}
                 />
                 <TextInput
                     style={styles.textInput}
-                    placeholder='Email'
+                    placeholder='Your Email'
                     placeholderTextColor='black'
                     value={email}
                     onChangeText={setEmail}
                 />
             </View>
-            
             <View style={styles.subContainer}>
                 <Icon
                     name = 'lock'
@@ -58,33 +53,31 @@ export default function Login({ navigation }) {
                 />
                 <TextInput
                     style={styles.textInput}
-                    placeholder='Password'
+                    placeholder='Your Password'
                     placeholderTextColor='black'
                     secureTextEntry={true}
                     value={password}
                     onChangeText={setPassword}
                 />
             </View>
-
-            <View style = {{justifyContent:'center',alignItems:'center',marginTop:20}}> 
-                <TouchableOpacity style={styles.loginBtn} onPress={() => login()}>
-                    <Text style={{fontWeight:'bold'}}>Login</Text>
-                </TouchableOpacity>
-               
-                <TouchableOpacity style={styles.resetBtn} onPress={() => {navigation.navigate('Reset')}}>
-                    <Text style={{fontWeight:'bold',color:'#ffffff'}}>Forgot password ?</Text>
+            
+                <TouchableOpacity style={styles.regisBtn} onPress={() => register()}>
+                <Text style={{fontWeight:'bold'}}>Register</Text>
                 </TouchableOpacity>
             
-                <TouchableOpacity style={styles.registerBtn} onPress={() => {navigation.navigate('Register')}}>
-                    <Text style={{fontWeight:'bold'}}>Register</Text>
-                </TouchableOpacity>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text>Already a user?</Text>
             </View>
-                        
+                <TouchableOpacity style={styles.loginBtn} onPress={() => {navigation.navigate('Login')}}>
+                    <Text style={{fontWeight:'bold'}}> Go to login </Text>
+                </TouchableOpacity>
+            
             {showLoading &&
                 <View style={styles.activity}>
                     <ActivityIndicator size="large" color="#0000ff" />
                 </View>
             }
+    
     </View>
     </SafeAreaView>
     );
@@ -97,17 +90,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor:'black'
     },
-    title:{
-        fontSize:28,
-        textAlign:'center',
-        fontWeight:'bold',
-        color:`rgba(0,200,170,255)`
-    },
-    loginIcon: {
-        padding: 11,
-        height: 47,
-        width: 46,
-        resizeMode: 'stretch'
+    formContainer: {
+        height: 400,
+        padding: 20
     },
     subContainer: {
         flexDirection: 'row',
@@ -116,7 +101,7 @@ const styles = StyleSheet.create({
         backgroundColor: `rgba(0,200,170,255)`,
         height: 50,
         borderRadius: 5,
-        width: screenWidth/1.2,
+        width: screenWidth/1.5,
         margin: 10,
     },
     activity: {
@@ -131,30 +116,26 @@ const styles = StyleSheet.create({
     textInput: {
         fontSize: 18,
         margin: 5,
-        width: screenWidth/1.5,
-        backgroundColor: `rgba(0,200,170,255)`,
-        borderRadius:25
+        width: 200
     },
-    loginBtn:{
+    loginIcon: {
+        padding: 11,
+        height: 47,
+        width: 46,
+        resizeMode: 'stretch'
+    },
+    regisBtn:{
         height:40,
         backgroundColor:'orange',
         borderRadius:25,
         justifyContent:'center',
         alignItems:'center',
-        width:screenWidth/2.5
-    },
-    resetBtn:{
-        height:40,
-        backgroundColor:'indigo',
-        borderRadius:25,
-        justifyContent:'center',
-        alignItems:'center',
         width:screenWidth/2.5,
-        margin:20
+        marginTop:8
     },
-    registerBtn: {
+    loginBtn:{
         height:40,
-        backgroundColor:'azure',
+        backgroundColor:'aqua',
         borderRadius:25,
         justifyContent:'center',
         alignItems:'center',

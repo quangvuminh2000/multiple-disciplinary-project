@@ -1,12 +1,31 @@
-import React, { useState } from 'react';
-import {View, Text, TouchableOpacity,Image, StyleSheet,TouchableHighlight} from 'react-native';
-export default function App ({navigation}){
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Button, Icon } from 'react-native-elements';
+import auth from '@react-native-firebase/auth';
+export default function Home({ navigation }) {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+
   const [text1,setText1] = useState('Off');
   const [text2,setText2] = useState('Off');
   const [text3,setText3] = useState('Off');
   const [borderColor1,setColor1] = useState('#999');
   const [borderColor2,setColor2] = useState('#999');
   const [borderColor3,setColor3] = useState('#999');
+
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+  if (initializing) return null;
+  if (!user) {
+    return navigation.navigate('Login');
+  }
+  
   function change1(){
     if(text1 === 'Off'){
       setText1('On');
@@ -43,15 +62,15 @@ export default function App ({navigation}){
     )
   }
 
-  return(
+  return (
     <View style={styles.container}>
-    <Image source = {require('./pap-logo.png')} 
+      <Image source = {require('./pap-logo.png')} 
            style = {{width:100,height:100}}
-    />
-    <Text style={styles.welcomeText}>Welcome to AGCS!</Text>
-    <Text style={styles.welcomeText}>Your Garden's personal Caretaker</Text>
-    <Separator/>
-    <View style={styles.btnContainer}>
+      />
+      <Text style={styles.welcomeText}>Welcome {user.email} </Text>
+      <Text style={styles.welcomeText}>Your Garden's personal Caretaker</Text>
+
+      <View style={styles.btnContainer}>
       <View style={{justifyContent:'center',textAlign:'center'}}>
       <Text style={{color:`rgba(0,200,170,255)`,fontWeight:'bold',marginBottom: 10}}>Soil Irrigation</Text>
       <TouchableOpacity style={[styles.soilBtn,{borderColor:borderColor1}]} onPress = {change1}>
@@ -73,14 +92,27 @@ export default function App ({navigation}){
   );
 }
 
+//Home.navigationOptions = ({ navigation }) => ({
+  //title: 'Home',
+  //headerRight: () => <Button
+    //      buttonStyle={{ padding: 0, marginRight: 20, backgroundColor: 'transparent' }}
+      //    icon={
+        //      <Icon
+          //        name="cancel"
+            //      size={28}
+              //    color="white"
+              ///>
+         // }
+          //onPress={() => {auth().signOut()}} />,
+//});
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'black'
+  container:{ 
+    flex: 1, 
+    alignItems: 'center', 
+    justifyContent: 'center' ,
+    backgroundColor:'black'
   },
-  welcomeText: {
+  welcomeText:{
     fontSize: 20,
     textAlign: 'center',
     color:'grey'
