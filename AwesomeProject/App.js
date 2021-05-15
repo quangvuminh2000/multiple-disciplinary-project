@@ -10,6 +10,7 @@ import Humidity from './components/Services/Humidity';
 import Temperature from './components/Services/Temperature';
 import viewLight from './components/Services/viewLight';
 import Devices from './components/Services/Devices';
+import Settings from './components/Screens/Settings';
 import { NavigationContainer } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
@@ -106,6 +107,16 @@ function MyDrawer(){
                                                                           drawerIcon: ({tintColor}) => (
                                                                             <Image 
                                                                                source={require('./device.png')}
+                                                                               style={[styles.icon,{tintColor:tintColor}]}
+                                                                           />)
+                                                                          }}
+        /> 
+        <Drawer.Screen name = "Settings" component = {Settings} options = {{drawerLabel: 'Settings',
+                                                                          headerShown:true,
+                                                                          headerStyle:{backgroundColor:`rgba(0,200,170,255)`},
+                                                                          drawerIcon: ({tintColor}) => (
+                                                                            <Image 
+                                                                               source={require('./settings1.png')}
                                                                                style={[styles.icon,{tintColor:tintColor}]}
                                                                            />)
                                                                           }}
