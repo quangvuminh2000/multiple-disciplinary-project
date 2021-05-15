@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, Button,Image,BackHandler} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -15,6 +15,8 @@ import Forget from './components/Screens/forget';
 import SignUp from './components/Screens/signUp';
 
 import Database from './components/Db_test';
+import MQTTConnecction from './android/app/src/MQTTConnection'
+import { ThemeConsumer } from 'react-native-elements';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -114,6 +116,36 @@ function MyStack(){
     )
   }
 export default function App() {
+
+  useEffect(()=> {
+    this.mqttConnect = new MQTTConnection()
+    this.mqttConnect.onMQTTConnect = this.onMQTTConnect
+    this.mqttConnect.onMQTTLost = this.onMQTTLost
+    this.mqttConnect.onMQTTMessageArrived = this.onMQTTMessageArrived
+    this.mqttConnect.onMQTTMessageDelivered = this.onMQTTMessageDelivered
+    //TODO: fill in ip and port number
+    this.mqttConnect.connect(ip, port)
+
+    onMQTTConnect = ()=>{
+      console.log('App onMQTTConnect')
+      this.mqttConnect.subscribeChannel('???')
+    }
+    onMQTTLost = () =>{
+      console.log('App onMQTTLost')
+    }
+    onMQTTMessageArrived = () =>{
+      console.log('App onMQTTMessageArrived: ', message);
+      console.log('App onMQTTMessageArrived payloadString: ', message.payloadString);
+
+    }
+    onMQTTMessageDelivered = (message) => {
+      console.log('App onMQTTMessageDelivered: ', message);
+    }
+    return () =>{
+      this.mqttConnect.close()
+    }
+  },[])
+  //Usage example: this.mqttConnect.send('channel_name', "message need send")
   return (
       <NavigationContainer>
         <MyStack/>
