@@ -14,6 +14,7 @@ import viewLight from './components/Services/viewLight';
 import Forget from './components/Screens/forget';
 import SignUp from './components/Screens/signUp';
 
+import Database from './components/Db_test';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
