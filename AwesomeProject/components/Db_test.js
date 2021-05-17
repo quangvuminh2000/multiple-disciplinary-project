@@ -2,9 +2,9 @@
 import React,{useState} from 'react';
 import { Component } from 'react';
 import {View, Text, TouchableOpacity,Image, StyleSheet} from 'react-native';
-
+import {openDatabase} from 'react-native-sqlite-storage';
 var SQLite = require('react-native-sqlite-storage')
-var db = SQLite.openDatabase({name: 'test.db', createFromLocation: '~test.db'})
+var db = SQLite.openDatabase({name: 'test.db', createFromLocation: '../app/src/main/assets/test.db'})
 
 
 export default function App(){

@@ -192,7 +192,7 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.android. service:1.1.1'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation 'com.github.mik3y:usb-serial-for-android:2.+'
-    compile project(':react-native-sqlite-storage')
+    implementation project(':react-native-sqlite-storage')
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
