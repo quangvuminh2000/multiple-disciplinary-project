@@ -16,6 +16,7 @@ export default function App(){
           if(len > 0) {
             // exists owner name John
             var row = results.rows.item(0);
+            console.log(row);
             setVal(row.value);
           }
         });
