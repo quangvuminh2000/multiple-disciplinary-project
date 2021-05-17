@@ -187,10 +187,11 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2'
-    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
     implementation project(':react-native-sqlite-storage')
+    
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
