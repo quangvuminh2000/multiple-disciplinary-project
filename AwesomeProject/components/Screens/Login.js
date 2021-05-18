@@ -35,8 +35,8 @@ export default function Login({ navigation }) {
             <Text style={styles.title}> Automated Care-Taking Gardening System </Text>
             <View style={styles.subContainer}>
                 <Icon
-                    name = 'user-circle'
-                    type = 'font-awesome-5'
+                    name = 'email'
+                    type = 'zocial'
                     color = 'black'         
                     style = {styles.loginIcon}
                 />
@@ -45,6 +45,7 @@ export default function Login({ navigation }) {
                     placeholder='Email'
                     placeholderTextColor='black'
                     value={email}
+                    autoCapitalize = 'none'
                     onChangeText={setEmail}
                 />
             </View>
@@ -62,6 +63,7 @@ export default function Login({ navigation }) {
                     placeholderTextColor='black'
                     secureTextEntry={true}
                     value={password}
+                    autoCapitalize = 'none'
                     onChangeText={setPassword}
                 />
             </View>

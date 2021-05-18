@@ -14,7 +14,7 @@ export default function Register({ navigation }) {
             const doRegister = await auth().createUserWithEmailAndPassword(email, password);
             setShowLoading(false);
             if(doRegister.user) {
-                navigation.navigate('Home');
+                navigation.navigate('Login');
             }
         } catch (e) {
             setShowLoading(false);

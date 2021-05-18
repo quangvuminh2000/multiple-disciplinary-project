@@ -67,7 +67,7 @@ export default function Home({ navigation }) {
       <Image source = {require('./pap-logo.png')} 
            style = {{width:100,height:100}}
       />
-      <Text style={styles.welcomeText}>Welcome {user.email} </Text>
+      <Text style={styles.welcomeText}>Welcome {user.email} ! </Text>
       <Text style={styles.welcomeText}>Your Garden's personal Caretaker</Text>
 
       <View style={styles.btnContainer}>

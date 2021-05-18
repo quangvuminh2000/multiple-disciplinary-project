@@ -1,7 +1,11 @@
 import React, {useState} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet,Dimensions,SafeAreaView,ScrollView,FlatList,Image} from 'react-native';
 import {LineChart} from 'react-native-chart-kit'
+import {openDatabase} from 'react-native-sqlite-storage'
 import ProgressCircle from 'react-native-progress-circle';
+
+var SQLite = require('react-native-sqlite-storage');
+var db = SQLite.openDatabase({name:'test1.db',createFromLocation:'~test1.db'})
 
 const Separator = () => {
     return(
@@ -16,7 +20,7 @@ const chartConfig3 = {
     backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(0,255,0,${opacity})`,
     strokeWidth: 2,
-    barPercentage: 0.5,
+    //barPercentage: 0.5,
     useShadowColorFromDataset: false
 }
 
@@ -27,7 +31,6 @@ const chartConfig4 = {
     backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(0,0,255,${opacity})`,
     strokeWidth: 2,
-    barPercentage: 0.5,
     useShadowColorFromDataset: false,
 }
 const data = [
@@ -60,20 +63,20 @@ const Item = ({source,title}) => (
 );
 
 
-const data3 = {
-    datasets: [
-        {
-            data: [40,50,65,60,70,55,75],
-            strokeWidth: 4.5
-        }
-    ],
-    legend:["Soil moisture"]
-}
+//const data3 = {
+  //  datasets: [
+    //    {
+      //      data: val,
+        //    strokeWidth: 4.5
+        //}
+    //],
+    //legend:["Soil moisture"]
+//}
 
 const data4 = {
     datasets: [
         {
-            data: [65,70,85,80,75,55,75],
+            data: [65,85,70],
             strokeWidth: 4.5
         },
     ],
@@ -88,6 +91,32 @@ export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
+
+    const [val,setVal] = useState([]);
+    db.transaction((tx) => {
+        tx.executeSql('SELECT value FROM soil', [], (_tx, results) => {
+            var len = results.rows.length;
+            if(len > 0){
+                let soilList = [];
+                for(let i = 0; i < len; i++){
+                    soilList.push(results.rows.item(i).value);
+                    console.log(results.rows.item(i).value);
+                }
+            setVal(soilList);
+            }
+          });
+      });
+      const data3 = {
+          datasets: [
+            {
+                data: val,
+                strokeWidth: 4.5
+            }
+          ],
+          legend:["Soil moisture"]
+      }
+    
+    
     return(
         <SafeAreaView style = {styles.container}>
         <ScrollView>
