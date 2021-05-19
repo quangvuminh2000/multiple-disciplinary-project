@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View,Text,Dimensions,StyleSheet,TouchableOpacity, SafeAreaView,FlatList,Image} from 'react-native';
 import {LineChart,ProgressChart} from 'react-native-chart-kit';
 import { ScrollView } from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
+import {openDatabase} from 'react-native-sqlite-storage'
+import { AsyncStorage } from '@react-native-community/async-storage';
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
@@ -50,26 +52,50 @@ const Item = ({source,title}) => (
 );
 
 
-const data2 = {
-    labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-    datasets: [
-        {
-            data: [30,29,32,35,25,30,35],
-            strokeWidth: 4.5
-        }
-    ],
-    legend:["Temperature"]
-};
+
+
+var SQLite = require('react-native-sqlite-storage');
+var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db',deferRender:true})
 export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
+    const [val,setVal] = useState([1,2,3]);
+    const [per,setPercent] = useState(1);
+    db.transaction((tx) => {
+        tx.executeSql(
+            'SELECT value FROM temperature ORDER BY DESC LIMIT 5', [], (_tx, results) => {
+                var len = results.rows.length;
+                console.log("IN BITCH");
+                if(len > 0){
+                    let tempList = [];
+                    for(let i = 0; i < len; i++){
+                        tempList.push(results.rows.item(i).value);
+                        //console.log(results.rows.item(i).value);
+                    }
+                setVal(tempList);
+                setPercent(tempList[0]);
+                
+               }
+            });
+        }); 
+    console.log(val);
+    const data2 = {
+        labels: ["20'","15'","10'","5'","Now"],
+        datasets: [
+        {
+            data: val,
+            strokeWidth: 4.5
+        }
+        ],
+        legend:["Temperature"]
+      }  
     return(
         <SafeAreaView style = {styles.container}> 
         <ScrollView>
         <View style={styles.progress}>
             <ProgressCircle
-                percent={30}
+                percent={per}
                 radius={50}
                 borderWidth={8}
                 color={'red'}

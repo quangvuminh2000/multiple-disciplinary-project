@@ -67,7 +67,7 @@ const screenHeight = Dimensions.get("window").height;
 
 
 var SQLite = require('react-native-sqlite-storage');
-var db = SQLite.openDatabase({name:'test1.db',createFromLocation:'~test1.db',deferRender:true})
+var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db',deferRender:true})
 
 
 export default function App({navigation}){
