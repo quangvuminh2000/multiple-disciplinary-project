@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet,Dimensions,SafeAreaView,ScrollView,FlatList,Image} from 'react-native';
 import {LineChart} from 'react-native-chart-kit'
 import {openDatabase} from 'react-native-sqlite-storage'
 import ProgressCircle from 'react-native-progress-circle';
+import { AsyncStorage } from '@react-native-community/async-storage';
 
-var SQLite = require('react-native-sqlite-storage');
-var db = SQLite.openDatabase({name:'test1.db',createFromLocation:'~test1.db'})
 
 const Separator = () => {
     return(
@@ -31,6 +30,7 @@ const chartConfig4 = {
     backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(0,0,255,${opacity})`,
     strokeWidth: 2,
+    //barPercentage: 0.5,
     useShadowColorFromDataset: false,
 }
 const data = [
@@ -62,59 +62,95 @@ const Item = ({source,title}) => (
     </View>
 );
 
-
-//const data3 = {
-  //  datasets: [
-    //    {
-      //      data: val,
-        //    strokeWidth: 4.5
-        //}
-    //],
-    //legend:["Soil moisture"]
-//}
-
-const data4 = {
-    datasets: [
-        {
-            data: [65,85,70],
-            strokeWidth: 4.5
-        },
-    ],
-    legend:["Atmosphere moisture"]
-    
-}
-
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
+
+
+var SQLite = require('react-native-sqlite-storage');
+var db = SQLite.openDatabase({name:'test1.db',createFromLocation:'~test1.db',deferRender:true})
+
 
 export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-
-    const [val,setVal] = useState([]);
+    const [val1,setVal1] = useState([1,2,3]);
+    const [val2,setVal2] = useState([1,2,3]);
+    const [per1,setPercent1] = useState(1);
+    const [per2,setPercent2] = useState(1);
     db.transaction((tx) => {
-        tx.executeSql('SELECT value FROM soil', [], (_tx, results) => {
-            var len = results.rows.length;
-            if(len > 0){
-                let soilList = [];
-                for(let i = 0; i < len; i++){
-                    soilList.push(results.rows.item(i).value);
-                    console.log(results.rows.item(i).value);
-                }
-            setVal(soilList);
-            }
-          });
-      });
-      const data3 = {
+        tx.executeSql(
+            'SELECT value FROM soil', [], (_tx, results) => {
+                var len = results.rows.length;
+                if(len > 0){
+                    let soilList = [];
+                    for(let i = 0; i < len; i++){
+                        soilList.push(results.rows.item(i).value);
+                        //console.log(results.rows.item(i).value);
+                    }
+                setVal1(soilList);
+                setPercent1(soilList[0]);
+               }
+            });
+        });    
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT value FROM air', [], (_tx, results) => {
+                    var len = results.rows.length;
+                    if(len > 0){
+                        let airList = [];
+                        for(let i = 0; i < len; i++){
+                            airList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        }
+                    setVal2(airList);
+                    setPercent2(airList[len-1]);
+                   }
+                });
+        });         
+    //console.log(val)
+     
+    //const [val,setVal] = useState([]);
+    //
+      //  db.transaction((tx) => {
+        //    tx.executeSql(
+          ///      'SELECT value FROM soil', [], (_tx, results) => {
+             //       var len = results.rows.length;
+               //     if(len > 0){
+                 //       let soilList = [];
+                   ///     for(let i = 0; i < len; i++){
+                      //      soilList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        //}
+                    //setVal(soilList);
+                   /// }
+                //});
+            //});
+       
+    //const [val1,setVal1] = useState([]);
+    
+
+    //console.log(val)
+    //console.log(val1)
+    const data3 = {
           datasets: [
             {
-                data: val,
+                data: val1,
                 strokeWidth: 4.5
             }
           ],
           legend:["Soil moisture"]
       }
+    const data4 = {
+        datasets: [
+            {
+                data: val2,
+                strokeWidth: 4.5
+            },
+        ],
+        legend:["Atmosphere moisture"]
+        
+    }
     
     
     return(
@@ -123,27 +159,27 @@ export default function App({navigation}){
         <View style = {styles.progressContainer}>
         <View style={styles.soilProgress}>
         <ProgressCircle
-                percent={65}
+                percent={per1}
                 radius={50}
                 borderWidth={8}
                 color={'green'}
                 shadowColor="#999"
                 bgColor={'black'}
         >
-        <Text style={{color:'green'}}>{'65%'}</Text>  
+        <Text style={{color:'green'}}>{ per1 + '%'}</Text>  
         </ProgressCircle>
         <Text style={{color:'green',marginTop:10}}>Soil moisture</Text>
         </View>
         <View style = {styles.airProgress}>
         <ProgressCircle
-                percent={75}
+                percent={per2}
                 radius={50}
                 borderWidth={8}
                 color={'blue'}
                 shadowColor="#999"
                 bgColor={'black'}
         >
-        <Text style={{color:'blue'}}>{'75%'}</Text>  
+        <Text style={{color:'blue'}}>{per2 + '%'}</Text>  
         </ProgressCircle>
         <Text style={{color:'blue',marginTop:10}}>Atmosphere moisture</Text>
         </View>
@@ -167,7 +203,6 @@ export default function App({navigation}){
             verticalLabelRotation = {30}
         />
         </View>
-        
         <Text style={styles.text}>Devices</Text>
         <View style={styles.devices}>
         <FlatList

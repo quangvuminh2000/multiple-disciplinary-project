@@ -61,7 +61,7 @@ export default function Home({ navigation }) {
         <View style={styles.separator}/>
     )
   }
-
+  
   return (
     <View style={styles.container}>
       <Image source = {require('./pap-logo.png')} 

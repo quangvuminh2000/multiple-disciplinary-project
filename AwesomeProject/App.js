@@ -40,7 +40,6 @@ function MyDrawer(){
                           onPress={()=>props.navigation.navigate("Login")}
                           icon={()=><Image source={require('./signout1.png')} style={styles.icon}/>}
                           />
-                          
             </DrawerContentScrollView>
           )
         }}
@@ -53,6 +52,7 @@ function MyDrawer(){
                                                                           source={require('./home12.png')}
                                                                           style={[styles.icon,{tintColor:tintColor}]}
                                                                       />)
+                                                                        
                                                                       }}
         />
         <Drawer.Screen name = "Humidity" component = {Humidity} options = {{drawerLabel:'Humidity',         
