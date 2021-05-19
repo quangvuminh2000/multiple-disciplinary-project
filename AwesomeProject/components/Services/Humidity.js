@@ -80,7 +80,7 @@ export default function App({navigation}){
     const [per2,setPercent2] = useState(1);
     db.transaction((tx) => {
         tx.executeSql(
-            'SELECT value FROM soil', [], (_tx, results) => {
+            'SELECT value FROM soil ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
                 var len = results.rows.length;
                 if(len > 0){
                     let soilList = [];
@@ -88,28 +88,30 @@ export default function App({navigation}){
                         soilList.push(results.rows.item(i).value);
                         //console.log(results.rows.item(i).value);
                     }
-                setVal1(soilList);
-                setPercent1(soilList[0]);
+                setVal1(soilList.reverse());
+                setPercent1(val1[4]);
                }
             });
         });    
-        db.transaction((tx) => {
-            tx.executeSql(
-                'SELECT value FROM air', [], (_tx, results) => {
-                    var len = results.rows.length;
-                    if(len > 0){
-                        let airList = [];
-                        for(let i = 0; i < len; i++){
-                            airList.push(results.rows.item(i).value);
-                            //console.log(results.rows.item(i).value);
-                        }
-                    setVal2(airList);
-                    setPercent2(airList[len-1]);
-                   }
-                });
+    db.transaction((tx) => {
+        tx.executeSql(
+            'SELECT value FROM air ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                var len = results.rows.length;
+                if(len > 0){
+                    let airList = [];
+                    for(let i = 0; i < len; i++){
+                        airList.push(results.rows.item(i).value);
+                        //console.log(results.rows.item(i).value);
+                    }
+                setVal2(airList.reverse());
+                setPercent2(val2[4]);
+                }
+            });
         });         
-    //console.log(val)
-     
+    //console.log(val1)
+    //console.log(per1)
+    console.log(val2)
+    console.log(per2)
     //const [val,setVal] = useState([]);
     //
       //  db.transaction((tx) => {
@@ -132,14 +134,14 @@ export default function App({navigation}){
 
     //console.log(val)
     //console.log(val1)
-    const data3 = {
-          datasets: [
+    const data3 = { 
+        datasets: [
             {
                 data: val1,
                 strokeWidth: 4.5
             }
           ],
-          legend:["Soil moisture"]
+        legend:["Soil moisture"]
       }
     const data4 = {
         datasets: [

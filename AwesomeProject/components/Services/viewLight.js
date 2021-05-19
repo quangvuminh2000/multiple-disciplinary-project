@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {View,Text,Dimensions,StyleSheet,TouchableOpacity, SafeAreaView,FlatList,Image} from 'react-native';
 import {
     LineChart,
@@ -53,33 +53,56 @@ const Item = ({source,title}) => (
     <Text style={styles.title}>{title}</Text>
     </View>
 );
+var SQLite = require('react-native-sqlite-storage');
+//var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
+var db1 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 
-const data2 = {
-    labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-    datasets: [
-        {
-            data: [65,70,85,80,75,55,75]
-        }
-    ],
-    legend:["Light level"]
-};
+
 export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
+    const[val,setVal] = useState([1,2,3]);
+    const[per,setPercent] = useState(1);
+    db1.transaction((tx) => {
+        tx.executeSql(
+            'SELECT value FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                var len = results.rows.length;
+                if(len > 0){
+                    let lightList = [];
+                    for(let i = 0; i < len; i++){
+                        lightList.push(results.rows.item(i).value);
+                        //console.log(results.rows.item(i).value);
+                    }
+                setVal(lightList.reverse());
+                setPercent(val[4]);
+               }
+            });
+        });
+        console.log(val)
+        console.log(per)    
+    const data2 = {
+        //labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+        datasets: [
+            {
+                data: val
+            }
+        ],
+        legend:["Light level"]
+    };
     return(
         <SafeAreaView style = {styles.container}>
         <ScrollView>
             <View style={styles.progress}>
             <ProgressCircle
-                percent={65}
+                percent={per}
                 radius={50}
                 borderWidth={8}
                 color={'yellow'}
                 shadowColor="#999"
                 bgColor={'black'}
             >
-            <Text style={{color:'yellow'}}>{'65%'}</Text>  
+            <Text style={{color:'yellow'}}>{per + '%'}</Text>  
             </ProgressCircle>
             <Text style={{color:'yellow',marginTop:10}}>Light level</Text>
             </View>        

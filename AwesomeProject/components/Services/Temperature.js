@@ -55,31 +55,32 @@ const Item = ({source,title}) => (
 
 
 var SQLite = require('react-native-sqlite-storage');
-var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db',deferRender:true})
+//var db = SQLite.openDatabase({name:'test1.db',createFromLocation:'~test1.db'})
+var db1 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
     const [val,setVal] = useState([1,2,3]);
     const [per,setPercent] = useState(1);
-    db.transaction((tx) => {
+    db1.transaction((tx) => {
         tx.executeSql(
-            'SELECT value FROM temperature ORDER BY DESC LIMIT 5', [], (_tx, results) => {
+            'SELECT value FROM temperature ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
                 var len = results.rows.length;
-                console.log("IN BITCH");
+                //console.log("IN BITCH");
                 if(len > 0){
                     let tempList = [];
                     for(let i = 0; i < len; i++){
                         tempList.push(results.rows.item(i).value);
                         //console.log(results.rows.item(i).value);
                     }
-                setVal(tempList);
-                setPercent(tempList[0]);
-                
+                setVal(tempList.reverse());
+                setPercent(val[4]);    
                }
             });
         }); 
     console.log(val);
+    console.log(per);
     const data2 = {
         labels: ["20'","15'","10'","5'","Now"],
         datasets: [
@@ -103,7 +104,7 @@ export default function App({navigation}){
                 bgColor={'black'}
                 style={styles.progress}
             >
-            <Text style={{color:'red'}}>{'30ºC'}</Text>  
+            <Text style={{color:'red'}}>{per + 'ºC'}</Text>  
             </ProgressCircle>
             <Text style={{color:'red',marginTop:10}}>Temperature</Text>
         </View>
