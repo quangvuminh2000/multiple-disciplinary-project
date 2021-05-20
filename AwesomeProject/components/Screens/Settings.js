@@ -4,11 +4,7 @@ import { TextInput } from 'react-native-gesture-handler';
 
 import {AppStateContext} from '../../App';
 
-const MqttObj = useContext(AppStateContext);
-// const client = MqttObj.client;
-const soilmonitor = MqttObj.soilmonitor;
-const airmonitor = MqttObj.airmonitor;
-const lightmonitor = MqttObj.lightmonitor;
+
 
 export default function App({navigation}){
     const [minTemp,setminTemp] = useState(32);
@@ -18,22 +14,12 @@ export default function App({navigation}){
     const [minAtmosphere,setminAtmos] = useState(65);
     const [maxAtmosphere,setmaxAtmos] = useState(70);
 
-    useEffect(() => {
-        soilmonitor.minSoil = minSoil;
-        soilmonitor.maxSoil = maxSoil;
-        soilmonitor.minTemp = minTemp;
-        soilmonitor.maxTemp = maxTemp;
-
-        airmonitor.minAtmosphere = minAtmosphere;
-        airmonitor.maxAtmosphere = maxAtmosphere;
-        airmonitor.minTemp = minTemp;
-        airmonitor.maxTemp = maxTemp;
-
-        lightmonitor.minTemp = minTemp;
-        lightmonitor.maxTemp = maxTemp;
-        console.log(soilmonitor.minSoil);
-        console.log(soilmonitor.maxSoil);
-    })
+    const MqttObj = useContext(AppStateContext);
+    const client = MqttObj.client;
+    const soilmonitor = MqttObj.soilmonitor;
+    const airmonitor = MqttObj.airmonitor;
+    const lightmonitor = MqttObj.lightmonitor;
+    console.log(soilmonitor.maxSoil)
 
     return (
         <View style = {styles.container}>
@@ -43,14 +29,14 @@ export default function App({navigation}){
                 <TextInput
                     placeholder = 'Min temperature'
                     placeholderTextColor = 'grey'
-                    value = {minTemp}
+                    value = {minTemp.toString()}
                     onChangeText = {setminTemp}
                     style={styles.userInput}
                 />
                 <TextInput
                     placeholder = 'Max temperature'
                     placeholderTextColor = 'grey'
-                    value = {maxTemp}
+                    value = {maxTemp.toString()}
                     onChangeText = {setmaxTemp}
                     style={styles.userInput}
                 />
@@ -60,14 +46,14 @@ export default function App({navigation}){
                 <TextInput
                     placeholder = 'Min humidity'
                     placeholderTextColor = 'grey'
-                    value = {minSoil}
+                    value = {minSoil.toString()}
                     onChangeText = {setminSoil}
                     style={styles.userInput}
                 />
                 <TextInput
                     placeholder = 'Max humidity'
                     placeholderTextColor = 'grey'
-                    value = {maxSoil}
+                    value = {maxSoil.toString()}
                     onChangeText = {setmaxSoil}
                     style={styles.userInput}
                 />
@@ -77,20 +63,20 @@ export default function App({navigation}){
                 <TextInput
                     placeholder = 'Min humidity'
                     placeholderTextColor = 'grey'
-                    value = {minAtmosphere}
+                    value = {minAtmosphere.toString()}
                     onChangeText = {setminAtmos}
                     style={styles.userInput}
                 />
                 <TextInput
                     placeholder = 'Max humidity'
                     placeholderTextColor = 'grey'
-                    value = {maxAtmosphere}
+                    value = {maxAtmosphere.toString()}
                     onChangeText = {setmaxAtmos}
                     style={styles.userInput}
                 />
             </View>
             <View style={{flexDirection:'row'}}>
-                <TouchableOpacity style = {styles.button}>
+                <TouchableOpacity style = {styles.button} onPress={set}>
                 <Text style = {styles.text1}> Set </Text>
                 </TouchableOpacity>
 
@@ -107,6 +93,20 @@ export default function App({navigation}){
         setMaxSoil(70);
         setMinAtmosphere(65);
         setMaxAtmosphere(70);
+    }
+    function set(){
+        soilmonitor.minSoil = minSoil;
+        soilmonitor.maxSoil = maxSoil;
+        soilmonitor.minTemp = minTemp;
+        soilmonitor.maxTemp = maxTemp;
+
+        airmonitor.minAtmosphere = minAtmosphere;
+        airmonitor.maxAtmosphere = maxAtmosphere;
+        airmonitor.minTemp = minTemp;
+        airmonitor.maxTemp = maxTemp;
+
+        lightmonitor.minTemp = minTemp;
+        lightmonitor.maxTemp = maxTemp;
     }
 }
 
