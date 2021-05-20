@@ -53,9 +53,6 @@ const Item = ({source,title}) => (
     </View>
 );
 
-
-
-
 var SQLite = require('react-native-sqlite-storage');
 //var db = SQLite.openDatabase({name:'test1.db',createFromLocation:'~test1.db'})
 var db1 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
@@ -80,31 +77,34 @@ export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-    const [val,setVal] = useState([1,2,3]);
-    const [per,setPercent] = useState(1);
-    db1.transaction((tx) => {
-        tx.executeSql(
-            'SELECT value FROM temperature ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                //console.log("IN BITCH");
-                if(len > 0){
-                    let tempList = [];
-                    for(let i = 0; i < len; i++){
-                        tempList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
-                    }
-                setVal(tempList.reverse());
-                setPercent(val[4]);    
-               }
-            });
-        }); 
-    console.log(val);
-    console.log(per);
+    const [temp,setTemp] = useState([0,0,0]);
+    const [per3,setPercent3] = useState(0);
+    useEffect(() => {
+        db1.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM temperature ORDER BY time DESC LIMIT 5', [], (tx, results) => {
+                    var len = results.rows.length;
+                    //console.log("IN BITCH");
+                    if(len > 0){
+                        let tempList = [];
+                        for(let i = 0; i < len; i++){
+                            tempList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        }
+                    setTemp(tempList.reverse());
+                    setPercent3(temp[len-1]);    
+                   }
+                });
+            }); 
+    }, []);
+    
+    console.log(temp);
+    console.log(per3);
     const data2 = {
         labels: ["20'","15'","10'","5'","Now"],
         datasets: [
         {
-            data: val,
+            data: temp,
             strokeWidth: 4.5
         }
         ],
@@ -112,10 +112,10 @@ export default function App({navigation}){
       }  
     return(
         <SafeAreaView style = {styles.container}> 
-        <ScrollView>
+        
         <View style={styles.progress}>
             <ProgressCircle
-                percent={per}
+                percent={per3}
                 radius={50}
                 borderWidth={8}
                 color={'red'}
@@ -123,7 +123,7 @@ export default function App({navigation}){
                 bgColor={'black'}
                 style={styles.progress}
             >
-            <Text style={{color:'red'}}>{per + 'ºC'}</Text>  
+            <Text style={{color:'red'}}>{per3 + 'ºC'}</Text>  
             </ProgressCircle>
             <Text style={{color:'red',marginTop:10}}>Temperature</Text>
         </View>
@@ -142,8 +142,7 @@ export default function App({navigation}){
            renderItem={renderItem}
            keyExtractor={(item) => item.id}
         />
-        </View>
-        </ScrollView>     
+        </View>     
         </SafeAreaView>    
     )
 }
@@ -175,7 +174,8 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     devices:{
-        flex: 1
+        flex: 1,
+        width:screenWidth/1.1
     },
     item:{
         backgroundColor:`rgba(33,35,39,255)`,

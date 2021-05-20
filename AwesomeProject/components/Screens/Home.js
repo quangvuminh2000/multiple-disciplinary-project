@@ -25,6 +25,12 @@ export default function Home({ navigation }) {
   if (!user) {
     return navigation.navigate('Login');
   }
+
+  const logoff = () => {
+    auth()
+    .signOut()
+    .then(()=>console.log('User signed out'))
+  }
   
   function change1(){
     if(text1 === 'Off'){
@@ -88,6 +94,7 @@ export default function Home({ navigation }) {
     <TouchableOpacity style={[styles.netBtn,{borderColor:borderColor3}]} onPress = {change3}>
       <Text style={styles.text3}>{text3}</Text>
     </TouchableOpacity>
+
     </View>
   );
 }

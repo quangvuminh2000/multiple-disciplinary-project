@@ -67,51 +67,56 @@ const screenHeight = Dimensions.get("window").height;
 
 
 var SQLite = require('react-native-sqlite-storage');
-var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db',deferRender:true})
+var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 
 
 export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-    const [val1,setVal1] = useState([1,2,3]);
-    const [val2,setVal2] = useState([1,2,3]);
-    const [per1,setPercent1] = useState(1);
-    const [per2,setPercent2] = useState(1);
-    db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT value FROM soil ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let soilList = [];
-                    for(let i = 0; i < len; i++){
-                        soilList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
+    const [val1,setVal1] = useState([0,0,0]);
+    const [val2,setVal2] = useState([0,0,0]);
+    const [per1,setPercent1] = useState(0);
+    const [per2,setPercent2] = useState(0);
+    useEffect(() => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM soil ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                    var len = results.rows.length;
+                    if(len > 0){
+                        let soilList = [];
+                        for(let i = 0; i < len; i++){
+                            soilList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        }
+                    setVal1(soilList.reverse());
+                   }
+                });
+            });    
+    }, []);
+    useEffect(() => {setPercent1(val1[4])}, []);
+    useEffect(() => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT value FROM air ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                    var len = results.rows.length;
+                    if(len > 0){
+                        let airList = [];
+                        for(let i = 0; i < len; i++){
+                            airList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        }
+                    setVal2(airList.reverse());
+                    
                     }
-                setVal1(soilList.reverse());
-                setPercent1(val1[4]);
-               }
-            });
-        });    
-    db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT value FROM air ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let airList = [];
-                    for(let i = 0; i < len; i++){
-                        airList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
-                    }
-                setVal2(airList.reverse());
-                setPercent2(val2[4]);
-                }
-            });
-        });         
+                });
+            });        
+    }, []);
+    useEffect(()=>{setPercent2(val2[4])}, []);
     //console.log(val1)
     //console.log(per1)
-    console.log(val2)
-    console.log(per2)
+    //console.log(val2)
+    //console.log(per2)
     //const [val,setVal] = useState([]);
     //
       //  db.transaction((tx) => {
@@ -135,6 +140,7 @@ export default function App({navigation}){
     //console.log(val)
     //console.log(val1)
     const data3 = { 
+        labels: ["20'","15'","10'","5'","Now"],
         datasets: [
             {
                 data: val1,
@@ -144,6 +150,7 @@ export default function App({navigation}){
         legend:["Soil moisture"]
       }
     const data4 = {
+        labels: ["20'","15'","10'","5'","Now"],
         datasets: [
             {
                 data: val2,
@@ -154,10 +161,9 @@ export default function App({navigation}){
         
     }
     
-    
     return(
         <SafeAreaView style = {styles.container}>
-        <ScrollView>
+        
         <View style = {styles.progressContainer}>
         <View style={styles.soilProgress}>
         <ProgressCircle
@@ -193,14 +199,14 @@ export default function App({navigation}){
         <LineChart
             data = {data3}
             width = {screenWidth/2}
-            height = {screenHeight/4.5}
+            height = {screenHeight/4}
             chartConfig = {chartConfig3}
             verticalLabelRotation = {30}
         />
         <LineChart
             data = {data4}
             width = {screenWidth/2}
-            height = {screenHeight/4.5}
+            height = {screenHeight/4}
             chartConfig = {chartConfig4}
             verticalLabelRotation = {30}
         />
@@ -213,7 +219,7 @@ export default function App({navigation}){
            keyExtractor={(item) => item.id}
         />
         </View>
-        </ScrollView>
+        
     </SafeAreaView>
     ) 
 }
@@ -227,6 +233,7 @@ const styles = StyleSheet.create({
     },
     progressContainer: {
         flexDirection: 'row',
+        alignItems:'center'
     },
     lineContainer: {
         flexDirection: 'row',
@@ -256,14 +263,16 @@ const styles = StyleSheet.create({
         marginTop:50,
         marginBottom: 20,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
+        marginRight:40
     },
     text:{
         fontSize: 20,
         color:'grey'
     },
     devices:{
-        flex: 1
+        flex: 1,
+        width:screenWidth/1.1
     },
     item:{
         backgroundColor:`rgba(33,35,39,255)`,

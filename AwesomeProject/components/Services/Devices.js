@@ -57,7 +57,7 @@ export default function App({navigation}){
     const [devname, setDev] = useState();
     return (
         <SafeAreaView style = {styles.container}>
-        <ScrollView>
+        
             <View style = {styles.loginSec}>
             <Icon
                 name = 'search'
@@ -80,7 +80,7 @@ export default function App({navigation}){
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
             />
-        </ScrollView>
+        
         </SafeAreaView>
     )
 }

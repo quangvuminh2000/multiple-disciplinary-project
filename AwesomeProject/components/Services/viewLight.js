@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {View,Text,Dimensions,StyleSheet,TouchableOpacity, SafeAreaView,FlatList,Image} from 'react-native';
 import {
     LineChart,
@@ -55,54 +55,58 @@ const Item = ({source,title}) => (
 );
 var SQLite = require('react-native-sqlite-storage');
 //var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
-var db1 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
+var db2 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 
 
 export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-    const[val,setVal] = useState([1,2,3]);
-    const[per,setPercent] = useState(1);
-    db1.transaction((tx) => {
-        tx.executeSql(
-            'SELECT value FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let lightList = [];
-                    for(let i = 0; i < len; i++){
-                        lightList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
-                    }
-                setVal(lightList.reverse());
-                setPercent(val[4]);
-               }
+    const[light,setLight] = useState([0,0,0]);
+    const[per4,setPercent4] = useState(0);
+    
+    useEffect(() => {
+        db2.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                    var len = results.rows.length;
+                    if(len > 0){
+                        let lightList = [];
+                        for(let i = 0; i < len; i++){
+                            lightList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        }
+                    setLight(lightList.reverse());
+                    setPercent4(light[4]);
+                   }
+                });
             });
-        });
-        console.log(val)
-        console.log(per)    
+    }, []);
+    
+        console.log(light)
+        console.log(per4)    
     const data2 = {
-        //labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+        labels: ["20'","15'","10'","5'","Now"],
         datasets: [
             {
-                data: val
+                data: light
             }
         ],
         legend:["Light level"]
     };
     return(
         <SafeAreaView style = {styles.container}>
-        <ScrollView>
+        
             <View style={styles.progress}>
             <ProgressCircle
-                percent={per}
+                percent={per4}
                 radius={50}
                 borderWidth={8}
                 color={'yellow'}
                 shadowColor="#999"
                 bgColor={'black'}
             >
-            <Text style={{color:'yellow'}}>{per + '%'}</Text>  
+            <Text style={{color:'yellow'}}>{per4 + '%'}</Text>  
             </ProgressCircle>
             <Text style={{color:'yellow',marginTop:10}}>Light level</Text>
             </View>        
@@ -124,7 +128,7 @@ export default function App({navigation}){
            keyExtractor={(item) => item.id}
         />
         </View>
-        </ScrollView>
+        
         </SafeAreaView>
     )
 }
@@ -156,7 +160,8 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     devices:{
-        flex: 1
+        flex: 1,
+        width: screenWidth/1.1
     },
     item:{
         backgroundColor:`rgba(33,35,39,255)`,
