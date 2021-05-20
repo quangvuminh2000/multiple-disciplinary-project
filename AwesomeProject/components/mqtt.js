@@ -2,6 +2,7 @@ import * as Mqtt from 'react-native-native-mqtt';
 import VIForegroundService from '@voximplant/react-native-foreground-service';
 import BackgroundTimer from 'react-native-background-timer';
 import {Buffer} from 'buffer';
+import { useState } from 'react';
 
 class MqttClient {
 
@@ -21,10 +22,28 @@ class MqttClient {
     this.temp= 0;
     this.soilHumid= 0;
     this.light= 0;
-    
+
     //client = new Mqtt.Client('[SCHEME]://[URL]:[PORT]');
     let client = new Mqtt.Client('tcp://io.adafruit.com:1883');
-    client.on(Mqtt.Event.Message, this.readSensor);
+    client.on(Mqtt.Event.Message, (topic, message) => {
+      console.log('Mqtt Message:', topic, message.toString());
+      const data = JSON.parse(message);
+      switch (parseInt(data.id)) {
+          case 7:
+              let temp, humid;
+              [temp, humid] = data.data.split('-');
+              this.temp = parseInt(temp);
+              this.airHumid = parseInt(humid);
+              break;
+          case 9:
+              this.soilHumid = parseInt(data.data);
+              break;
+          case 13:
+              this.light = parseInt(data.data);
+              break;
+      }
+      // Update notification
+    });
 
     client.on(Mqtt.Event.Connect, () => {
       console.log('MQTT Connect');
@@ -32,7 +51,7 @@ class MqttClient {
         this.sensorTopics,
         Array(this.sensorTopics.length).fill(1),
       );
-	callback();
+      callback();
     });
 
     client.on(Mqtt.Event.Error, error => {
@@ -45,26 +64,8 @@ class MqttClient {
     this.client = client;
   }
 
-  readSensor(topic, message) {
-    console.log('Mqtt Message:', topic, message.toString());
-    const data = JSON.parse(message);
-    switch (parseInt(data.id)) {
-        case 7:
-            let temp, humid;
-            [temp, humid] = data.data.split('-');
-			      this.temp = parseInt(temp);
-			      this.airHumid = parseInt(humid);
-            console.log("HERE: ",this.temp)
-            break;
-        case 9:
-            this.soilHumid = parseInt(data.data);
-            break;
-        case 13:
-            this.light = parseInt(data.data);
-            break;
-    }
-    // Update notification
-  }
+  // readSensor(topic, message) {
+  // }
 
   activateLight(clientId) {
     let data = {id: '6', name: 'traffic', data: '10', unit: ''};

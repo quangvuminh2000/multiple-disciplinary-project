@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {View,Text,Dimensions,StyleSheet,TouchableOpacity, SafeAreaView,FlatList,Image} from 'react-native';
 import {
     LineChart,
@@ -10,6 +10,8 @@ import {
 } from 'react-native-chart-kit';
 import { ScrollView } from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
+import { AppStateContext } from '../../App';
+import { LightMonitor } from '../mqtt';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -64,27 +66,35 @@ export default function App({navigation}){
     );
     const[light,setLight] = useState([0,0,0]);
     const[per4,setPercent4] = useState(0);
-    
+
+    const client = useContext(AppStateContext)
+
     useEffect(() => {
-        db2.transaction((tx) => {
-            tx.executeSql(
-                'SELECT * FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                    var len = results.rows.length;
-                    if(len > 0){
-                        let lightList = [];
-                        for(let i = 0; i < len; i++){
-                            lightList.push(results.rows.item(i).value);
-                            //console.log(results.rows.item(i).value);
-                        }
-                    setLight(lightList.reverse());
-                    setPercent4(light[4]);
-                   }
-                });
+        let monitor = new LightMonitor(client);
+        setInterval(() => {
+            if (client.client.connected) { monitor.checkCondition(); }
+        }, 1000);
+
+        setPercent4(client.light);
+        console.log("Light", client.light)
+
+    }, [client.light])
+
+    db2.transaction((tx) => {
+        tx.executeSql(
+            'SELECT * FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                var len = results.rows.length;
+                if(len > 0){
+                    let lightList = [];
+                    for(let i = 0; i < len; i++){
+                        lightList.push(results.rows.item(i).value);
+                        //console.log(results.rows.item(i).value);
+                    }
+                setLight(lightList.reverse());
+                }
             });
-    }, []);
-    
-        console.log(light)
-        console.log(per4)    
+        });
+
     const data2 = {
         labels: ["20'","15'","10'","5'","Now"],
         datasets: [
@@ -94,9 +104,9 @@ export default function App({navigation}){
         ],
         legend:["Light level"]
     };
+
     return(
         <SafeAreaView style = {styles.container}>
-        
             <View style={styles.progress}>
             <ProgressCircle
                 percent={per4}
@@ -106,10 +116,10 @@ export default function App({navigation}){
                 shadowColor="#999"
                 bgColor={'black'}
             >
-            <Text style={{color:'yellow'}}>{per4 + '%'}</Text>  
+            <Text style={{color:'yellow'}}>{per4 + '%'}</Text>
             </ProgressCircle>
             <Text style={{color:'yellow',marginTop:10}}>Light level</Text>
-            </View>        
+            </View>
             <Separator/>
             <LineChart
                 data = {data2}
@@ -119,16 +129,14 @@ export default function App({navigation}){
                 chartConfig = {chartConfig}
                 yAxisLabel="%"
             />
-           
-        <Text style={styles.text}>Devices</Text> 
+        <Text style={styles.text}>Devices</Text>
         <View style={styles.devices}>
         <FlatList
-           data={data}
-           renderItem={renderItem}
-           keyExtractor={(item) => item.id}
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
         />
         </View>
-        
         </SafeAreaView>
     )
 }

@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet,Dimensions,SafeAreaView,ScrollView,FlatList,Image} from 'react-native';
 import {LineChart} from 'react-native-chart-kit'
 import {openDatabase} from 'react-native-sqlite-storage'
 import ProgressCircle from 'react-native-progress-circle';
 import { AsyncStorage } from '@react-native-community/async-storage';
+import { AppStateContext } from '../../App';
+import { SoilMonitor } from '../mqtt';
 
 
 const Separator = () => {
@@ -78,67 +80,50 @@ export default function App({navigation}){
     const [val2,setVal2] = useState([0,0,0]);
     const [per1,setPercent1] = useState(0);
     const [per2,setPercent2] = useState(0);
-    useEffect(() => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                'SELECT * FROM soil ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                    var len = results.rows.length;
-                    if(len > 0){
-                        let soilList = [];
-                        for(let i = 0; i < len; i++){
-                            soilList.push(results.rows.item(i).value);
-                            //console.log(results.rows.item(i).value);
-                        }
-                    setVal1(soilList.reverse());
-                   }
-                });
-            });    
-    }, []);
-    useEffect(() => {setPercent1(val1[4])}, []);
-    useEffect(() => {
-        db.transaction((tx) => {
-            tx.executeSql(
-                'SELECT value FROM air ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                    var len = results.rows.length;
-                    if(len > 0){
-                        let airList = [];
-                        for(let i = 0; i < len; i++){
-                            airList.push(results.rows.item(i).value);
-                            //console.log(results.rows.item(i).value);
-                        }
-                    setVal2(airList.reverse());
-                    
-                    }
-                });
-            });        
-    }, []);
-    useEffect(()=>{setPercent2(val2[4])}, []);
-    //console.log(val1)
-    //console.log(per1)
-    //console.log(val2)
-    //console.log(per2)
-    //const [val,setVal] = useState([]);
-    //
-      //  db.transaction((tx) => {
-        //    tx.executeSql(
-          ///      'SELECT value FROM soil', [], (_tx, results) => {
-             //       var len = results.rows.length;
-               //     if(len > 0){
-                 //       let soilList = [];
-                   ///     for(let i = 0; i < len; i++){
-                      //      soilList.push(results.rows.item(i).value);
-                            //console.log(results.rows.item(i).value);
-                        //}
-                    //setVal(soilList);
-                   /// }
-                //});
-            //});
-       
-    //const [val1,setVal1] = useState([]);
-    
 
-    //console.log(val)
-    //console.log(val1)
+    const client = useContext(AppStateContext);
+    useEffect(() => {
+        let monitor = new SoilMonitor(client);
+        setInterval(() => {
+            if (client.client.connected) { monitor.checkCondition(); }
+        }, 1000);
+
+        setPercent1(client.soilHumid);
+        // console.log("Soil Humid", client.soilHumid)
+        setPercent2(client.airHumid);
+        // console.log("Air Humid", client.airHumid)
+
+    }, [client.soilHumid, client.airHumid]);
+    db.transaction((tx) => {
+        tx.executeSql(
+            'SELECT * FROM soil ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                var len = results.rows.length;
+                if(len > 0){
+                    let soilList = [];
+                    for(let i = 0; i < len; i++){
+                        soilList.push(results.rows.item(i).value);
+                        //console.log(results.rows.item(i).value);
+                    }
+                setVal1(soilList.reverse());
+                }
+            });
+        });
+
+    db.transaction((tx) => {
+        tx.executeSql(
+            'SELECT value FROM air ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                var len = results.rows.length;
+                if(len > 0){
+                    let airList = [];
+                    for(let i = 0; i < len; i++){
+                        airList.push(results.rows.item(i).value);
+                        //console.log(results.rows.item(i).value);
+                    }
+                setVal2(airList.reverse());
+                }
+            });
+        });
+
     const data3 = { 
         labels: ["20'","15'","10'","5'","Now"],
         datasets: [

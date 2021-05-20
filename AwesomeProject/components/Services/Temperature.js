@@ -23,7 +23,6 @@ const chartConfig = {
     color: (opacity = 1) => `rgba(255,0,0,${opacity})`,
     barPercentage: 0.5,
     useShadowColorFromDataset: false,
-    
 }
 const chartConfig1 = {
     color: (opacity = 1) => `rgba(255,0,0,${opacity})`,
@@ -46,7 +45,7 @@ const data = [
 
 const Item = ({source,title}) => (
     <View style={styles.item}>
-    <Image 
+    <Image
         source={source}
         style={{height:30,width:30}}/>
     <Text style={styles.title}>{title}</Text>
@@ -58,48 +57,42 @@ var SQLite = require('react-native-sqlite-storage');
 var db1 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 
 export default function App({navigation}){
-    const {clientContext} = useContext(AppStateContext);
-    console.log(typeof(clientContext))
+    const client = useContext(AppStateContext);
+    const [temp,setTemp] = useState([0,0,0]);
+    const [per3,setPercent3] = useState(0);
     useEffect(() => {
         // Update the document title using the browser API
         // console.log('ok');
         //let client = new MqttClient(callback);
         //setClient(new MqttClient(callback));
-        
-        let monitor = new AirMonitor(clientContext);
+        let monitor = new AirMonitor(client);
         setInterval(() => {
-        // if (clientContext.client.connected) {
-        //     monitor.checkCondition();
-        // }
+            if (client.client.connected) { monitor.checkCondition(); }
         }, 1000);
-    });
 
+        setPercent3(client.temp);
+        console.log("Temp",client.temp)
+
+    }, [client.temp]);
+
+    db1.transaction((tx) => {
+        tx.executeSql(
+            'SELECT * FROM temperature ORDER BY time DESC LIMIT 5', [], (tx, results) => {
+                var len = results.rows.length;
+                //console.log("IN BITCH");
+                if(len > 0){
+                    let tempList = [];
+                    for(let i = 0; i < len; i++){
+                        tempList.push(results.rows.item(i).value);
+                        //console.log(results.rows.item(i).value);
+                    }
+                setTemp(tempList.reverse());
+                }
+            });
+        });
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-    const [temp,setTemp] = useState([0,0,0]);
-    const [per3,setPercent3] = useState(0);
-    useEffect(() => {
-        db1.transaction((tx) => {
-            tx.executeSql(
-                'SELECT * FROM temperature ORDER BY time DESC LIMIT 5', [], (tx, results) => {
-                    var len = results.rows.length;
-                    //console.log("IN BITCH");
-                    if(len > 0){
-                        let tempList = [];
-                        for(let i = 0; i < len; i++){
-                            tempList.push(results.rows.item(i).value);
-                            //console.log(results.rows.item(i).value);
-                        }
-                    setTemp(tempList.reverse());
-                    setPercent3(temp[len-1]);    
-                   }
-                });
-            }); 
-    }, []);
-    
-    console.log(temp);
-    console.log(per3);
     const data2 = {
         labels: ["20'","15'","10'","5'","Now"],
         datasets: [
@@ -109,10 +102,9 @@ export default function App({navigation}){
         }
         ],
         legend:["Temperature"]
-      }  
+      }
     return(
-        <SafeAreaView style = {styles.container}> 
-        
+        <SafeAreaView style = {styles.container}>
         <View style={styles.progress}>
             <ProgressCircle
                 percent={per3}
@@ -123,7 +115,7 @@ export default function App({navigation}){
                 bgColor={'black'}
                 style={styles.progress}
             >
-            <Text style={{color:'red'}}>{per3 + 'ºC'}</Text>  
+            <Text style={{color:'red'}}>{per3 + 'ºC'}</Text>
             </ProgressCircle>
             <Text style={{color:'red',marginTop:10}}>Temperature</Text>
         </View>
@@ -134,16 +126,15 @@ export default function App({navigation}){
             height = {screenHeight/4}
             chartConfig = {chartConfig}
         />
-        
-        <Text style={styles.text}>Devices</Text> 
+        <Text style={styles.text}>Devices</Text>
         <View style={styles.devices}>
         <FlatList
            data={data}
            renderItem={renderItem}
            keyExtractor={(item) => item.id}
         />
-        </View>     
-        </SafeAreaView>    
+        </View>
+        </SafeAreaView>
     )
 }
 

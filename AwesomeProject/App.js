@@ -204,13 +204,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export const AppStateContext = React.createContext();
+const client = new MqttClient(callback);
+export const AppStateContext = React.createContext(client);
 
 const AppStateProvider = (props) => {
-  const clientContext = new MqttClient(callback);
-  clientContext.start();
+  client.start();
 
-  return (<AppStateContext.Provider value={clientContext}>
+  return (<AppStateContext.Provider value={client}>
     {props.children}
     </AppStateContext.Provider>)
 }
