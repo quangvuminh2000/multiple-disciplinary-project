@@ -4,12 +4,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import {Buffer} from 'buffer';
 
 class MqttClient {
-  sensorData = {
-    airHumid: null,
-    temp: null,
-    soilHumid: null,
-    light: null,
-  };
+
   sensorTopics = [
     //'NPNLab_BBC/feeds/bk-iot-temp-humid',
     'Group12/feeds/air-moisture',
@@ -22,6 +17,11 @@ class MqttClient {
   ];
 
   constructor(callback) {
+    this.airHumid= 0;
+    this.temp= 0;
+    this.soilHumid= 0;
+    this.light= 0;
+    
     //client = new Mqtt.Client('[SCHEME]://[URL]:[PORT]');
     let client = new Mqtt.Client('tcp://io.adafruit.com:1883');
     client.on(Mqtt.Event.Message, this.readSensor);
@@ -50,11 +50,11 @@ class MqttClient {
     const data = JSON.parse(message);
     switch (parseInt(data.id)) {
         case 7:
-            var temp, humid;
+            let temp, humid;
             [temp, humid] = data.data.split('-');
-			this.airTemp = parseInt(temp);
-			this.airHumid = parseInt(humid);
-	console.log(temp, humid);
+			      this.temp = parseInt(temp);
+			      this.airHumid = parseInt(humid);
+            console.log("HERE: ",this.temp)
             break;
         case 9:
             this.soilHumid = parseInt(data.data);
@@ -77,7 +77,7 @@ class MqttClient {
   }
 
   checkCondition() {
-    if (this.sensorData.light > 80 && this.sensorData.airTemp > 35) {
+    if (this.light > 80 && this.airTemp > 35) {
       // Notify user
       // Activate shading net
       // Log data
@@ -131,15 +131,15 @@ class SoilMonitor {
 
   checkCondition() {
 	  // console.log('Check condition');
-    let temp = this.client.sensorData.temp;
-    let humid = this.client.sensorData.soilHumid;
+    let temp = this.client.temp;
+    let humid = this.client.soilHumid;
     if (humid <= 65 && temp >= 37) {
       // TODO: log data and notify user
       this.activate_pump();
 
       var intervalID = setInterval(() => {
-        temp = this.client.sensorData.temp;
-        humid = this.client.sensorData.soilHumid;
+        temp = this.client.temp;
+        humid = this.client.soilHumid;
 
         if (temp <= 32 && humid >= 70) {
           this.deactivate_pump();
@@ -166,16 +166,16 @@ class AirMonitor {
   }
 
   async checkCondition() {
-    let temp = this.client.sensorData.temp;
-    let humid = this.client.sensorData.airHumid;
+    let temp = this.client.temp;
+    let humid = this.client.airHumid;
     if (humid <= 65 && temp >= 37) {
       // TODO: nofity user
       // this.notifyUser()
       // this.logData()
       this.activate_pump();
       var intervalID = setInterval(() => {
-        temp = this.client.sensorData.temp;
-        humid = this.client.sensorData.airHumid;
+        temp = this.client.temp;
+        humid = this.client.airHumid;
 
         if (temp <= 32 && humid >= 70) {
           this.deactivate_pump();
@@ -202,12 +202,12 @@ class LightMonitor {
   }
 
   async checkCondition() {
-    let light = this.client.sensorData.light;
-    let temp = this.client.sensorData.temp;
+    let light = this.client.light;
+    let temp = this.client.temp;
     if (light > 70 && temp >= 35) {
       // TODO: nofity user
       var intervalID = setInterval(() => {
-        light = this.client.sensorData.light;
+        light = this.client.light;
 
         if (light < 50) {
           this.deactivate_net();
