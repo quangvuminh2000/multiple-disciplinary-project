@@ -1,8 +1,5 @@
-// Searching using Search Bar Filter in React Native List View
-// https://aboutreact.com/react-native-search-bar-filter-on-listview/
-// import React in our code
+
 import React, {useState, useEffect} from 'react';
-// import all the components we are going to use
 import {
   SafeAreaView,
   Text,
