@@ -205,16 +205,23 @@ const styles = StyleSheet.create({
 });
 
 const client = new MqttClient(callback);
-// let soilmonitor = new SoilMonitor(client);
-// let airmonitor = new AirMonitor(client);
-// let lightmonitor = new LightMonitor(client);
+const soilmonitor = new SoilMonitor(client);
+const airmonitor = new AirMonitor(client);
+const lightmonitor = new LightMonitor(client);
+
+const MqttObj = {
+  client: client,
+  soilmonitor: soilmonitor,
+  airmonitor: airmonitor,
+  lightmonitor: lightmonitor
+}
 
 export const AppStateContext = React.createContext(client);
 
 const AppStateProvider = (props) => {
   client.start();
 
-  return (<AppStateContext.Provider value={client}>
+  return (<AppStateContext.Provider value={MqttObj}>
     {props.children}
     </AppStateContext.Provider>)
 }

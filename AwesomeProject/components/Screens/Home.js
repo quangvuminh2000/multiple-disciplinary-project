@@ -21,21 +21,24 @@ export default function Home({ navigation }) {
     if (initializing) setInitializing(false);
   }
 
-  const client = useContext(AppStateContext);
+  const MqttObj = useContext(AppStateContext);
+  const client = MqttObj.client;
+  const soilmonitor = MqttObj.soilmonitor;
+  const airmonitor = MqttObj.airmonitor;
+  const lightmonitor = MqttObj.lightmonitor
+
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     ///////////////////////////////////////////////////
 
-    let soilmonitor = new SoilMonitor(client);
     setInterval(() => {
         if (client.client.connected) {
           soilmonitor.checkCondition();
           setText1(soilmonitor.soilIrrigation ? 'On' : 'Off');
-          setColor1(soilmonitor.soilIrrigation ? `rgba(0,200,170,255)`  : '#999');
+          setColor1(soilmonitor.soilIrrigation ? `rgba(0,200,170,255)` : '#999');
         }
     }, soilmonitor.interval);
 
-    let airmonitor = new AirMonitor(client);
     setInterval(() => {
         if (client.client.connected) {
           airmonitor.checkCondition();
@@ -44,12 +47,11 @@ export default function Home({ navigation }) {
         }
     }, airmonitor.interval);
 
-    let lightmonitor = new LightMonitor(client);
     setInterval(() => {
       if (client.client.connected) {
         lightmonitor.checkCondition();
         setText3(lightmonitor.net ? 'On' : 'Off');
-        setColor3(lightmonitor.net ? 'yellow'  : '#999');
+        setColor3(lightmonitor.net ? 'yellow' : '#999');
         // if (lightmonitor.net == true){
         //   setText3('On');
         //   setColor3('yellow');

@@ -6,12 +6,12 @@ import { TextInput } from 'react-native-gesture-handler';
 // import {AirMonitor,  MqttClient, SoilMonitor, LightMonitor,} from '../mqtt';
 
 export default function App({navigation}){
-    const [minTemp,setminTemp] = useState();
-    const [maxTemp,setmaxTemp] = useState();
-    const [minSoil,setminSoil] = useState();
-    const [maxSoil,setmaxSoil] = useState();
-    const [minAtmosphere,setminAtmos] = useState();
-    const [maxAtmosphere,setmaxAtmos] = useState();
+    const [minTemp,setminTemp] = useState(32);
+    const [maxTemp,setmaxTemp] = useState(37);
+    const [minSoil,setminSoil] = useState(65);
+    const [maxSoil,setmaxSoil] = useState(70);
+    const [minAtmosphere,setminAtmos] = useState(65);
+    const [maxAtmosphere,setmaxAtmos] = useState(70);
 
     return (
         <View style = {styles.container}>
@@ -67,7 +67,6 @@ export default function App({navigation}){
                     style={styles.userInput}
                 />
             </View>
-            
             <View style={{flexDirection:'row'}}>
                 <TouchableOpacity style = {styles.button}>
                 <Text style = {styles.text1}> Set </Text>
@@ -80,13 +79,12 @@ export default function App({navigation}){
         </View>
     )
     function reset(){
-        setminTemp()
-        setmaxTemp()
-        setminSoil()
-        setmaxSoil()
-        setminAtmos()
-        setmaxAtmos()
-
+        setMinTemp(32);
+        setMaxTemp(37);
+        setMinSoil(65);
+        setMaxSoil(70);
+        setMinAtmosphere(65);
+        setMaxAtmosphere(70);
     }
 }
 
