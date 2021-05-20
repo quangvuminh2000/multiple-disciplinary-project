@@ -1,9 +1,14 @@
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
-// import {AppStateContext} from '../../App';
-// import {AirMonitor,  MqttClient, SoilMonitor, LightMonitor,} from '../mqtt';
+import {AppStateContext} from '../../App';
+
+const MqttObj = useContext(AppStateContext);
+// const client = MqttObj.client;
+const soilmonitor = MqttObj.soilmonitor;
+const airmonitor = MqttObj.airmonitor;
+const lightmonitor = MqttObj.lightmonitor;
 
 export default function App({navigation}){
     const [minTemp,setminTemp] = useState(32);
@@ -12,6 +17,23 @@ export default function App({navigation}){
     const [maxSoil,setmaxSoil] = useState(70);
     const [minAtmosphere,setminAtmos] = useState(65);
     const [maxAtmosphere,setmaxAtmos] = useState(70);
+
+    useEffect(() => {
+        soilmonitor.minSoil = minSoil;
+        soilmonitor.maxSoil = maxSoil;
+        soilmonitor.minTemp = minTemp;
+        soilmonitor.maxTemp = maxTemp;
+
+        airmonitor.minAtmosphere = minAtmosphere;
+        airmonitor.maxAtmosphere = maxAtmosphere;
+        airmonitor.minTemp = minTemp;
+        airmonitor.maxTemp = maxTemp;
+
+        lightmonitor.minTemp = minTemp;
+        lightmonitor.maxTemp = maxTemp;
+        console.log(soilmonitor.minSoil);
+        console.log(soilmonitor.maxSoil);
+    })
 
     return (
         <View style = {styles.container}>

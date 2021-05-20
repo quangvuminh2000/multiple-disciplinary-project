@@ -132,6 +132,11 @@ class SoilMonitor {
     this.client = client;
     this.interval = 5000; // For the checking interval
     this.soilIrrigation = false; // To know if the soil irrigation machine is activated
+
+    this.minSoil = 65;
+    this.maxSoil = 70;
+    this.minTemp = 32;
+    this.maxTemp = 37;
   }
 
   checkCondition() {
@@ -139,8 +144,8 @@ class SoilMonitor {
     let temp = this.client.temp;
     let humid = this.client.soilHumid;
 
-    if (humid <= minSoil && temp >= maxTemp && !this.soilIrrigation) this.activate_pump();
-    if (humid >= maxSoil && temp <= minTemp && this.soilIrrigation) this.deactivate_pump();
+    if (humid <= this.minSoil && temp >= this.maxTemp && !this.soilIrrigation) this.activate_pump();
+    if (humid >= this.maxSoil && temp <= this.minTemp && this.soilIrrigation) this.deactivate_pump();
   }
 
   activate_pump() {
@@ -173,14 +178,19 @@ class AirMonitor {
     this.client = client;
     this.interval = 5000; // For the checking interval
     this.mistSpray = false; // To know if the mist-spray machine is activated
+
+    this.minAtmosphere = 65;
+    this.maxAtmosphere = 70;
+    this.minTemp = 32;
+    this.maxTemp = 37;
   }
 
   checkCondition() {
     let temp = this.client.temp;
     let humid = this.client.airHumid;
 
-    if (humid <= minAtmosphere && temp >= maxTemp && !this.mistSpray) this.activate_spray();
-    if (humid >= maxAtmosphere && temp <= minTemp && this.mistSpray) this.deactivate_spray();
+    if (humid <= this.minAtmosphere && temp >= this.maxTemp && !this.mistSpray) this.activate_spray();
+    if (humid >= this.maxAtmosphere && temp <= this.minTemp && this.mistSpray) this.deactivate_spray();
     /*isCritical && !this.mistSpray
     isCitical         mistSpray             result
     true              true                  false
@@ -230,13 +240,16 @@ class LightMonitor {
     this.client = client;
     this.net = false;
     this.interval = 5000;
+
+    this.minTemp = 32;
+    this.maxTemp = 37;
   }
 
   checkCondition() {
     let light = this.client.light;
     let temp = this.client.temp;
 
-    if (light > 70 && temp >= minTemp && this.net == false) this.activate_net();
+    if (light > 70 && temp >= this.minTemp && this.net == false) this.activate_net();
     if (light < 50 && this.net == true) this.deactivate_net();
   }
 

@@ -25,7 +25,7 @@ export default function Home({ navigation }) {
   const client = MqttObj.client;
   const soilmonitor = MqttObj.soilmonitor;
   const airmonitor = MqttObj.airmonitor;
-  const lightmonitor = MqttObj.lightmonitor
+  const lightmonitor = MqttObj.lightmonitor;
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
