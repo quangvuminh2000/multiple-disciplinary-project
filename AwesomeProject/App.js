@@ -168,11 +168,16 @@ function MyStack() {
     </Stack.Navigator>
   );
 }
+
+const callback = () => {
+  console.log("Implement callback!")
+}
+
 export default function App() {
   useEffect(() => {
     // Update the document title using the browser API
     console.log('ok');
-    let client = new MqttClient();
+    let client = new MqttClient(callback);
     client.start();
     let monitor = new SoilMonitor(client);
     setInterval(() => {

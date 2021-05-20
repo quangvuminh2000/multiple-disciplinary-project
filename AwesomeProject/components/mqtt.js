@@ -93,7 +93,10 @@ class MqttClient {
         password: 'aio_atNP67yCNWakTjSOUHXJ2WpLiIdG',
         autoReconnect: true,
       },
-      err => console.error(err),
+      (err) => {
+        if(err){
+           console.error("Error",err);
+          }},
     );
   }
 }
