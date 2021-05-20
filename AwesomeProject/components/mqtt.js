@@ -18,9 +18,9 @@ class MqttClient {
   ];
 
   constructor(callback) {
-    this.airHumid= 0;
-    this.temp= 0;
-    this.soilHumid= 0;
+    this.airHumid= 70;
+    this.temp= 30;
+    this.soilHumid= 70;
     this.light= 0;
 
     //client = new Mqtt.Client('[SCHEME]://[URL]:[PORT]');
@@ -66,11 +66,6 @@ class MqttClient {
 
   // readSensor(topic, message) {
   // }
-
-  activateLight(clientId) {
-    let data = {id: '6', name: 'traffic', data: '10', unit: ''};
-    this.publish('Group12/feeds/bk-iot-traffic', data);
-  }
 
   publish(topic, payload) {
     let data = Buffer.from(JSON.stringify(payload));
@@ -154,19 +149,24 @@ class SoilMonitor {
   }
 
   activate_pump() {
-    let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
-    this.client.publish('Group12/feeds/test2', data);
+    //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
+    //this.client.publish('Group12/feeds/test2', data);
+    let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
+    this.client.publish('Group12/feeds/relay', data);
   }
 
   deactivate_pump() {
-    let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
-    this.client.publish('Group12/feeds/test2', data);
+    //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
+    //this.client.publish('Group12/feeds/test2', data);
+    let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
+    this.client.publish('Group12/feeds/relay', data);
   }
 }
 
 class AirMonitor {
   constructor(client) {
     this.client = client;
+    
   }
 
   async checkCondition() {
@@ -190,45 +190,53 @@ class AirMonitor {
   }
 
   activate_pump() {
-    let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
-    this.client.publish('NPNLab_BBC/feeds/bk-iot-relay', data);
+    //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
+    //this.client.publish('NPNLab_BBC/feeds/bk-iot-relay', data);
+    let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
+    this.client.publish('Group12/feeds/relay', data);
   }
 
   deactivate_pump() {
-    let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
-    this.client.publish('NPNLab_BBC/feeds/bk-iot-relay', data);
+    //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
+    //this.client.publish('NPNLab_BBC/feeds/bk-iot-relay', data);
+    let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
+    this.client.publish('Group12/feeds/relay', data);
   }
 }
 
 class LightMonitor {
   constructor(client) {
     this.client = client;
+    this.net = false;
+    this.interval = 5000;
   }
 
   async checkCondition() {
     let light = this.client.light;
     let temp = this.client.temp;
-    if (light > 70 && temp >= 35) {
+    if (light > 70 && temp >= 35 && this.net == false) {
       // TODO: nofity user
-      var intervalID = setInterval(() => {
-        light = this.client.light;
-
-        if (light < 50) {
-          this.deactivate_net();
-          clearInterval(intervalID);
-        }
-      }, 100);
+      this.activate_net();
+      this.net = true;
+      this.interval = 1000;
+    }
+    if (light <50 && this.net == true){
+      this.deactivate_net();
+      this.net = false;
+      this.interval = 5000;
     }
   }
 
   activate_net() {
     let data = {id: '10', name: 'DRV_PWM', data: '255', unit: ''};
-    this.client.publish('NPNLab_BBC/feeds/bk-iot-drv', data);
+    //this.client.publish('NPNLab_BBC/feeds/bk-iot-drv', data);
+    this.client.publish('Group12/feeds/drv', data);
   }
 
   deactivate_net() {
     let data = {id: '10', name: 'DRV_PWM', data: '-255', unit: ''};
-    this.client.publish('NPNLab_BBC/feeds/bk-iot-drv', data);
+    //this.client.publish('NPNLab_BBC/feeds/bk-iot-drv', data);
+    this.client.publish('Group12/feeds/drv', data);
   }
 }
 

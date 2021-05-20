@@ -60,21 +60,6 @@ export default function App({navigation}){
     const client = useContext(AppStateContext);
     const [temp,setTemp] = useState([0,0,0]);
     const [per3,setPercent3] = useState(0);
-    useEffect(() => {
-        // Update the document title using the browser API
-        // console.log('ok');
-        //let client = new MqttClient(callback);
-        //setClient(new MqttClient(callback));
-        let monitor = new AirMonitor(client);
-        setInterval(() => {
-            if (client.client.connected) { monitor.checkCondition(); }
-        }, 1000);
-
-        setPercent3(client.temp);
-        console.log("Temp",client.temp)
-
-    }, [client.temp]);
-
     db1.transaction((tx) => {
         tx.executeSql(
             'SELECT * FROM temperature ORDER BY time DESC LIMIT 5', [], (tx, results) => {
@@ -87,9 +72,35 @@ export default function App({navigation}){
                         //console.log(results.rows.item(i).value);
                     }
                 setTemp(tempList.reverse());
+                //setPercent3(tempList[0]);
                 }
             });
         });
+    useEffect(() => {
+        // Update the document title using the browser API
+        // console.log('ok');
+        //let client = new MqttClient(callback);
+        //setClient(new MqttClient(callback));
+        let monitor = new AirMonitor(client);
+        setInterval(() => {
+            if (client.client.connected) { monitor.checkCondition(); }
+        }, 1000);
+        //var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        // db1.transaction((tx) => {
+        //     tx.executeSql(
+        //         'INSERT INTO temperature(time, value) VALUE (?,?)', [date,client.temp], (tx, results) => {
+        //   console.log('Results', results.rowsAffected);
+        //   if (results.rowsAffected > 0) {
+        //     console.log("Success");
+        //   } else console.log('Registration Failed');
+        //     });
+        //     });
+         setPercent3(client.temp);
+        
+
+    }, [client.temp]);
+
+
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );

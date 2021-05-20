@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
+
+import {AppStateContext} from '../../App';
+import {AirMonitor,  MqttClient, SoilMonitor, LightMonitor,} from '../mqtt';
 export default function Home({ navigation }) {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
@@ -17,8 +20,37 @@ export default function Home({ navigation }) {
     setUser(user);
     if (initializing) setInitializing(false);
   }
+
+  const client = useContext(AppStateContext);
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    
+    ///////////////////////////////////////////////////
+    // let airmonitor = new AirMonitor(client);
+    // setInterval(() => {
+    //     if (client.client.connected) { airmonitor.checkCondition(); }
+    // }, 1000);
+
+    // let soilmonitor = new SoilMonitor(client);
+    // setInterval(() => {
+    //     if (client.client.connected) { soilmonitor.checkCondition(); }
+    // }, 1000);
+
+    let lightmonitor = new LightMonitor(client);
+    setInterval(() => {
+        if (client.client.connected) { 
+          lightmonitor.checkCondition(); 
+          if (lightmonitor.net == true){
+            setText3('On');
+            setColor3('yellow');
+          } else {
+            setText3('Off');
+            setColor3('#999');
+          }
+        
+        }
+    }, lightmonitor.interval);
+    ////////////////////////
     return subscriber; // unsubscribe on unmount
   }, []);
   if (initializing) return null;
@@ -67,7 +99,7 @@ export default function Home({ navigation }) {
         <View style={styles.separator}/>
     )
   }
-  
+
   return (
     <View style={styles.container}>
       <Image source = {require('./pap-logo.png')} 
@@ -91,7 +123,7 @@ export default function Home({ navigation }) {
       </View>
     </View>
     <Text style={{color:'yellow',fontWeight:'bold',marginTop:10}}>Shading Net</Text>
-    <TouchableOpacity style={[styles.netBtn,{borderColor:borderColor3}]} onPress = {change3}>
+    <TouchableOpacity style={[styles.netBtn,{borderColor:borderColor3}]}onPress = {change3}>
       <Text style={styles.text3}>{text3}</Text>
     </TouchableOpacity>
 
