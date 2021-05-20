@@ -205,6 +205,10 @@ const styles = StyleSheet.create({
 });
 
 const client = new MqttClient(callback);
+let soilmonitor = new SoilMonitor(client);
+let airmonitor = new AirMonitor(client);
+let lightmonitor = new LightMonitor(client);
+
 export const AppStateContext = React.createContext(client);
 
 const AppStateProvider = (props) => {

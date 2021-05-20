@@ -2,13 +2,17 @@ import React, {useState} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
+import {AppStateContext} from '../../App';
+import {AirMonitor,  MqttClient, SoilMonitor, LightMonitor,} from '../mqtt';
+
 export default function App({navigation}){
-    const [minTemp,setminTemp] = useState();
-    const [maxTemp,setmaxTemp] = useState();
-    const [minSoil,setminSoil] = useState();
-    const [maxSoil,setmaxSoil] = useState();
-    const [minAtmosphere,setminAtmos] = useState();
-    const [maxAtmosphere,setmaxAtmos] = useState();
+    const [minTemp,setminTemp] = useState(32);
+    const [maxTemp,setmaxTemp] = useState(37);
+    const [minSoil,setminSoil] = useState(65);
+    const [maxSoil,setmaxSoil] = useState(70);
+    const [minAtmosphere,setminAtmos] = useState(65);
+    const [maxAtmosphere,setmaxAtmos] = useState(70);
+
     return (
         <View style = {styles.container}>
             <Text style={styles.text}>Condition</Text>
@@ -82,6 +86,7 @@ export default function App({navigation}){
         setmaxSoil()
         setminAtmos()
         setmaxAtmos()
+
     }
 }
 

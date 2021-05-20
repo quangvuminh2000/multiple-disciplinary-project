@@ -134,7 +134,7 @@ class SoilMonitor {
 
     let isCritical = humid <= 65 && temp >= 37;
 
-    if (isCitical && !this.soilIrrigation) this.activate_pump();
+    if (isCritical && !this.soilIrrigation) this.activate_pump();
     if (!isCritical && this.soilIrrigation) this.deactivate_pump();
   }
 
