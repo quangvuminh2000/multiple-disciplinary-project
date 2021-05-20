@@ -60,22 +60,6 @@ export default function App({navigation}){
     const client = useContext(AppStateContext);
     const [temp,setTemp] = useState([0,0,0]);
     const [per3,setPercent3] = useState(0);
-    db1.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM temperature ORDER BY time DESC LIMIT 5', [], (tx, results) => {
-                var len = results.rows.length;
-                //console.log("IN BITCH");
-                if(len > 0){
-                    let tempList = [];
-                    for(let i = 0; i < len; i++){
-                        tempList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
-                    }
-                setTemp(tempList.reverse());
-                //setPercent3(tempList[0]);
-                }
-            });
-        });
     useEffect(() => {
         // Update the document title using the browser API
         // console.log('ok');
@@ -95,11 +79,26 @@ export default function App({navigation}){
         //   } else console.log('Registration Failed');
         //     });
         //     });
-         setPercent3(client.temp);
-        
+        setPercent3(client.temp);
 
     }, [client.temp]);
 
+    db1.transaction((tx) => {
+        tx.executeSql(
+            'SELECT * FROM temperature ORDER BY time DESC LIMIT 5', [], (tx, results) => {
+                var len = results.rows.length;
+                //console.log("IN BITCH");
+                if(len > 0){
+                    let tempList = [];
+                    for(let i = 0; i < len; i++){
+                        tempList.push(results.rows.item(i).value);
+                        //console.log(results.rows.item(i).value);
+                    }
+                setTemp(tempList.reverse());
+                //setPercent3(tempList[0]);
+                }
+            });
+        });
 
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>

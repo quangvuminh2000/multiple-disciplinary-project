@@ -40,7 +40,6 @@ const data = [
         title: "DHT11",
         source: require('./DHT11.jpg')
     },
-    
     {
         id: "2",
         title: "RC Servo",

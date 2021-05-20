@@ -94,6 +94,7 @@ export default function App({navigation}){
         // console.log("Air Humid", client.airHumid)
 
     }, [client.soilHumid, client.airHumid]);
+
     db.transaction((tx) => {
         tx.executeSql(
             'SELECT * FROM soil ORDER BY time DESC LIMIT 5', [], (_tx, results) => {

@@ -89,10 +89,7 @@ class MqttClient {
         password: 'aio_atNP67yCNWakTjSOUHXJ2WpLiIdG',
         autoReconnect: true,
       },
-      (err) => {
-        if(err){
-           console.error("Error",err);
-          }},
+      (err) => { if(err){ console.error("Error",err); }},
     );
   }
 }
@@ -126,29 +123,27 @@ async function startForegroundService() {
 class SoilMonitor {
   constructor(client) {
     this.client = client;
+    this.interval = 5000; // For the checking interval
+    this.soilIrrigation = false; // To know if the soil irrigation machine is activated
   }
 
   checkCondition() {
 	  // console.log('Check condition');
     let temp = this.client.temp;
     let humid = this.client.soilHumid;
-    if (humid <= 65 && temp >= 37) {
-      // TODO: log data and notify user
-      this.activate_pump();
 
-      var intervalID = setInterval(() => {
-        temp = this.client.temp;
-        humid = this.client.soilHumid;
+    let isCritical = humid <= 65 && temp >= 37;
 
-        if (temp <= 32 && humid >= 70) {
-          this.deactivate_pump();
-          clearInterval(intervalID);
-        }
-      }, 100);
-    }
+    if (isCitical && !this.soilIrrigation) this.activate_pump();
+    if (!isCritical && this.soilIrrigation) this.deactivate_pump();
   }
 
   activate_pump() {
+    //? re-setting conditions
+    this.interval = 1000;
+    this.soilIrrigation = true;
+
+    //? Publish data to relay
     //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
     //this.client.publish('Group12/feeds/test2', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
@@ -156,9 +151,14 @@ class SoilMonitor {
   }
 
   deactivate_pump() {
+    //? re-setting conditions
+    this.interval = 5000;
+    this.soilIrrigation = false;
+
+    //? Publish data to relay
     //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
     //this.client.publish('Group12/feeds/test2', data);
-    let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
+    let data = {id: '11', name: 'RELAY_SOIL', data: '0', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
   }
 }
@@ -166,40 +166,58 @@ class SoilMonitor {
 class AirMonitor {
   constructor(client) {
     this.client = client;
-    
+    this.interval = 5000; // For the checking interval
+    this.mistSpray = false; // To know if the mist-spray machine is activated
   }
 
-  async checkCondition() {
+  checkCondition() {
     let temp = this.client.temp;
     let humid = this.client.airHumid;
-    if (humid <= 65 && temp >= 37) {
-      // TODO: nofity user
-      // this.notifyUser()
-      // this.logData()
-      this.activate_pump();
-      var intervalID = setInterval(() => {
-        temp = this.client.temp;
-        humid = this.client.airHumid;
 
-        if (temp <= 32 && humid >= 70) {
-          this.deactivate_pump();
-          clearInterval(intervalID);
-        }
-      }, 100);
-    }
+    let isCritical = humid <= 65 && temp >=37;
+
+    if (isCritical && !this.mistSpray) this.activate_spray();
+    if (!isCritical && this.mistSpray) this.deactivate_spray();
+    /*isCritical && !this.mistSpray
+    isCitical         mistSpray             result
+    true              true                  false
+    true              false                 true
+    false             true                  false
+    false             false                 false
+
+    !isCitical && this.mistSpray
+    isCitical         mistSpray             result
+    true              true                  false
+    true              false                 false
+    false             true                  true
+    false             false                 false
+
+    ==> The mist spray dvc will be manually on/off by the user when
+          (isCitical, mistSpray) = (true, true), (false, false) // Pretty accurate
+    */
   }
 
-  activate_pump() {
+  activate_spray() {
+    //? re-setting conditions
+    this.mistSpray = true;
+    this.interval = 1000;
+
+    // ? Publish data to the relay
     //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
     //this.client.publish('NPNLab_BBC/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
   }
 
-  deactivate_pump() {
+  deactivate_spray() {
+    //? re-setting conditions
+    this.mistSpray = false;
+    this.interval = 5000;
+
+    // ? Publish data to the relay
     //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
     //this.client.publish('NPNLab_BBC/feeds/bk-iot-relay', data);
-    let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
+    let data = {id: '11', name: 'RELAY_AIR', data: '0', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
   }
 }
@@ -211,29 +229,33 @@ class LightMonitor {
     this.interval = 5000;
   }
 
-  async checkCondition() {
+  checkCondition() {
     let light = this.client.light;
     let temp = this.client.temp;
-    if (light > 70 && temp >= 35 && this.net == false) {
-      // TODO: nofity user
-      this.activate_net();
-      this.net = true;
-      this.interval = 1000;
-    }
-    if (light <50 && this.net == true){
-      this.deactivate_net();
-      this.net = false;
-      this.interval = 5000;
-    }
+
+    let isCritical = light > 70 && temp >= 35;
+
+    if (isCritical && !this.net) this.activate_net();
+    if (light <50 && this.net == true) this.deactivate_net();
   }
 
   activate_net() {
+    //? re-setting conditions
+    this.net = true;
+    this.interval = 1000;
+
+    //? Publish data into drv
     let data = {id: '10', name: 'DRV_PWM', data: '255', unit: ''};
     //this.client.publish('NPNLab_BBC/feeds/bk-iot-drv', data);
     this.client.publish('Group12/feeds/drv', data);
   }
 
   deactivate_net() {
+    //? re-setting conditions
+    this.net = false;
+    this.interval = 5000;
+
+    //? Publish data into drv
     let data = {id: '10', name: 'DRV_PWM', data: '-255', unit: ''};
     //this.client.publish('NPNLab_BBC/feeds/bk-iot-drv', data);
     this.client.publish('Group12/feeds/drv', data);

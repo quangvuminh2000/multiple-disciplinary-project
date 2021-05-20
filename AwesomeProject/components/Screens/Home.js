@@ -24,31 +24,40 @@ export default function Home({ navigation }) {
   const client = useContext(AppStateContext);
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    
     ///////////////////////////////////////////////////
-    // let airmonitor = new AirMonitor(client);
-    // setInterval(() => {
-    //     if (client.client.connected) { airmonitor.checkCondition(); }
-    // }, 1000);
 
-    // let soilmonitor = new SoilMonitor(client);
-    // setInterval(() => {
-    //     if (client.client.connected) { soilmonitor.checkCondition(); }
-    // }, 1000);
+    let soilmonitor = new SoilMonitor(client);
+    setInterval(() => {
+        if (client.client.connected) {
+          soilmonitor.checkCondition();
+          setText1('On' ? soilmonitor.soilIrrigation : 'Off');
+          setColor1(`rgba(0,200,170,255)` ? soilmonitor.soilIrrigation : '#999');
+        }
+    }, soilmonitor.interval);
+
+    let airmonitor = new AirMonitor(client);
+    setInterval(() => {
+        if (client.client.connected) {
+          airmonitor.checkCondition();
+          setText1('On' ? airmonitor.mistSpray : 'Off');
+          setColor1(`blue` ? airmonitor.mistSpray : '#999');
+        }
+    }, airmonitor.interval);
 
     let lightmonitor = new LightMonitor(client);
     setInterval(() => {
-        if (client.client.connected) { 
-          lightmonitor.checkCondition(); 
-          if (lightmonitor.net == true){
-            setText3('On');
-            setColor3('yellow');
-          } else {
-            setText3('Off');
-            setColor3('#999');
-          }
-        
-        }
+      if (client.client.connected) {
+        lightmonitor.checkCondition();
+        setText3('On' ? lightmonitor.net : 'Off');
+        setColor3('yellow' ? lightmonitor.net : '#999');
+        // if (lightmonitor.net == true){
+        //   setText3('On');
+        //   setColor3('yellow');
+        // } else {
+        //   setText3('Off');
+        //   setColor3('#999');
+        // }
+      }
     }, lightmonitor.interval);
     ////////////////////////
     return subscriber; // unsubscribe on unmount
@@ -63,7 +72,7 @@ export default function Home({ navigation }) {
     .signOut()
     .then(()=>console.log('User signed out'))
   }
-  
+
   function change1(){
     if(text1 === 'Off'){
       setText1('On');
@@ -72,7 +81,7 @@ export default function Home({ navigation }) {
     else if(text1 === 'On'){
       setText1('Off');
       setColor1('#999')
-    } 
+    }
   }
   function change2(){
     if(text2 === 'Off'){
@@ -82,7 +91,7 @@ export default function Home({ navigation }) {
     else if(text2 === 'On'){
       setText2('Off');
       setColor2('#999')
-    } 
+    }
   }
   function change3(){
     if(text3 === 'Off'){
@@ -92,7 +101,7 @@ export default function Home({ navigation }) {
     else if(text3 === 'On'){
       setText3('Off');
       setColor3('#999')
-    } 
+    }
   }
   const Separator = () => {
     return(
@@ -102,8 +111,8 @@ export default function Home({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image source = {require('./pap-logo.png')} 
-           style = {{width:100,height:100}}
+      <Image source = {require('./pap-logo.png')}
+          style = {{width:100,height:100}}
       />
       <Text style={styles.welcomeText}>Welcome {user.email} ! </Text>
       <Text style={styles.welcomeText}>Your Garden's personal Caretaker</Text>
@@ -145,17 +154,19 @@ export default function Home({ navigation }) {
           //onPress={() => {auth().signOut()}} />,
 //});
 const styles = StyleSheet.create({
-  container:{ 
-    flex: 1, 
-    alignItems: 'center', 
+  container:{
+    flex: 1,
+    alignItems: 'center',
     justifyContent: 'center' ,
     backgroundColor:'black'
   },
+
   welcomeText:{
     fontSize: 20,
     textAlign: 'center',
     color:'grey'
   },
+
   soilBtn:{
     width:100,
     height:100,
@@ -167,6 +178,7 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     marginRight:90
   },
+
   mistBtn:{
     width:100,
     height:100,
@@ -176,12 +188,13 @@ const styles = StyleSheet.create({
     backgroundColor:'black',
     alignItems:'center',
     justifyContent:'center',
-    
   },
+
   btnContainer:{
     flexDirection:'row',
     marginTop:20
   },
+
   netBtn:{
     width:100,
     height:100,
@@ -193,15 +206,19 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     marginTop:10
   },
+
   text1:{
     color:`rgba(0,200,170,255)`
   },
+
   text2:{
     color:'blue'
   },
+
   text3:{
     color:'yellow'
   },
+
   separator:{
     borderBottomColor: 'grey',
     borderBottomWidth: StyleSheet.hairlineWidth,
