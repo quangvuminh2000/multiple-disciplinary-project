@@ -30,8 +30,8 @@ export default function Home({ navigation }) {
     setInterval(() => {
         if (client.client.connected) {
           soilmonitor.checkCondition();
-          setText1('On' ? soilmonitor.soilIrrigation : 'Off');
-          setColor1(`rgba(0,200,170,255)` ? soilmonitor.soilIrrigation : '#999');
+          setText1(soilmonitor.soilIrrigation ? 'On' : 'Off');
+          setColor1(soilmonitor.soilIrrigation ? `rgba(0,200,170,255)`  : '#999');
         }
     }, soilmonitor.interval);
 
@@ -39,8 +39,8 @@ export default function Home({ navigation }) {
     setInterval(() => {
         if (client.client.connected) {
           airmonitor.checkCondition();
-          setText1('On' ? airmonitor.mistSpray : 'Off');
-          setColor1(`blue` ? airmonitor.mistSpray : '#999');
+          setText2(airmonitor.mistSpray ? 'On'  : 'Off');
+          setColor2(airmonitor.mistSpray ? `blue` : '#999');
         }
     }, airmonitor.interval);
 
@@ -48,8 +48,8 @@ export default function Home({ navigation }) {
     setInterval(() => {
       if (client.client.connected) {
         lightmonitor.checkCondition();
-        setText3('On' ? lightmonitor.net : 'Off');
-        setColor3('yellow' ? lightmonitor.net : '#999');
+        setText3(lightmonitor.net ? 'On' : 'Off');
+        setColor3(lightmonitor.net ? 'yellow'  : '#999');
         // if (lightmonitor.net == true){
         //   setText3('On');
         //   setColor3('yellow');
