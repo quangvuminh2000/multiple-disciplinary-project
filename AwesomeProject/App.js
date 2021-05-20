@@ -174,23 +174,26 @@ const callback = () => {
 }
 
 export default function App() {
-  useEffect(() => {
-    // Update the document title using the browser API
-    console.log('ok');
-    let client = new MqttClient(callback);
-    client.start();
-    let monitor = new SoilMonitor(client);
-    setInterval(() => {
-      if (client.client.connected) {
-        monitor.checkCondition();
-      }
-    }, 1000);
-  });
+  // useEffect(() => {
+  //   // Update the document title using the browser API
+  //   console.log('ok');
+  //   //let client = new MqttClient(callback);
+  //   //setClient(new MqttClient(callback));
+  //   client.start();
+  //   let monitor = new SoilMonitor(client);
+  //   setInterval(() => {
+  //     if (client.client.connected) {
+  //       monitor.checkCondition();
+  //     }
+  //   }, 1000);
+  // });
 
   return (
-    <NavigationContainer>
-      <MyStack />
-    </NavigationContainer>
+    <AppStateProvider>
+      <NavigationContainer>
+        <MyStack/>
+      </NavigationContainer>
+    </AppStateProvider>
   );
 }
 const styles = StyleSheet.create({
@@ -200,3 +203,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
 });
+
+export const AppStateContext = React.createContext();
+
+const AppStateProvider = (props) => {
+  const clientContext = new MqttClient(callback);
+  clientContext.start();
+
+  return (<AppStateContext.Provider value={clientContext}>
+    {props.children}
+    </AppStateContext.Provider>)
+}
