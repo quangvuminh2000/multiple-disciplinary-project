@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
-import {AppStateContext} from '../../App';
-import {AirMonitor,  MqttClient, SoilMonitor, LightMonitor,} from '../mqtt';
+// import {AppStateContext} from '../../App';
+// import {AirMonitor,  MqttClient, SoilMonitor, LightMonitor,} from '../mqtt';
 
 export default function App({navigation}){
     const [minTemp,setminTemp] = useState(32);

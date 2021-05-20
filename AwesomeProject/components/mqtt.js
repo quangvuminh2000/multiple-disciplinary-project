@@ -4,6 +4,13 @@ import BackgroundTimer from 'react-native-background-timer';
 import {Buffer} from 'buffer';
 import { useState } from 'react';
 
+let minTemp = 32;
+let maxTemp = 37;
+let minSoil = 65;
+let maxSoil = 70;
+let minAtmosphere = 65;
+let maxAtmosphere = 70;
+
 class MqttClient {
 
   sensorTopics = [
@@ -132,10 +139,8 @@ class SoilMonitor {
     let temp = this.client.temp;
     let humid = this.client.soilHumid;
 
-    let isCritical = humid <= 65 && temp >= 37;
-
-    if (isCritical && !this.soilIrrigation) this.activate_pump();
-    if (!isCritical && this.soilIrrigation) this.deactivate_pump();
+    if (humid <= minSoil && temp >= maxTemp && !this.soilIrrigation) this.activate_pump();
+    if (humid >= maxSoil && temp <= minTemp && this.soilIrrigation) this.deactivate_pump();
   }
 
   activate_pump() {
@@ -174,10 +179,8 @@ class AirMonitor {
     let temp = this.client.temp;
     let humid = this.client.airHumid;
 
-    let isCritical = humid <= 65 && temp >=37;
-
-    if (isCritical && !this.mistSpray) this.activate_spray();
-    if (!isCritical && this.mistSpray) this.deactivate_spray();
+    if (humid <= minAtmosphere && temp >= maxTemp && !this.mistSpray) this.activate_spray();
+    if (humid >= maxAtmosphere && temp <= minTemp && this.mistSpray) this.deactivate_spray();
     /*isCritical && !this.mistSpray
     isCitical         mistSpray             result
     true              true                  false
@@ -233,10 +236,8 @@ class LightMonitor {
     let light = this.client.light;
     let temp = this.client.temp;
 
-    let isCritical = light > 70 && temp >= 35;
-
-    if (isCritical && !this.net) this.activate_net();
-    if (light <50 && this.net == true) this.deactivate_net();
+    if (light > 70 && temp >= minTemp && this.net == false) this.activate_net();
+    if (light < 50 && this.net == true) this.deactivate_net();
   }
 
   activate_net() {
