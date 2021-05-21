@@ -5,7 +5,7 @@ import {openDatabase} from 'react-native-sqlite-storage'
 import ProgressCircle from 'react-native-progress-circle';
 import { AsyncStorage } from '@react-native-community/async-storage';
 import { AppStateContext } from '../../App';
-import { SoilMonitor } from '../mqtt';
+import { SoilMonitor,MqttClient } from '../mqtt';
 
 
 const Separator = () => {
@@ -81,11 +81,15 @@ export default function App({navigation}){
     const [per1,setPercent1] = useState(0);
     const [per2,setPercent2] = useState(0);
 
-    const client = useContext(AppStateContext);
+    const MqttObj = useContext(AppStateContext);
+    const client = MqttObj.client;
+    const soilmonitor = MqttObj.soilmonitor;
+    const airmonitor = MqttObj.airmonitor;
+    const lightmonitor = MqttObj.lightmonitor;
+
     useEffect(() => {
-        let monitor = new SoilMonitor(client);
         setInterval(() => {
-            if (client.client.connected) { monitor.checkCondition(); }
+            if (client.client.connected) { soilmonitor.checkCondition(); }
         }, 1000);
 
         setPercent1(client.soilHumid);

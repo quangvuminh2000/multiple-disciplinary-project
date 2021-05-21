@@ -66,12 +66,15 @@ export default function App({navigation}){
     const[light,setLight] = useState([0,0,0]);
     const[per4,setPercent4] = useState(0);
 
-    const client = useContext(AppStateContext)
-
+    const MqttObj = useContext(AppStateContext);
+    const client = MqttObj.client;
+    const soilmonitor = MqttObj.soilmonitor;
+    const airmonitor = MqttObj.airmonitor;
+    const lightmonitor = MqttObj.lightmonitor;
     useEffect(() => {
-        let monitor = new LightMonitor(client);
+
         setInterval(() => {
-            if (client.client.connected) { monitor.checkCondition(); }
+            if (client.client.connected) { lightmonitor.checkCondition(); }
         }, 1000);
 
         setPercent4(client.light);

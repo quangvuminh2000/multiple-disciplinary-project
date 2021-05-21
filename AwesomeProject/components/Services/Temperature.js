@@ -6,7 +6,7 @@ import ProgressCircle from 'react-native-progress-circle';
 import {openDatabase} from 'react-native-sqlite-storage';
 import { AsyncStorage } from '@react-native-community/async-storage';
 import {AppStateContext} from '../../App';
-import {AirMonitor} from '../mqtt';
+import {AirMonitor,MqttClient} from '../mqtt';
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
@@ -57,17 +57,21 @@ var SQLite = require('react-native-sqlite-storage');
 var db1 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 
 export default function App({navigation}){
-    const client = useContext(AppStateContext);
     const [temp,setTemp] = useState([0,0,0]);
     const [per3,setPercent3] = useState(0);
+
+    const MqttObj = useContext(AppStateContext);
+    const client = MqttObj.client;
+    const soilmonitor = MqttObj.soilmonitor;
+    const airmonitor = MqttObj.airmonitor;
+    const lightmonitor = MqttObj.lightmonitor;
     useEffect(() => {
         // Update the document title using the browser API
         // console.log('ok');
         //let client = new MqttClient(callback);
         //setClient(new MqttClient(callback));
-        let monitor = new AirMonitor(client);
         setInterval(() => {
-            if (client.client.connected) { monitor.checkCondition(); }
+            if (client.client.connected) { arimonitor.checkCondition(); }
         }, 1000);
         //var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
         // db1.transaction((tx) => {
