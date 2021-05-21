@@ -1,5 +1,6 @@
 
 import React, {useState, useEffect} from 'react';
+import { TouchableOpacity } from 'react-native';
 import {
   SafeAreaView,
   Text,
@@ -31,7 +32,7 @@ export default function App(){
             });
         });        
   }, []);
-  const searchFilterFunction = text => {
+  const searchFilterFunction = (text) => {
     // Check if searched text is not blank
     if (text) {
       // Inserted text is not blank
@@ -80,14 +81,14 @@ export default function App(){
   };
   const getItem = (item) => {
     // Function for click on an item
-    alert('Id : ' + item.id + ' Title : ' + item.name);
+    alert('ID:' + item.id + ', ' + 'Device:' + item.name);
   };
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.container}>
         <TextInput
           style={styles.textInputStyle}
-          onChangeText={text => searchFilterFunction(text)}
+          onChangeText={(text) => searchFilterFunction(text)}
           value={search}
           underlineColorAndroid="transparent"
           placeholder="Search Here"
@@ -98,6 +99,9 @@ export default function App(){
           ItemSeparatorComponent={ItemSeparatorView}
           renderItem={ItemView}
         />
+        <TouchableOpacity style = {styles.btn}>
+          <Text>ABC</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -119,4 +123,15 @@ const styles = StyleSheet.create({
     borderColor: '#009688',
     backgroundColor: 'lightgrey',
   },
+  btn:{
+    marginTop:10,
+    paddingTop:15,
+    paddingBottom:15,
+    marginLeft:30,
+    marginRight:30,
+    backgroundColor:'#00BCD4',
+    borderRadius:10,
+    borderWidth: 1,
+    borderColor: '#fff'
+  }
 });

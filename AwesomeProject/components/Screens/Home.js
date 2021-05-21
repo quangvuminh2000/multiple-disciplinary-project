@@ -43,7 +43,7 @@ export default function Home({ navigation }) {
         if (client.client.connected) {
           airmonitor.checkCondition();
           setText2(airmonitor.mistSpray ? 'On'  : 'Off');
-          setColor2(airmonitor.mistSpray ? `blue` : '#999');
+          setColor2(airmonitor.mistSpray ? '#04d9ff' : '#999');
         }
     }, airmonitor.interval);
 
@@ -88,7 +88,7 @@ export default function Home({ navigation }) {
   function change2(){
     if(text2 === 'Off'){
       setText2('On');
-      setColor2('blue');
+      setColor2('#04d9ff');
     }
     else if(text2 === 'On'){
       setText2('Off');
@@ -120,24 +120,27 @@ export default function Home({ navigation }) {
       <Text style={styles.welcomeText}>Your Garden's personal Caretaker</Text>
 
       <View style={styles.btnContainer}>
-      <View style={{justifyContent:'center',textAlign:'center'}}>
-      <Text style={{color:`rgba(0,200,170,255)`,fontWeight:'bold',marginBottom: 10}}>Soil Irrigation</Text>
-      <TouchableOpacity style={[styles.soilBtn,{borderColor:borderColor1}]} onPress = {change1}>
-        <Text style={styles.text1}>{text1}</Text>
-      </TouchableOpacity>
+      
+      <View style={{backgroundColor:'#353c57',width:150,height:160,borderRadius:20,justifyContent:'center',alignItems:'center',marginRight:25}}>
+          <Text style={{color:`rgba(0,200,170,255)`,fontWeight:'bold',marginBottom: 10}}>Soil Irrigation</Text>
+          <TouchableOpacity style={[styles.soilBtn,{borderColor:borderColor1}]} onPress = {change1}>
+          <Text style={styles.text1}>{text1}</Text>
+          </TouchableOpacity>
       </View>
-      <View style={{justifyContent:'center',textAlign:'center'}}>
-      <Text style={{color:'blue',alignSelf:'center',fontWeight:'bold',marginBottom:10}}>Mist spray</Text>
+      
+      <View style={{backgroundColor:'#353c57',justifyContent:'center',alignItems:'center',textAlign:'center',width:150,height:160,borderRadius:25}}>
+      <Text style={{color:'#04d9ff',alignSelf:'center',fontWeight:'bold',marginBottom:10}}>Mist spray</Text>
       <TouchableOpacity style={[styles.mistBtn,{borderColor:borderColor2}]} onPress = {change2}>
         <Text style={styles.text2}>{text2}</Text>
       </TouchableOpacity>
       </View>
     </View>
-    <Text style={{color:'yellow',fontWeight:'bold',marginTop:10}}>Shading Net</Text>
-    <TouchableOpacity style={[styles.netBtn,{borderColor:borderColor3}]}onPress = {change3}>
-      <Text style={styles.text3}>{text3}</Text>
-    </TouchableOpacity>
-
+    <View style={{backgroundColor:'#353c57',justifyContent:'center',alignItems:'center',textAlign:'center',width:150,height:160,borderRadius:25,marginTop:20}}>
+      <Text style={{color:'yellow',fontWeight:'bold',marginTop:10}}>Shading Net</Text>
+      <TouchableOpacity style={[styles.netBtn,{borderColor:borderColor3}]}onPress = {change3}>
+        <Text style={styles.text3}>{text3}</Text>
+      </TouchableOpacity>
+    </View>
     </View>
   );
 }
@@ -160,7 +163,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center' ,
-    backgroundColor:'black'
+    backgroundColor:'#20222f'
   },
 
   welcomeText:{
@@ -173,37 +176,38 @@ const styles = StyleSheet.create({
     width:100,
     height:100,
     borderRadius:100,
-    borderWidth:5,
+    borderWidth:10,
     //borderColor:`rgba(0,200,170,255)`,
-    backgroundColor:'black',
+    backgroundColor:'#353c57',
     alignItems:'center',
     justifyContent:'center',
-    marginRight:90
+    //marginRight:90
   },
 
   mistBtn:{
     width:100,
     height:100,
     borderRadius:100,
-    borderWidth:5,
+    borderWidth:10,
     //borderColor:'blue',
-    backgroundColor:'black',
+    backgroundColor:'#353c57',
     alignItems:'center',
     justifyContent:'center',
   },
 
   btnContainer:{
     flexDirection:'row',
-    marginTop:20
+    marginTop:20,
+    backgroundColor:'#20222f'
   },
 
   netBtn:{
     width:100,
     height:100,
     borderRadius:100,
-    backgroundColor:'black',
+    backgroundColor:'#353c57',
     borderColor:'yellow',
-    borderWidth:5,
+    borderWidth:10,
     alignItems:'center',
     justifyContent:'center',
     marginTop:10
@@ -214,7 +218,7 @@ const styles = StyleSheet.create({
   },
 
   text2:{
-    color:'blue'
+    color:'#04d9ff'
   },
 
   text3:{

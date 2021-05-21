@@ -21,9 +21,9 @@ const Separator = () => {
     )
 }
 const chartConfig = {
-    backgroundGradientFrom: `rgba(33,35,39,255)`,
+    backgroundGradientFrom: '#353c57',
     backgroundGradientFromOpacity: 1,
-    backgroundGradientTo: `rgba(33,35,39,255)`,
+    backgroundGradientTo: '#353c57',
     backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(255,255,0,${opacity})`,
     barPercentage: 0.5,
@@ -82,20 +82,23 @@ export default function App({navigation}){
 
     }, [client.light])
 
-    db2.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let lightList = [];
-                    for(let i = 0; i < len; i++){
-                        lightList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
+    useEffect(()=>{
+        db2.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                    var len = results.rows.length;
+                    if(len > 0){
+                        let lightList = [];
+                        for(let i = 0; i < len; i++){
+                            lightList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        }
+                    setLight(lightList.reverse());
                     }
-                setLight(lightList.reverse());
-                }
+                });
             });
-        });
+    }, []);
+    
 
     const data2 = {
         labels: ["20'","15'","10'","5'","Now"],
@@ -116,7 +119,7 @@ export default function App({navigation}){
                 borderWidth={8}
                 color={'yellow'}
                 shadowColor="#999"
-                bgColor={'black'}
+                bgColor={'#20222f'}
             >
             <Text style={{color:'yellow'}}>{per4 + '%'}</Text>
             </ProgressCircle>
@@ -130,8 +133,10 @@ export default function App({navigation}){
                 strokeWidth = {5}
                 chartConfig = {chartConfig}
                 yAxisLabel="%"
+                style = {styles.lineBackGround}
             />
         <Text style={styles.text}>Devices</Text>
+        <Text style={{color:'lightgrey',marginTop:-10}}>_______________________________________________</Text>
         <View style={styles.devices}>
         <FlatList
             data={data}
@@ -148,7 +153,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'black'
+        backgroundColor: '#20222f'
     },
     button: {
         backgroundColor: 'green',
@@ -174,21 +179,25 @@ const styles = StyleSheet.create({
         width: screenWidth/1.1
     },
     item:{
-        backgroundColor:`rgba(33,35,39,255)`,
+        backgroundColor:'#353c57',
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
-        flexDirection:'row'
+        flexDirection:'row',
+        borderRadius:10
     },
     title:{
         fontSize: 20,
         marginLeft:10,
-        color:'springgreen'
+        color:`rgba(0,200,170,255)`
     },
     separator:{
         borderBottomColor: 'azure',
         borderBottomWidth: StyleSheet.hairlineWidth,
         marginTop:11,
         marginBottom: 15
+    },
+    lineBackGround:{
+        borderRadius: 25
     }
 })

@@ -5,7 +5,7 @@ import {openDatabase} from 'react-native-sqlite-storage'
 import ProgressCircle from 'react-native-progress-circle';
 import { AsyncStorage } from '@react-native-community/async-storage';
 import { AppStateContext } from '../../App';
-import { SoilMonitor,MqttClient } from '../mqtt';
+import { SoilMonitor,MqttClient,AirMonitor } from '../mqtt';
 
 
 const Separator = () => {
@@ -15,22 +15,22 @@ const Separator = () => {
 }
 
 const chartConfig3 = {
-    backgroundGradientFrom: `rgba(33,35,39,255)`,
+    backgroundGradientFrom: '#353c57',
     backgroundGradientFromOpacity: 1,
-    backgroundGradientTo: `rgba(33,35,39,255)`,
+    backgroundGradientTo: '#353c57',
     backgroundGradientToOpacity: 1,
-    color: (opacity = 1) => `rgba(0,255,0,${opacity})`,
+    color: (opacity = 1) => `rgba(0,200,170,${opacity})`,
     strokeWidth: 2,
     //barPercentage: 0.5,
     useShadowColorFromDataset: false
 }
 
 const chartConfig4 = {
-    backgroundGradientFrom: `rgba(33,35,39,255)`,
+    backgroundGradientFrom: '#353c57',
     backgroundGradientFromOpacity: 1,
-    backgroundGradientTo: `rgba(33,35,39,255)`,
+    backgroundGradientTo: '#353c57',
     backgroundGradientToOpacity: 1,
-    color: (opacity = 1) => `rgba(0,0,255,${opacity})`,
+    color: (opacity = 1) => `rgba(4,217,255,${opacity})`,
     strokeWidth: 2,
     //barPercentage: 0.5,
     useShadowColorFromDataset: false,
@@ -160,48 +160,53 @@ export default function App({navigation}){
                 percent={per1}
                 radius={50}
                 borderWidth={8}
-                color={'green'}
+                color={`rgba(0,200,170,255)`}
                 shadowColor="#999"
-                bgColor={'black'}
+                bgColor={'#20222f'}
         >
-        <Text style={{color:'green'}}>{ per1 + '%'}</Text>  
+        <Text style={{color:`rgba(0,200,170,255)`}}>{ per1 + '%'}</Text>  
         </ProgressCircle>
-        <Text style={{color:'green',marginTop:10}}>Soil moisture</Text>
+        <Text style={{color:`rgba(0,200,170,255)`,marginTop:10}}>Soil moisture</Text>
         </View>
         <View style = {styles.airProgress}>
         <ProgressCircle
                 percent={per2}
                 radius={50}
                 borderWidth={8}
-                color={'blue'}
+                color={'#04d9ff'}
                 shadowColor="#999"
-                bgColor={'black'}
+                bgColor={'#20222f'}
         >
-        <Text style={{color:'blue'}}>{per2 + '%'}</Text>  
+        <Text style={{color:'#04d9ff'}}>{per2 + '%'}</Text>  
         </ProgressCircle>
-        <Text style={{color:'blue',marginTop:10}}>Atmosphere moisture</Text>
+        <Text style={{color:'#04d9ff',marginTop:10}}>Atmosphere moisture</Text>
         </View>
         </View>
 
         <Separator/>
 
         <View style = {styles.lineContainer}>
-        <LineChart
-            data = {data3}
-            width = {screenWidth/2}
-            height = {screenHeight/4}
-            chartConfig = {chartConfig3}
-            verticalLabelRotation = {30}
-        />
-        <LineChart
-            data = {data4}
-            width = {screenWidth/2}
-            height = {screenHeight/4}
-            chartConfig = {chartConfig4}
-            verticalLabelRotation = {30}
-        />
+        <ScrollView horizontal={true}>
+            <LineChart
+                data = {data3}
+                width = {screenWidth}
+                height = {screenHeight/4}
+                chartConfig = {chartConfig3}
+                verticalLabelRotation = {30}
+                style = {styles.lineBackGround}
+            />
+            <LineChart
+                data = {data4}
+                width = {screenWidth}
+                height = {screenHeight/4}
+                chartConfig = {chartConfig4}
+                verticalLabelRotation = {30}
+                style = {styles.lineBackGround}
+            />
+        </ScrollView>
         </View>
         <Text style={styles.text}>Devices</Text>
+        <Text style={{color:'lightgrey',marginTop:-10}}>_______________________________________________</Text>
         <View style={styles.devices}>
         <FlatList
            data={data}
@@ -219,15 +224,16 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'black'
+        backgroundColor: '#20222f'
     },
     progressContainer: {
         flexDirection: 'row',
-        alignItems:'center'
+        alignItems:'center',
+        backgroundColor:'#20222f'
     },
     lineContainer: {
         flexDirection: 'row',
-        marginBottom: 10
+        marginBottom: 10,
     },
     button: {
         backgroundColor: 'green',
@@ -265,21 +271,25 @@ const styles = StyleSheet.create({
         width:screenWidth/1.1
     },
     item:{
-        backgroundColor:`rgba(33,35,39,255)`,
+        backgroundColor:'#353c57',
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
-        flexDirection:'row'
+        flexDirection:'row',
+        borderRadius:10
     },
     title:{
         fontSize: 20,
         marginLeft:10,
-        color:'springgreen'
+        color:`rgba(0,200,170,255)`
     },
     separator:{
         marginVertical: 8,
         borderBottomColor: 'azure',
-        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomWidth: 10,
         marginBottom: 15
+    },
+    lineBackGround:{
+        borderRadius:25
     }
 })

@@ -16,11 +16,11 @@ const Separator = () => {
     )
 }
 const chartConfig = {
-    backgroundGradientFrom: `rgba(33,35,39,255)`,
+    backgroundGradientFrom: '#353c57',
     backgroundGradientFromOpacity: 1,
-    backgroundGradientTo: `rgba(33,35,39,255)`,
+    backgroundGradientTo: '#353c57',
     backgroundGradientToOpacity: 1,
-    color: (opacity = 1) => `rgba(255,0,0,${opacity})`,
+    color: (opacity = 1) => `rgba(255,49,49,${opacity})`,
     barPercentage: 0.5,
     useShadowColorFromDataset: false,
 }
@@ -71,7 +71,7 @@ export default function App({navigation}){
         //let client = new MqttClient(callback);
         //setClient(new MqttClient(callback));
         setInterval(() => {
-            if (client.client.connected) { arimonitor.checkCondition(); }
+            if (client.client.connected) { airmonitor.checkCondition(); }
         }, 1000);
         //var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
         // db1.transaction((tx) => {
@@ -126,8 +126,10 @@ export default function App({navigation}){
                 borderWidth={8}
                 color={'red'}
                 shadowColor="#999"
-                bgColor={'black'}
+                bgColor={'#20222f'}
                 style={styles.progress}
+                //rgba(255,49,49,255)
+
             >
             <Text style={{color:'red'}}>{per3 + 'ºC'}</Text>
             </ProgressCircle>
@@ -139,8 +141,10 @@ export default function App({navigation}){
             width = {screenWidth}
             height = {screenHeight/4}
             chartConfig = {chartConfig}
+            style = {styles.lineBackGround}
         />
         <Text style={styles.text}>Devices</Text>
+        <Text style={{color:'lightgrey',marginTop:-10}}>_______________________________________________</Text>
         <View style={styles.devices}>
         <FlatList
            data={data}
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor:'black'
+        backgroundColor:'#20222f'
     },
     button: {
         backgroundColor: 'green',
@@ -183,21 +187,25 @@ const styles = StyleSheet.create({
         width:screenWidth/1.1
     },
     item:{
-        backgroundColor:`rgba(33,35,39,255)`,
+        backgroundColor:'#353c57',
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
-        flexDirection:'row'
+        flexDirection:'row',
+        borderRadius:10
     },
     title:{
         fontSize: 20,
         marginLeft:10,
-        color:'springgreen'
+        color:`rgba(0,200,170,255)`
     },
     separator:{
         borderBottomColor: 'azure',
         borderBottomWidth: StyleSheet.hairlineWidth,
         marginTop:11,
         marginBottom: 15
+    },
+    lineBackGround:{
+        borderRadius: 25
     }
 })
