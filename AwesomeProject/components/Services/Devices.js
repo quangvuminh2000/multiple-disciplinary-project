@@ -27,6 +27,7 @@ export default function App(){
                         deviceList.push(results.rows.item(i));
                         //console.log(results.rows.item(i).value);
                     }
+                setFilteredDataSource(deviceList);
                 setMasterDataSource(deviceList);
                 }
             });
@@ -74,14 +75,14 @@ export default function App(){
         style={{
           height: 0.5,
           width: '100%',
-          backgroundColor: '#C8C8C8',
+          backgroundColor: 'azure',
         }}
       />
     );
   };
   const getItem = (item) => {
     // Function for click on an item
-    alert('ID:' + item.id + ', ' + 'Device:' + item.name);
+    alert('ID:' + item.id + ', ' + 'Device:' + item.name + ', ' + 'Online:' + item.online);
   };
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -99,9 +100,6 @@ export default function App(){
           ItemSeparatorComponent={ItemSeparatorView}
           renderItem={ItemView}
         />
-        <TouchableOpacity style = {styles.btn}>
-          <Text>ABC</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -109,11 +107,13 @@ export default function App(){
 const styles = StyleSheet.create({
   container: {
     flex:2,
-    backgroundColor: 'black',
+    backgroundColor: '#20222f',
   },
   itemStyle: {
     padding: 10,
-    backgroundColor:'grey'
+    backgroundColor:'#353c57',
+    color:'azure',
+    fontWeight:'bold'
   },
   textInputStyle: {
     height: 40,
@@ -123,15 +123,5 @@ const styles = StyleSheet.create({
     borderColor: '#009688',
     backgroundColor: 'lightgrey',
   },
-  btn:{
-    marginTop:10,
-    paddingTop:15,
-    paddingBottom:15,
-    marginLeft:30,
-    marginRight:30,
-    backgroundColor:'#00BCD4',
-    borderRadius:10,
-    borderWidth: 1,
-    borderColor: '#fff'
-  }
+  
 });

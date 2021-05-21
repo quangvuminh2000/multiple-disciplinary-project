@@ -24,11 +24,7 @@ const chartConfig = {
     barPercentage: 0.5,
     useShadowColorFromDataset: false,
 }
-const chartConfig1 = {
-    color: (opacity = 1) => `rgba(255,0,0,${opacity})`,
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false
-}
+
 const data = [
     {
         id: "1",
@@ -124,27 +120,31 @@ export default function App({navigation}){
                 percent={per3}
                 radius={50}
                 borderWidth={8}
-                color={'red'}
+                color={`rgba(255,49,49,255)`}
                 shadowColor="#999"
                 bgColor={'#20222f'}
                 style={styles.progress}
                 //rgba(255,49,49,255)
 
             >
-            <Text style={{color:'red'}}>{per3 + 'ºC'}</Text>
+            <Text style={{color:`rgba(255,49,49,255)`}}>{per3 + 'ºC'}</Text>
             </ProgressCircle>
-            <Text style={{color:'red',marginTop:10}}>Temperature</Text>
+            <Text style={{color:`rgba(255,49,49,255)`,marginTop:10}}>Temperature</Text>
         </View>
-        <Separator/>
+        <Text style={{color:'lightgrey',marginBottom:10,fontWeight:'bold'}}>
+            ____________________________________________________
+        </Text>
         <LineChart
             data = {data2}
-            width = {screenWidth}
-            height = {screenHeight/4}
+            width = {screenWidth/1.2}
+            height = {screenHeight/3.8}
             chartConfig = {chartConfig}
             style = {styles.lineBackGround}
         />
         <Text style={styles.text}>Devices</Text>
-        <Text style={{color:'lightgrey',marginTop:-10}}>_______________________________________________</Text>
+        <Text style={{color:'lightgrey',marginTop:-10,fontWeight:'bold'}}>
+            ____________________________________________________
+        </Text>
         <View style={styles.devices}>
         <FlatList
            data={data}
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 20,
         marginTop: 10,
-        color:'grey'
+        color:'cyan'
     },
     progress:{
         alignItems:'center',

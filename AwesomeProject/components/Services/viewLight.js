@@ -125,18 +125,22 @@ export default function App({navigation}){
             </ProgressCircle>
             <Text style={{color:'yellow',marginTop:10}}>Light level</Text>
             </View>
-            <Separator/>
+            <Text style={{color:'lightgrey',marginBottom:10,fontWeight:'bold'}}>
+            ____________________________________________________
+            </Text>
             <LineChart
                 data = {data2}
-                width = {screenWidth}
-                height = {screenHeight/4}
+                width = {screenWidth/1.2}
+                height = {screenHeight/3.8}
                 strokeWidth = {5}
                 chartConfig = {chartConfig}
                 yAxisLabel="%"
                 style = {styles.lineBackGround}
             />
         <Text style={styles.text}>Devices</Text>
-        <Text style={{color:'lightgrey',marginTop:-10}}>_______________________________________________</Text>
+        <Text style={{color:'lightgrey',marginTop:-10,fontWeight:'bold'}}>
+            ____________________________________________________
+        </Text>
         <View style={styles.devices}>
         <FlatList
             data={data}
@@ -166,7 +170,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 20,
         marginTop: 10,
-        color:'grey'
+        color:'cyan'
     },
     progress:{
         alignItems:'center',
@@ -200,4 +204,5 @@ const styles = StyleSheet.create({
     lineBackGround:{
         borderRadius: 25
     }
+    
 })

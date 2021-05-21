@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View,Text,TouchableOpacity,StyleSheet,Dimensions,SafeAreaView,ScrollView,FlatList,Image} from 'react-native';
+import {View,Text,TouchableOpacity,StyleSheet,Dimensions,SafeAreaView,ScrollView,FlatList,Image,SectionList} from 'react-native';
 import {LineChart} from 'react-native-chart-kit'
 import {openDatabase} from 'react-native-sqlite-storage'
 import ProgressCircle from 'react-native-progress-circle';
@@ -21,7 +21,7 @@ const chartConfig3 = {
     backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(0,200,170,${opacity})`,
     strokeWidth: 2,
-    //barPercentage: 0.5,
+    barPercentage: 0.5,
     useShadowColorFromDataset: false
 }
 
@@ -32,7 +32,7 @@ const chartConfig4 = {
     backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(4,217,255,${opacity})`,
     strokeWidth: 2,
-    //barPercentage: 0.5,
+    barPercentage: 0.5,
     useShadowColorFromDataset: false,
 }
 const data = [
@@ -182,31 +182,33 @@ export default function App({navigation}){
         <Text style={{color:'#04d9ff',marginTop:10}}>Atmosphere moisture</Text>
         </View>
         </View>
-
-        <Separator/>
-
+        <Text style={{color:'lightgrey',marginBottom:10,fontWeight:'bold'}}>
+            ____________________________________________________
+        </Text>
         <View style = {styles.lineContainer}>
         <ScrollView horizontal={true}>
             <LineChart
                 data = {data3}
-                width = {screenWidth}
-                height = {screenHeight/4}
+                width = {screenWidth/1.1}
+                height = {screenHeight/3.8}
                 chartConfig = {chartConfig3}
                 verticalLabelRotation = {30}
-                style = {styles.lineBackGround}
+                style = {styles.lineBackGround1}
             />
             <LineChart
                 data = {data4}
-                width = {screenWidth}
-                height = {screenHeight/4}
+                width = {screenWidth/1.1}
+                height = {screenHeight/3.8}
                 chartConfig = {chartConfig4}
                 verticalLabelRotation = {30}
-                style = {styles.lineBackGround}
+                style = {styles.lineBackGround2}
             />
         </ScrollView>
         </View>
         <Text style={styles.text}>Devices</Text>
-        <Text style={{color:'lightgrey',marginTop:-10}}>_______________________________________________</Text>
+        <Text style={{color:'lightgrey',marginTop:-10,fontWeight:'bold'}}>
+            ____________________________________________________
+        </Text>
         <View style={styles.devices}>
         <FlatList
            data={data}
@@ -243,10 +245,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 10
     },
-    text: {
-        color: '#ffffff',
-        textAlign: 'center',
-    },
     soilProgress:{
         marginLeft:50,
         marginRight: 90,
@@ -264,7 +262,7 @@ const styles = StyleSheet.create({
     },
     text:{
         fontSize: 20,
-        color:'grey'
+        color: 'cyan',
     },
     devices:{
         flex: 1,
@@ -289,7 +287,14 @@ const styles = StyleSheet.create({
         borderBottomWidth: 10,
         marginBottom: 15
     },
-    lineBackGround:{
-        borderRadius:25
+    lineBackGround1:{
+        borderRadius:25,
+        marginLeft:40,
+        marginRight:20
+    },
+    lineBackGround2:{
+        borderRadius:25,
+        marginLeft:10,
+        marginRight:15
     }
 })
