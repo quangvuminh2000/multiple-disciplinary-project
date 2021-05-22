@@ -1,20 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {View,Text,Dimensions,StyleSheet,TouchableOpacity, SafeAreaView,FlatList,Image} from 'react-native';
-import {
-    LineChart,
-    BarChart,
-    PieChart,
-    ProgressChart,
-    ContributionGraph,
-    StackedBarChart
-} from 'react-native-chart-kit';
+import {LineChart,ProgressChart} from 'react-native-chart-kit';
 import { ScrollView } from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
-import { AppStateContext } from '../../App';
-import { LightMonitor } from '../mqtt';
-
+import {openDatabase} from 'react-native-sqlite-storage';
+import { AsyncStorage } from '@react-native-community/async-storage';
+import {AppStateContext} from '../../App';
+import {AirMonitor,MqttClient} from '../mqtt';
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
+
 const Separator = () => {
     return(
         <View style={styles.separator}/>
@@ -25,46 +20,41 @@ const chartConfig = {
     backgroundGradientFromOpacity: 1,
     backgroundGradientTo: '#353c57',
     backgroundGradientToOpacity: 1,
-    color: (opacity = 1) => `rgba(255,255,0,${opacity})`,
+    color: (opacity = 1) => `rgba(255,49,49,${opacity})`,
     barPercentage: 0.5,
-    useShadowColorFromDataset: false
+    useShadowColorFromDataset: false,
 }
-const chartConfig2 = {
-    color: (opacity = 1) => `rgba(255,255,0,${opacity})`,
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false
-}
+
 const data = [
     {
         id: "1",
         title: "DHT11",
         source: require('./DHT11.jpg')
     },
+    
     {
         id: "2",
-        title: "RC Servo",
-        source: require('./servo.jpg')
+        title: "Water Pumper",
+        source: require('./pumper.png')
     }
 ]
+
 const Item = ({source,title}) => (
     <View style={styles.item}>
-    <Image 
+    <Image
         source={source}
         style={{height:30,width:30}}/>
     <Text style={styles.title}>{title}</Text>
     </View>
 );
-var SQLite = require('react-native-sqlite-storage');
-//var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
-var db2 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 
+var SQLite = require('react-native-sqlite-storage');
+//var db = SQLite.openDatabase({name:'test1.db',createFromLocation:'~test1.db'})
+var db1 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 
 export default function App({navigation}){
-    const renderItem = ({item}) => (
-        <Item title={item.title} source={item.source}/>
-    );
-    const[light,setLight] = useState([0,0,0]);
-    const[per4,setPercent4] = useState(0);
+    const [temp,setTemp] = useState([0,0,0]);
+    const [per3,setPercent3] = useState(0);
 
     const MqttObj = useContext(AppStateContext);
     const client = MqttObj.client;
@@ -72,80 +62,94 @@ export default function App({navigation}){
     const airmonitor = MqttObj.airmonitor;
     const lightmonitor = MqttObj.lightmonitor;
     useEffect(() => {
-
+        // Update the document title using the browser API
+        // console.log('ok');
+        //let client = new MqttClient(callback);
+        //setClient(new MqttClient(callback));
         setInterval(() => {
-            if (client.client.connected) { lightmonitor.checkCondition(); }
+            if (client.client.connected) { airmonitor.checkCondition(); }
         }, 1000);
+        //var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        // db1.transaction((tx) => {
+        //     tx.executeSql(
+        //         'INSERT INTO temperature(time, value) VALUE (?,?)', [date,client.temp], (tx, results) => {
+        //   console.log('Results', results.rowsAffected);
+        //   if (results.rowsAffected > 0) {
+        //     console.log("Success");
+        //   } else console.log('Registration Failed');
+        //     });
+        //     });
+        setPercent3(client.temp);
 
-        setPercent4(client.light);
-        console.log("Light", client.light)
+    }, [client.temp]);
 
-    }, [client.light])
-
-
-    db2.transaction((tx) => {
+    db1.transaction((tx) => {
         tx.executeSql(
-            'SELECT * FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+            'SELECT * FROM temperature ORDER BY time DESC LIMIT 5', [], (tx, results) => {
                 var len = results.rows.length;
+                //console.log("IN BITCH");
                 if(len > 0){
-                    let lightList = [];
+                    let tempList = [];
                     for(let i = 0; i < len; i++){
-                        lightList.push(results.rows.item(i).value);
+                        tempList.push(results.rows.item(i).value);
                         //console.log(results.rows.item(i).value);
                     }
-                setLight(lightList.reverse());
+                setTemp(tempList.reverse());
+                //setPercent3(tempList[0]);
                 }
             });
         });
 
-    
-
+    const renderItem = ({item}) => (
+        <Item title={item.title} source={item.source}/>
+    );
     const data2 = {
         labels: ["20'","15'","10'","5'","Now"],
         datasets: [
-            {
-                data: light
-            }
+        {
+            data: temp,
+            strokeWidth: 4.5
+        }
         ],
-        legend:["Light level"]
-    };
-
+        legend:["Temperature"]
+      }
     return(
         <SafeAreaView style = {styles.container}>
-            <View style={styles.progress}>
+        <View style={styles.progress}>
             <ProgressCircle
-                percent={per4}
+                percent={per3}
                 radius={50}
                 borderWidth={8}
-                color={'yellow'}
+                color={`rgba(255,49,49,255)`}
                 shadowColor="#999"
                 bgColor={'#20222f'}
+                style={styles.progress}
+                //rgba(255,49,49,255)
+
             >
-            <Text style={{color:'yellow'}}>{per4 + '%'}</Text>
+            <Text style={{color:`rgba(255,49,49,255)`}}>{per3 + 'ºC'}</Text>
             </ProgressCircle>
-            <Text style={{color:'yellow',marginTop:10}}>Light level</Text>
-            </View>
-            <Text style={{color:'lightgrey',marginBottom:10,fontWeight:'bold'}}>
+            <Text style={{color:`rgba(255,49,49,255)`,marginTop:10}}>Temperature</Text>
+        </View>
+        <Text style={{color:'lightgrey',marginBottom:10,fontWeight:'bold'}}>
             ____________________________________________________
-            </Text>
-            <LineChart
-                data = {data2}
-                width = {screenWidth/1.2}
-                height = {screenHeight/3.8}
-                strokeWidth = {5}
-                chartConfig = {chartConfig}
-                yAxisLabel="%"
-                style = {styles.lineBackGround}
-            />
+        </Text>
+        <LineChart
+            data = {data2}
+            width = {screenWidth/1.2}
+            height = {screenHeight/3.8}
+            chartConfig = {chartConfig}
+            style = {styles.lineBackGround}
+        />
         <Text style={styles.text}>Devices</Text>
         <Text style={{color:'lightgrey',marginTop:-10,fontWeight:'bold'}}>
             ____________________________________________________
         </Text>
         <View style={styles.devices}>
         <FlatList
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+           data={data}
+           renderItem={renderItem}
+           keyExtractor={(item) => item.id}
         />
         </View>
         </SafeAreaView>
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#20222f'
+        backgroundColor:'#20222f'
     },
     button: {
         backgroundColor: 'green',
@@ -180,7 +184,7 @@ const styles = StyleSheet.create({
     },
     devices:{
         flex: 1,
-        width: screenWidth/1.1
+        width:screenWidth/1.1
     },
     item:{
         backgroundColor:'#353c57',
@@ -204,5 +208,4 @@ const styles = StyleSheet.create({
     lineBackGround:{
         borderRadius: 25
     }
-    
 })

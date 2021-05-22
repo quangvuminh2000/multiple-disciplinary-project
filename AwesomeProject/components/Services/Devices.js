@@ -1,141 +1,127 @@
-import React, {useState} from 'react';
-import {View,Text,TouchableOpacity,StyleSheet,FlatList,Image,SafeAreaView,Dimensions} from 'react-native';
-import {Icon} from 'react-native-elements';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
-const screenWidth = Dimensions.get("window").width
-const screenHeight = Dimensions.get("window").height
-const data = [
-    {
-        id: "1",
-        title: "DHT11",
-        source: require('./DHT11.jpg')
-    },
-    
-    {
-        id: "2",
-        title: "Soil Moisture Sensor",
-        source: require('./soilsensor.png')
-    },
-    
-    {
-        id: "3",
-        title: "Light Sensor",
-        source: require('./lightsensor.jpg')
-    },
 
-    {
-        id: "4",
-        title: "RC Servo",
-        source: require('./servo.jpg')
-    },
-
-    {
-        id: "5",
-        title: "Mini Pump",
-        source: require('./pumper.png')
-    },
-
-    {
-        id: "6",
-        title: "Propeller",
-        source: require('./soilsensor.png')
+import React, {useState, useEffect} from 'react';
+import { TouchableOpacity } from 'react-native';
+import {
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  View,
+  FlatList,
+  TextInput,
+  SearchBar
+} from 'react-native';
+var SQLite = require('react-native-sqlite-storage');
+var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
+export default function App(){
+  const [search, setSearch] = useState('');
+  const [filteredDataSource, setFilteredDataSource] = useState([]);
+  const [masterDataSource, setMasterDataSource] = useState([]);
+  useEffect(() => {
+    db.transaction((tx) => {
+        tx.executeSql(
+            'SELECT * FROM sensor', [], (_tx, results) => {
+                var len = results.rows.length;
+                if(len > 0){
+                    let deviceList = [];
+                    for(let i = 0; i < len; i++){
+                        deviceList.push(results.rows.item(i));
+                        //console.log(results.rows.item(i).value);
+                    }
+                setFilteredDataSource(deviceList);
+                setMasterDataSource(deviceList);
+                }
+            });
+        });        
+  }, []);
+  const searchFilterFunction = (text) => {
+    // Check if searched text is not blank
+    if (text) {
+      // Inserted text is not blank
+      // Filter the masterDataSource
+      // Update FilteredDataSource
+      const newData = masterDataSource.filter(
+        function (item) {
+          const itemData = item.name
+            ? item.name.toUpperCase()
+            : ''.toUpperCase();
+          const textData = text.toUpperCase();
+          return itemData.indexOf(textData) > -1;
+      });
+      setFilteredDataSource(newData);
+      setSearch(text);
+    } else {
+      // Inserted text is blank
+      // Update FilteredDataSource with masterDataSource
+      setFilteredDataSource(masterDataSource);
+      setSearch(text);
     }
-]
-const Item = ({source,title}) => (
-    <View style={styles.item}>
-    <Image 
-        source={source}
-        style={{height:30,width:30}}/>
-    <Text style={styles.title}>{title}</Text>
-    </View>
-);
-
-export default function App({navigation}){
-    const renderItem = ({item}) => (
-        <Item title={item.title} source={item.source}/>
-    );
-    const [devname, setDev] = useState();
+  };
+  const ItemView = ({item}) => {
     return (
-        <SafeAreaView style = {styles.container}>
-        <ScrollView>
-            <View style = {styles.loginSec}>
-            <Icon
-                name = 'search'
-                type = 'font-awesome-5'
-                color = 'black'         
-                style = {styles.loginIcon}
-            />
-            <TextInput
-                placeholder = {'Search devices'}
-                placeholderTextColor = {'black'}
-                //secureTextEntry = {true}
-                onChangeText = {setDev}
-                value = {devname}
-                style = {styles.userInput}
-                underlineColorAndroid = 'transparent'
-            />
-            </View>
-            <FlatList
-                data={data}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-            />
-        </ScrollView>
-        </SafeAreaView>
-    )
-}
-
+      // Flat List Item
+      <Text
+        style={styles.itemStyle}
+        onPress={() => getItem(item)}>
+        {item.id}
+        {'.'}
+        {item.name.toUpperCase()}
+      </Text>
+    );
+  };
+  const ItemSeparatorView = () => {
+    return (
+      // Flat List Item Separator
+      <View
+        style={{
+          height: 0.5,
+          width: '100%',
+          backgroundColor: 'azure',
+        }}
+      />
+    );
+  };
+  const getItem = (item) => {
+    // Function for click on an item
+    alert('ID:' + item.id + ', ' + 'Device:' + item.name + ', ' + 'Online:' + item.online);
+  };
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <View style={styles.container}>
+        <TextInput
+          style={styles.textInputStyle}
+          onChangeText={(text) => searchFilterFunction(text)}
+          value={search}
+          underlineColorAndroid="transparent"
+          placeholder="Search Here"
+        />
+        <FlatList
+          data={filteredDataSource}
+          keyExtractor={(item, index) => index.toString()}
+          ItemSeparatorComponent={ItemSeparatorView}
+          renderItem={ItemView}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor:'black'
-    },
-    button: {
-        backgroundColor: 'indigo',
-        height: 40,
-        width: 110,
-        borderRadius: 30,
-        justifyContent: 'center',
-        marginTop: 10
-    },
-    item:{
-        backgroundColor:`rgba(33,35,39,255)`,
-        padding: 20,
-        marginVertical: 8,
-        marginHorizontal: 16,
-        marginTop: 20,
-        flexDirection:'row',
-        width: screenWidth/1.15
-    },
-    title:{
-        fontSize: 20,
-        marginLeft:10,
-        color:'springgreen'
-    },
-    userInput: {
-        backgroundColor: 'grey',
-        height: 40,
-        width: screenWidth/1.25,
-        borderRadius: 25,
-        height: screenHeight/14
-    },
-    loginIcon: {
-        padding: 11,
-        height: 47,
-        width: 46,
-        resizeMode: 'stretch'
-    },
-    loginSec:{
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'grey',
-        height: 50,
-        borderRadius: 5,
-        width: screenWidth/1.1,
-        height: screenHeight/11.8,
-        margin: 10,
-    },
-})
+  container: {
+    flex:2,
+    backgroundColor: '#20222f',
+  },
+  itemStyle: {
+    padding: 10,
+    backgroundColor:'#353c57',
+    color:'azure',
+    fontWeight:'bold'
+  },
+  textInputStyle: {
+    height: 40,
+    borderWidth: 1,
+    paddingLeft: 20,
+    margin: 5,
+    borderColor: '#009688',
+    backgroundColor: 'lightgrey',
+  },
+  
+});
