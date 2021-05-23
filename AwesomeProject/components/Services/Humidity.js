@@ -1,9 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet,Dimensions,SafeAreaView,ScrollView,FlatList,Image,SectionList} from 'react-native';
 import {LineChart} from 'react-native-chart-kit'
-import {openDatabase} from 'react-native-sqlite-storage'
 import ProgressCircle from 'react-native-progress-circle';
-import { AsyncStorage } from '@react-native-community/async-storage';
 import { AppStateContext } from '../../App';
 import { SoilMonitor,MqttClient,AirMonitor } from '../mqtt';
 
@@ -68,10 +66,6 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 
-var SQLite = require('react-native-sqlite-storage');
-var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
-
-
 export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
@@ -99,35 +93,27 @@ export default function App({navigation}){
 
     }, [client.soilHumid, client.airHumid]);
 
-    db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM soil ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let soilList = [];
-                    for(let i = 0; i < len; i++){
-                        soilList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
-                    }
+    useEffect(() => {
+        const fetchSoilData = async db => {
+            let [result] = await db.executeSql('SELECT * FROM soil ORDER BY time DESC LIMIT 5');
+            let rows = result.rows;
+            if (rows.length > 0) {
+                let soilList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
                 setVal1(soilList.reverse());
-                }
-            });
-        });
-
-    db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT value FROM air ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let airList = [];
-                    for(let i = 0; i < len; i++){
-                        airList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
-                    }
+             }
+        };
+        const fetchAirData = async db => {
+            let [result] = await db.executeSql('SELECT value FROM air ORDER BY time DESC LIMIT 5');
+            var rows = result.rows;
+            if (rows.length > 0) {
+                let airList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
                 setVal2(airList.reverse());
-                }
-            });
-        });
+            }
+        };
+        MqttObj.db.then(fetchSoilData);
+		MqttObj.db.then(fetchAirData);
+    }, []);
+
 
     const data3 = { 
         labels: ["20'","15'","10'","5'","Now"],

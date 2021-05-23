@@ -9,6 +9,9 @@ import {
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
+import SQLite from 'react-native-sqlite-storage';
+// SQLite.DEBUG(true);
+SQLite.enablePromise(true);
 
 import Login from './components/Screens/Login';
 import Home from './components/Screens/Home';
@@ -213,7 +216,8 @@ const MqttObj = {
   client: client,
   soilmonitor: soilmonitor,
   airmonitor: airmonitor,
-  lightmonitor: lightmonitor
+  lightmonitor: lightmonitor,
+  db: SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 }
 
 export const AppStateContext = React.createContext(client);

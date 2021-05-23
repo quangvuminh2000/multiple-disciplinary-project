@@ -54,9 +54,6 @@ const Item = ({source,title}) => (
     <Text style={styles.title}>{title}</Text>
     </View>
 );
-var SQLite = require('react-native-sqlite-storage');
-//var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
-var db2 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 
 
 export default function App({navigation}){
@@ -83,22 +80,20 @@ export default function App({navigation}){
     }, [client.light])
 
 
-    db2.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let lightList = [];
-                    for(let i = 0; i < len; i++){
-                        lightList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
-                    }
+    useEffect(() => {
+        const fetchLightData = async db => {
+            let [result] = await db.executeSql('SELECT * FROM light ORDER BY time DESC LIMIT 5');
+            var rows = result.rows;
+        console.log('ok');
+            if (rows.length > 0) {
+                let lightList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
                 setLight(lightList.reverse());
-                }
-            });
-        });
+            }
+        };
+        MqttObj.db.then(fetchLightData);
+    }, []);
 
-    
+
 
     const data2 = {
         labels: ["20'","15'","10'","5'","Now"],

@@ -3,8 +3,6 @@ import {View,Text,Dimensions,StyleSheet,TouchableOpacity, SafeAreaView,FlatList,
 import {LineChart,ProgressChart} from 'react-native-chart-kit';
 import { ScrollView } from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
-import {openDatabase} from 'react-native-sqlite-storage';
-import { AsyncStorage } from '@react-native-community/async-storage';
 import {AppStateContext} from '../../App';
 import {AirMonitor,MqttClient} from '../mqtt';
 const screenWidth = Dimensions.get("window").width;
@@ -48,9 +46,6 @@ const Item = ({source,title}) => (
     </View>
 );
 
-var SQLite = require('react-native-sqlite-storage');
-//var db = SQLite.openDatabase({name:'test1.db',createFromLocation:'~test1.db'})
-var db1 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
 
 export default function App({navigation}){
     const [temp,setTemp] = useState([0,0,0]);
@@ -83,22 +78,17 @@ export default function App({navigation}){
 
     }, [client.temp]);
 
-    db1.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM temperature ORDER BY time DESC LIMIT 5', [], (tx, results) => {
-                var len = results.rows.length;
-                //console.log("IN BITCH");
-                if(len > 0){
-                    let tempList = [];
-                    for(let i = 0; i < len; i++){
-                        tempList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
-                    }
+    useEffect(() => {
+        const fetchTempData = async db => {
+            let [result] = await db.executeSql('SELECT * FROM temperature ORDER BY time DESC LIMIT 5');
+            var rows = result.rows;
+            if (rows.length > 0) {
+                let tempList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
                 setTemp(tempList.reverse());
-                //setPercent3(tempList[0]);
-                }
-            });
-        });
+            }
+        };
+        MqttObj.db.then(fetchTempData);
+    }, []);
 
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
