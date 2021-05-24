@@ -78,8 +78,7 @@ export default function App({navigation}){
     const MqttObj = useContext(AppStateContext);
     const client = MqttObj.client;
     const soilmonitor = MqttObj.soilmonitor;
-    const airmonitor = MqttObj.airmonitor;
-    const lightmonitor = MqttObj.lightmonitor;
+	const database = MqttObj.database;
 
     useEffect(() => {
         setInterval(() => {
@@ -94,24 +93,26 @@ export default function App({navigation}){
     }, [client.soilHumid, client.airHumid]);
 
     useEffect(() => {
-        const fetchSoilData = async db => {
-            let [result] = await db.executeSql('SELECT * FROM soil ORDER BY time DESC LIMIT 5');
-            let rows = result.rows;
-            if (rows.length > 0) {
-                let soilList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
-                setVal1(soilList.reverse());
-             }
-        };
-        const fetchAirData = async db => {
-            let [result] = await db.executeSql('SELECT value FROM air ORDER BY time DESC LIMIT 5');
-            var rows = result.rows;
-            if (rows.length > 0) {
-                let airList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
-                setVal2(airList.reverse());
-            }
-        };
-        MqttObj.db.then(fetchSoilData);
-		MqttObj.db.then(fetchAirData);
+        // const fetchSoilData = async db => {
+        //     let [result] = await db.executeSql('SELECT * FROM soil ORDER BY time DESC LIMIT 5');
+        //     let rows = result.rows;
+        //     if (rows.length > 0) {
+        //         let soilList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
+        //         setVal1(soilList.reverse());
+        //      }
+        // };
+        // const fetchAirData = async db => {
+        //     let [result] = await db.executeSql('SELECT value FROM air ORDER BY time DESC LIMIT 5');
+        //     var rows = result.rows;
+        //     if (rows.length > 0) {
+        //         let airList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
+        //         setVal2(airList.reverse());
+        //     }
+        // };
+        // MqttObj.db.then(fetchSoilData);
+		// MqttObj.db.then(fetchAirData);
+		database.fetchData('soil', setVal1);
+		database.fetchData('air', setVal2);
     }, []);
 
 

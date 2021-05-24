@@ -9,9 +9,6 @@ import {
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
-import SQLite from 'react-native-sqlite-storage';
-// SQLite.DEBUG(true);
-SQLite.enablePromise(true);
 
 import Login from './components/Screens/Login';
 import Home from './components/Screens/Home';
@@ -22,6 +19,7 @@ import Humidity from './components/Services/Humidity';
 import Temperature from './components/Services/Temperature';
 import viewLight from './components/Services/viewLight';
 import Settings from './components/Screens/Settings';
+import Database from './components/database';
 
 import {
   MqttClient,
@@ -175,9 +173,11 @@ function MyStack() {
 const callback = () => {
   console.log("Implement callback!")
 }
+const database = new Database({name:'test2.db',createFromLocation:'~test2.db'});
 
 export default function App() {
-  // useEffect(() => {
+  useEffect(() => {
+	  database.init();
   //   // Update the document title using the browser API
   //   console.log('ok');
   //   //let client = new MqttClient(callback);
@@ -189,7 +189,7 @@ export default function App() {
   //       monitor.checkCondition();
   //     }
   //   }, 1000);
-  // });
+  }, []);
 
   return (
     <AppStateProvider>
@@ -217,7 +217,7 @@ const MqttObj = {
   soilmonitor: soilmonitor,
   airmonitor: airmonitor,
   lightmonitor: lightmonitor,
-  db: SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
+  database: database,
 }
 
 export const AppStateContext = React.createContext(client);

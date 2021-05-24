@@ -68,6 +68,7 @@ export default function App({navigation}){
     const soilmonitor = MqttObj.soilmonitor;
     const airmonitor = MqttObj.airmonitor;
     const lightmonitor = MqttObj.lightmonitor;
+	const database = MqttObj.database;
     useEffect(() => {
 
         setInterval(() => {
@@ -81,16 +82,16 @@ export default function App({navigation}){
 
 
     useEffect(() => {
-        const fetchLightData = async db => {
-            let [result] = await db.executeSql('SELECT * FROM light ORDER BY time DESC LIMIT 5');
-            var rows = result.rows;
-        console.log('ok');
-            if (rows.length > 0) {
-                let lightList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
-                setLight(lightList.reverse());
-            }
-        };
-        MqttObj.db.then(fetchLightData);
+        // const fetchLightData = async db => {
+        //     let [result] = await db.executeSql('SELECT * FROM light ORDER BY time DESC LIMIT 5');
+        //     var rows = result.rows;
+        //     if (rows.length > 0) {
+        //         let lightList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
+        //         setLight(lightList.reverse());
+        //     }
+        // };
+        // MqttObj.db.then(fetchLightData);
+		database.fetchData('light', setLight);
     }, []);
 
 
