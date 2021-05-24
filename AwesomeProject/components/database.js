@@ -6,6 +6,8 @@ function range(end) {
 }
 
 export default class Database {
+  #fetchIntervalID;
+  dataTable = ['light', 'temperature', 'air', 'soil'];
   constructor(args) {
     SQLite.DEBUG(true);
     SQLite.enablePromise(true);
@@ -14,6 +16,16 @@ export default class Database {
 
   async init() {
     this.db = await SQLite.openDatabase(this.args);
+    await this.fetchData3();
+    this.#fetchIntervalID = setInterval(this.fetchData3, 300000);
+  }
+
+  async cleanup() {
+    if (this.#fetchIntervalID) {
+      clearInterval(this.#fetchIntervalID);
+      this.#fetchIntervalID = undefined;
+    }
+    await this.db.close();
   }
 
   async setUser(username) {
@@ -23,6 +35,17 @@ export default class Database {
     );
     let rows = result.rows;
     this.plants = range(rows.length).map(i => rows.item(i));
+  }
+
+  async fetchData3() {
+    this.dataTable.map(table => {
+      let [result] = await this.db.executeSql(
+        'SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5',
+      );
+      console.log('result query', result);
+      let rows = result.rows;
+      this[table] = range(rows.length).map(i => rows.item(i).value);
+    });
   }
 
   async fetchData(table, setter) {

@@ -60,7 +60,7 @@ export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-    const[light,setLight] = useState([0,0,0]);
+    // const[light,setLight] = useState([0,0,0]);
     const[per4,setPercent4] = useState(0);
 
     const MqttObj = useContext(AppStateContext);
@@ -69,6 +69,7 @@ export default function App({navigation}){
     const airmonitor = MqttObj.airmonitor;
     const lightmonitor = MqttObj.lightmonitor;
 	const database = MqttObj.database;
+	const light = database.light;
     useEffect(() => {
 
         setInterval(() => {
@@ -76,23 +77,23 @@ export default function App({navigation}){
         }, 1000);
 
         setPercent4(client.light);
-        console.log("Light", client.light)
+        console.log("Light", client.light);
 
     }, [client.light])
 
 
-    useEffect(() => {
-        // const fetchLightData = async db => {
-        //     let [result] = await db.executeSql('SELECT * FROM light ORDER BY time DESC LIMIT 5');
-        //     var rows = result.rows;
-        //     if (rows.length > 0) {
-        //         let lightList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
-        //         setLight(lightList.reverse());
-        //     }
-        // };
-        // MqttObj.db.then(fetchLightData);
-		database.fetchData('light', setLight);
-    }, []);
+    // useEffect(() => {
+    //     // const fetchLightData = async db => {
+    //     //     let [result] = await db.executeSql('SELECT * FROM light ORDER BY time DESC LIMIT 5');
+    //     //     var rows = result.rows;
+    //     //     if (rows.length > 0) {
+    //     //         let lightList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
+    //     //         setLight(lightList.reverse());
+    //     //     }
+    //     // };
+    //     // MqttObj.db.then(fetchLightData);
+		// database.fetchData('light', setLight);
+    // }, []);
 
 
 

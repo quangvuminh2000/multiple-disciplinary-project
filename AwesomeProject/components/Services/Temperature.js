@@ -48,7 +48,7 @@ const Item = ({source,title}) => (
 
 
 export default function App({navigation}){
-    const [temp,setTemp] = useState([0,0,0]);
+    // const [temp,setTemp] = useState([0,0,0]);
     const [per3,setPercent3] = useState(0);
 
     const MqttObj = useContext(AppStateContext);
@@ -57,6 +57,7 @@ export default function App({navigation}){
     const airmonitor = MqttObj.airmonitor;
     const lightmonitor = MqttObj.lightmonitor;
 	const database = MqttObj.database;
+	const temp = database.temperature;
     useEffect(() => {
         // Update the document title using the browser API
         // console.log('ok');
@@ -82,7 +83,8 @@ export default function App({navigation}){
         //     }
         // }, 300000);
 		setInterval(async () => await database.updateData('temperature', client.temp), 300000);
-		database.fetchData('temperature', setTemp);
+		// database.fetchData('temperature', setTemp);
+	// setTemp(database.temperature);
     }, []);
 
     // useEffect(() => {

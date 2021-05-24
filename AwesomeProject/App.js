@@ -189,6 +189,7 @@ export default function App() {
   //       monitor.checkCondition();
   //     }
   //   }, 1000);
+	  return database.cleanup;
   }, []);
 
   return (

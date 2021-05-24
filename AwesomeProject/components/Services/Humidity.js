@@ -70,8 +70,8 @@ export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-    const [val1,setVal1] = useState([0,0,0]);
-    const [val2,setVal2] = useState([0,0,0]);
+    // const [val1,setVal1] = useState([0,0,0]);
+    // const [val2,setVal2] = useState([0,0,0]);
     const [per1,setPercent1] = useState(0);
     const [per2,setPercent2] = useState(0);
 
@@ -79,6 +79,8 @@ export default function App({navigation}){
     const client = MqttObj.client;
     const soilmonitor = MqttObj.soilmonitor;
 	const database = MqttObj.database;
+	const val1 = database.soil;
+	const val2 = database.air;
 
     useEffect(() => {
         setInterval(() => {
@@ -92,28 +94,28 @@ export default function App({navigation}){
 
     }, [client.soilHumid, client.airHumid]);
 
-    useEffect(() => {
-        // const fetchSoilData = async db => {
-        //     let [result] = await db.executeSql('SELECT * FROM soil ORDER BY time DESC LIMIT 5');
-        //     let rows = result.rows;
-        //     if (rows.length > 0) {
-        //         let soilList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
-        //         setVal1(soilList.reverse());
-        //      }
-        // };
-        // const fetchAirData = async db => {
-        //     let [result] = await db.executeSql('SELECT value FROM air ORDER BY time DESC LIMIT 5');
-        //     var rows = result.rows;
-        //     if (rows.length > 0) {
-        //         let airList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
-        //         setVal2(airList.reverse());
-        //     }
-        // };
-        // MqttObj.db.then(fetchSoilData);
-		// MqttObj.db.then(fetchAirData);
-		database.fetchData('soil', setVal1);
-		database.fetchData('air', setVal2);
-    }, []);
+    // useEffect(() => {
+    //     // const fetchSoilData = async db => {
+    //     //     let [result] = await db.executeSql('SELECT * FROM soil ORDER BY time DESC LIMIT 5');
+    //     //     let rows = result.rows;
+    //     //     if (rows.length > 0) {
+    //     //         let soilList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
+    //     //         setVal1(soilList.reverse());
+    //     //      }
+    //     // };
+    //     // const fetchAirData = async db => {
+    //     //     let [result] = await db.executeSql('SELECT value FROM air ORDER BY time DESC LIMIT 5');
+    //     //     var rows = result.rows;
+    //     //     if (rows.length > 0) {
+    //     //         let airList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
+    //     //         setVal2(airList.reverse());
+    //     //     }
+    //     // };
+    //     // MqttObj.db.then(fetchSoilData);
+		// // MqttObj.db.then(fetchAirData);
+		// database.fetchData('soil', setVal1);
+		// database.fetchData('air', setVal2);
+    // }, []);
 
 
     const data3 = { 
