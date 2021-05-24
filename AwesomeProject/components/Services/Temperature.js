@@ -64,19 +64,23 @@ export default function App({navigation}){
         setInterval(() => {
             if (client.client.connected) { airmonitor.checkCondition(); }
         }, 1000);
-        //var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        // db1.transaction((tx) => {
-        //     tx.executeSql(
-        //         'INSERT INTO temperature(time, value) VALUE (?,?)', [date,client.temp], (tx, results) => {
-        //   console.log('Results', results.rowsAffected);
-        //   if (results.rowsAffected > 0) {
-        //     console.log("Success");
-        //   } else console.log('Registration Failed');
-        //     });
-        //     });
         setPercent3(client.temp);
 
     }, [client.temp]);
+
+    useEffect(() => {
+        setInterval(async () => {
+            let db = await MqttObj.db;
+            let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            let [result] = await db.executeSql('INSERT INTO temperature(time, value) VALUE (?,?)', [date, client.temp]);
+            console.log('Results', result.rowsAffected);
+            if (result.rowsAffected > 0) {
+                console.log('Success');
+            } else {
+                console.log('Registration Failed');
+            }
+        }, 300000);
+    }, []);
 
     useEffect(() => {
         const fetchTempData = async db => {
