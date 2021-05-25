@@ -38,14 +38,14 @@ export default class Database {
   }
 
   async fetchData3() {
-    this.dataTable.map(table => {
+    for (const table of this.dataTable) {
       let [result] = await this.db.executeSql(
         'SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5',
       );
       console.log('result query', result);
       let rows = result.rows;
       this[table] = range(rows.length).map(i => rows.item(i).value);
-    });
+    }
   }
 
   async fetchData(table, setter) {
