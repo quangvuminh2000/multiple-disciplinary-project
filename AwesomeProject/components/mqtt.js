@@ -12,7 +12,7 @@ let minAtmosphere = 65;
 let maxAtmosphere = 70;
 
 class MqttClient {
-
+  #client;
   sensorTopics = [
     //'NPNLab_BBC/feeds/bk-iot-temp-humid',
     'Group12/feeds/air-moisture',
@@ -23,60 +23,57 @@ class MqttClient {
     'Group12/feeds/light',
     'Group12/feeds/test2',
   ];
+  messageCallbacks = [];
 
-  constructor(callback) {
-    this.airHumid= 70;
-    this.temp= 30;
-    this.soilHumid= 70;
-    this.light= 0;
+  constructor() {
+    this.airHumid = 70;
+    this.temp = 30;
+    this.soilHumid = 70;
+    this.light = 0;
 
     //client = new Mqtt.Client('[SCHEME]://[URL]:[PORT]');
-    let client = new Mqtt.Client('tcp://io.adafruit.com:1883');
-    client.on(Mqtt.Event.Message, (topic, message) => {
-      console.log('Mqtt Message:', topic, message.toString());
+    this.#client = new Mqtt.Client('tcp://io.adafruit.com:1883');
+    this.#client.on(Mqtt.Event.Message, (topic, message) => {
+      console.log('MQTT Message:', topic, message.toString());
       const data = JSON.parse(message);
-      switch (parseInt(data.id)) {
-          case 7:
-              let temp, humid;
-              [temp, humid] = data.data.split('-');
-              this.temp = parseInt(temp);
-              this.airHumid = parseInt(humid);
-              break;
-          case 9:
-              this.soilHumid = parseInt(data.data);
-              break;
-          case 13:
-              this.light = parseInt(data.data);
-              break;
+      data.id = parseInt(data.id);
+      // switch (parseInt(data.id)) {
+      //     case 7:
+      //         let temp, humid;
+      //         [temp, humid] = data.data.split('-');
+      //         this.temp = parseInt(temp);
+      //         this.airHumid = parseInt(humid);
+      //         break;
+      //     case 9:
+      //         this.soilHumid = parseInt(data.data);
+      //         break;
+      //     case 13:
+      //         this.light = parseInt(data.data);
+      //         break;
+      // }
+      for (const callback of this.messageCallbacks) {
+        callback.bind(this)(data);
       }
       // Update notification
     });
 
-    client.on(Mqtt.Event.Connect, () => {
-      console.log('MQTT Connect');
-      client.subscribe(
-        this.sensorTopics,
-        Array(this.sensorTopics.length).fill(1),
-      );
-      callback();
-    });
-
-    client.on(Mqtt.Event.Error, error => {
+    this.#client.on(Mqtt.Event.Error, error => {
       console.log('MQTT Error:', error);
     });
 
-    client.on(Mqtt.Event.Disconnect, cause => {
+    this.#client.on(Mqtt.Event.Disconnect, cause => {
       console.log('MQTT Disconnect:', cause);
     });
-    this.client = client;
+    this.client = this.#client;
   }
 
-  // readSensor(topic, message) {
-  // }
+  get connected() {
+    return this.#client.connected;
+  }
 
   publish(topic, payload) {
     let data = Buffer.from(JSON.stringify(payload));
-    this.client.publish(topic, data, 1);
+    this.#client.publish(topic, data, 1);
   }
 
   checkCondition() {
@@ -87,10 +84,19 @@ class MqttClient {
     }
   }
 
-  start() {
-    this.client.connect(
+  start(connectCallback) {
+    this.#client.on(Mqtt.Event.Connect, () => {
+      console.log('MQTT Connect');
+      this.#client.subscribe(
+        this.sensorTopics,
+        Array(this.sensorTopics.length).fill(1),
+      );
+      connectCallback.bind(this)();
+    });
+
+    this.#client.connect(
       {
-        clientId: this.client.id,
+        clientId: this.#client.id,
         enableSsl: false,
         username: 'Group12',
         password: 'aio_atNP67yCNWakTjSOUHXJ2WpLiIdG',
@@ -98,6 +104,10 @@ class MqttClient {
       },
       (err) => { if(err){ console.error("Error",err); }},
     );
+  }
+
+  stop() {
+    this.#client.close();
   }
 }
 

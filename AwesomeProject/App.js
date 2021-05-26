@@ -170,26 +170,20 @@ function MyStack() {
   );
 }
 
-const callback = () => {
-  console.log("Implement callback!")
-}
-const database = new Database({name:'test2.db',createFromLocation:'~test2.db'});
+const database = new Database('test2.db');
 
 export default function App() {
   useEffect(() => {
-	  database.init();
-  //   // Update the document title using the browser API
-  //   console.log('ok');
-  //   //let client = new MqttClient(callback);
-  //   //setClient(new MqttClient(callback));
-  //   client.start();
-  //   let monitor = new SoilMonitor(client);
-  //   setInterval(() => {
-  //     if (client.client.connected) {
-  //       monitor.checkCondition();
-  //     }
-  //   }, 1000);
-	  return database.cleanup;
+    database.init();
+    return database.cleanup;
+  }, []);
+
+  useEffect(() => {
+    const callback = () => {
+      console.log('Implement callback!');
+    }
+    client.start(callback);
+    return client.stop;
   }, []);
 
   return (
@@ -208,7 +202,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const client = new MqttClient(callback);
+const client = new MqttClient();
 const soilmonitor = new SoilMonitor(client);
 const airmonitor = new AirMonitor(client);
 const lightmonitor = new LightMonitor(client);
@@ -224,8 +218,6 @@ const MqttObj = {
 export const AppStateContext = React.createContext(client);
 
 const AppStateProvider = (props) => {
-  client.start();
-
   return (<AppStateContext.Provider value={MqttObj}>
     {props.children}
     </AppStateContext.Provider>)

@@ -60,7 +60,7 @@ export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-    // const[light,setLight] = useState([0,0,0]);
+    const[light,setLight] = useState([0,0,0]);
     const[per4,setPercent4] = useState(0);
 
     const MqttObj = useContext(AppStateContext);
@@ -69,17 +69,22 @@ export default function App({navigation}){
     const airmonitor = MqttObj.airmonitor;
     const lightmonitor = MqttObj.lightmonitor;
 	const database = MqttObj.database;
-	const light = database.light;
+
     useEffect(() => {
 
         setInterval(() => {
-            if (client.client.connected) { lightmonitor.checkCondition(); }
+            if (client.connected) { lightmonitor.checkCondition(); }
         }, 1000);
 
-        setPercent4(client.light);
-        console.log("Light", client.light);
+        client.messageCallbacks.push(data => {
+            if (data.id === 13) {
+                const light = parseInt(data.data);
+                setPercent4(light);
+                console.log('Light', light);
+            }
+        });
 
-    }, [client.light])
+    }, []);
 
 
     // useEffect(() => {
