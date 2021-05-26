@@ -35,7 +35,7 @@ const data = [
     {
         id: "2",
         title: "Water Pumper",
-        source: require('./pumper.png')
+        source: require('./pump.jpg')
     }
 ]
 
@@ -83,23 +83,26 @@ export default function App({navigation}){
 
     }, [client.temp]);
 
-    db1.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM temperature ORDER BY time DESC LIMIT 5', [], (tx, results) => {
-                var len = results.rows.length;
-                //console.log("IN BITCH");
-                if(len > 0){
-                    let tempList = [];
-                    for(let i = 0; i < len; i++){
-                        tempList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
+    useEffect(()=>{
+        db1.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM temperature ORDER BY time DESC LIMIT 5', [], (tx, results) => {
+                    var len = results.rows.length;
+                    //console.log("IN BITCH");
+                    if(len > 0){
+                        let tempList = [];
+                        for(let i = 0; i < len; i++){
+                            tempList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        }
+                    setTemp(tempList.reverse());
+                    //setPercent3(tempList[0]);
                     }
-                setTemp(tempList.reverse());
-                //setPercent3(tempList[0]);
-                }
+                });
             });
-        });
-
+    
+    }, []);
+    
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );

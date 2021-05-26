@@ -45,13 +45,13 @@ const data = [
     {
         id: "2",
         title: "Soil Moisture Sensor",
-        source: require('./soilsensor.png')
+        source: require('./soilsensor.jpg')
     },
-    
+     
     {
         id: "3",
         title: "Water Pumper",
-        source: require('./pumper.png')
+        source: require('./pump.jpg')
     }
 ]
 
@@ -98,36 +98,40 @@ export default function App({navigation}){
         // console.log("Air Humid", client.airHumid)
 
     }, [client.soilHumid, client.airHumid]);
-
-    db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM soil ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let soilList = [];
-                    for(let i = 0; i < len; i++){
-                        soilList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
+    useEffect(()=>{
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM soil ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                    var len = results.rows.length;
+                    if(len > 0){
+                        let soilList = [];
+                        for(let i = 0; i < len; i++){
+                            soilList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        }
+                    setVal1(soilList.reverse());
                     }
-                setVal1(soilList.reverse());
-                }
+                });
             });
-        });
-
-    db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT value FROM air ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let airList = [];
-                    for(let i = 0; i < len; i++){
-                        airList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
+    }, []);
+    
+    useEffect(()=>{
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT value FROM air ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                    var len = results.rows.length;
+                    if(len > 0){
+                        let airList = [];
+                        for(let i = 0; i < len; i++){
+                            airList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        }
+                    setVal2(airList.reverse());
                     }
-                setVal2(airList.reverse());
-                }
+                });
             });
-        });
+    },[]);
+    
 
     const data3 = { 
         labels: ["20'","15'","10'","5'","Now"],
@@ -279,7 +283,7 @@ const styles = StyleSheet.create({
     title:{
         fontSize: 20,
         marginLeft:10,
-        color:`rgba(0,200,170,255)`
+        color:'cyan'
     },
     separator:{
         marginVertical: 8,

@@ -15,11 +15,7 @@ import { LightMonitor } from '../mqtt';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
-const Separator = () => {
-    return(
-        <View style={styles.separator}/>
-    )
-}
+
 const chartConfig = {
     backgroundGradientFrom: '#353c57',
     backgroundGradientFromOpacity: 1,
@@ -43,7 +39,7 @@ const data = [
     {
         id: "2",
         title: "RC Servo",
-        source: require('./servo.jpg')
+        source: require('./rc.jpg')
     }
 ]
 const Item = ({source,title}) => (
@@ -82,22 +78,22 @@ export default function App({navigation}){
 
     }, [client.light])
 
-
-    db2.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let lightList = [];
-                    for(let i = 0; i < len; i++){
-                        lightList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
+    useEffect(()=>{
+        db2.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM light ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
+                    var len = results.rows.length;
+                    if(len > 0){
+                        let lightList = [];
+                        for(let i = 0; i < len; i++){
+                            lightList.push(results.rows.item(i).value);
+                            //console.log(results.rows.item(i).value);
+                        }
+                    setLight(lightList.reverse());
                     }
-                setLight(lightList.reverse());
-                }
-            });
-        });
-
+                });
+            });   
+    }, []);
     
 
     const data2 = {

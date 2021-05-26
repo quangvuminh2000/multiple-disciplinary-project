@@ -1,80 +1,95 @@
-import React, {useState} from 'react';
-import {Text,View,TextInput,TouchableOpacity,StyleSheet,Image, SafeAreaView,Dimensions} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, ActivityIndicator, View, Text, Alert, 
+         Dimensions, TextInput, Image,SafeAreaView,TouchableOpacity} from 'react-native';
+import auth from '@react-native-firebase/auth';
 import {Icon} from 'react-native-elements';
+import { ScrollView } from 'react-native-gesture-handler';
 
-
-const screenWidth = Dimensions.get("window").width
-const screenHeight = Dimensions.get("window").height
-
-export default function App({navigation}){
-    const [username, setUser] = useState();
-    const [password, setPass] = useState();
-
-    return(
-        <SafeAreaView style={{flex:1}}>
-            <View style = {styles.container}>
-                <Image  source = {require('./pap-logo.png')}
-                        style = {{width:100,height:100}}/>
-                <Text style = {styles.title}>Automated Care-Taking Gardening System</Text>
-                <View style = {styles.loginSec}>
-                    <Icon
-                        name = 'user-circle'
-                        type = 'font-awesome-5'
-                        color = 'black'         
-                        style = {styles.loginIcon}
-                    />
-                    <TextInput
-                        placeholder = {'Username'}
-                        placeholderTextColor = {'black'}
-                        //secureTextEntry = {true}
-                        onChangeText = {setUser}
-                        value = {username}
-                        style = {styles.userInput1}
-                        autoCapitalize = "none"
-                        underlineColorAndroid = "transparent"
-                    />
-                </View>
-                
-                <View style = {styles.loginSec}>
-                    <Icon
-                        name = 'lock'
-                        type = 'font-awesome-5'
-                        color = 'black'         
-                        style = {styles.loginIcon}
-                    />
-                    <TextInput
-                        placeholder = {'Password'}
-                        placeholderTextColor = {'black'}
-                        secureTextEntry = {true}
-                        onChangeText = {setPass}
-                        value = {password}
-                        style = {styles.userInput2}
-                    />
-                </View>
-                
-                
-                <TouchableOpacity style = {styles.loginBtn} onPress = {validation}>
-                    <Text style = {styles.text}> Login </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style = {styles.forgetBtn} onPress = {() => {navigation.navigate("Forget")}}>
-                    <Text style = {styles.text}> Forget password ?</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style = {styles.signUp} onPress = {() => {navigation.navigate("Sign Up")}}>
-                    <Text style = {styles.text}> Don't have an account ? Sign up here</Text>                    
-                </TouchableOpacity>
-
-            </View>
-        </SafeAreaView>   
-    );
-    function validation(){
-        if(username === 'thanh' && password === '123') {
-            navigation.navigate('My App')
-        } else {
-            alert('Invalid input')
+const screenWidth = Dimensions.get('window').width
+export default function Login({ navigation }) {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showLoading, setShowLoading] = useState(false);
+    const login = async() => {
+        setShowLoading(true);
+        try {
+            const doLogin = await auth().signInWithEmailAndPassword(email, password);
+            setShowLoading(false);
+            if(doLogin.user) {
+                navigation.navigate('My App');
+            }
+        } catch (e) {
+            setShowLoading(false);
+            Alert.alert(
+                e.message
+            );
         }
-    }
+    };
+    return (
+        <SafeAreaView style={{flex:1}}>
+        <View style={styles.container}>
+            <Image
+                source = {require('./pap-logo.png')}
+                style = {{width: 100,height:100}}
+            />
+            <Text style={styles.title}> Automated Care-Taking Gardening System </Text>
+            <View style={styles.subContainer}>
+                <Icon
+                    name = 'email'
+                    type = 'zocial'
+                    color = 'black'         
+                    style = {styles.loginIcon}
+                />
+                <TextInput
+                    style={styles.textInput}
+                    placeholder='Email'
+                    placeholderTextColor='black'
+                    value={email}
+                    autoCapitalize = 'none'
+                    onChangeText={setEmail}
+                />
+            </View>
+            
+            <View style={styles.subContainer}>
+                <Icon
+                    name = 'lock'
+                    type = 'font-awesome-5'
+                    color = 'black'         
+                    style = {styles.loginIcon}
+                />
+                <TextInput
+                    style={styles.textInput}
+                    placeholder='Password'
+                    placeholderTextColor='black'
+                    secureTextEntry={true}
+                    value={password}
+                    autoCapitalize = 'none'
+                    onChangeText={setPassword}
+                />
+            </View>
+
+            <View style = {{justifyContent:'center',alignItems:'center',marginTop:20}}> 
+                <TouchableOpacity style={styles.loginBtn} onPress={() => login()}>
+                    <Text style={{fontWeight:'bold'}}>Login</Text>
+                </TouchableOpacity>
+               
+                <TouchableOpacity style={styles.resetBtn} onPress={() => {navigation.navigate('Reset')}}>
+                    <Text style={{fontWeight:'bold',color:'#ffffff'}}>Forgot password ?</Text>
+                </TouchableOpacity>
+            
+                <TouchableOpacity style={styles.registerBtn} onPress={() => {navigation.navigate('Register')}}>
+                    <Text style={{fontWeight:'bold'}}>Register</Text>
+                </TouchableOpacity>
+            </View>
+                        
+            {showLoading &&
+                <View style={styles.activity}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            }
+    </View>
+    </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -82,44 +97,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor:  'black'
+        backgroundColor:'#20222f'
     },
-    title: {
-        color:`rgba(0,200,170,255)`,
-        textAlign: 'center',
-        fontSize: 30,
-        fontWeight: "bold"
-    },
-    text: {
-        color: '#ffffff',
-        marginTop: 10,
-        textAlign: 'center',
-        fontSize:14
-    },
-    text1: {
-        marginLeft: 5,
-        fontSize: 15
-    },
-    userInput1: {
-        backgroundColor: `rgba(0,200,170,255)`,
-        height: 40,
-        width: 295,
-        borderRadius: 25,
-        flex:1
-    },
-    userInput2: {
-        backgroundColor: `rgba(0,200,170,255)`,
-        height: 40,
-        width: 295,
-        borderRadius: 25,
-        flex:1
-    },
-    loginBtn: {
-        backgroundColor: 'green',
-        marginTop: 30,
-        height: 40,
-        width: 80,
-        borderRadius: 25
+    title:{
+        fontSize:28,
+        textAlign:'center',
+        fontWeight:'bold',
+        color:`rgba(0,200,170,255)`
     },
     loginIcon: {
         padding: 11,
@@ -127,28 +111,55 @@ const styles = StyleSheet.create({
         width: 46,
         resizeMode: 'stretch'
     },
-    loginSec:{
+    subContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: `rgba(0,200,170,255)`,
         height: 50,
         borderRadius: 5,
-        width: screenWidth/1.1,
+        width: screenWidth/1.2,
         margin: 10,
     },
-    forgetBtn:{
-        backgroundColor: 'indigo',
-        marginTop: 20,
-        height: 40,
-        width: 150,
-        borderRadius: 25
+    activity: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
-    signUp:{
+    textInput: {
+        fontSize: 18,
+        margin: 5,
+        width: screenWidth/1.5,
+        backgroundColor: `rgba(0,200,170,255)`,
+        borderRadius:25
+    },
+    loginBtn:{
+        height:40,
         backgroundColor:'orange',
-        height: 40,
-        width: 270,
-        marginTop: 20,
-        borderRadius: 25
+        borderRadius:25,
+        justifyContent:'center',
+        alignItems:'center',
+        width:screenWidth/2.5
+    },
+    resetBtn:{
+        height:40,
+        backgroundColor:'indigo',
+        borderRadius:25,
+        justifyContent:'center',
+        alignItems:'center',
+        width:screenWidth/2.5,
+        margin:20
+    },
+    registerBtn: {
+        height:40,
+        backgroundColor:'azure',
+        borderRadius:25,
+        justifyContent:'center',
+        alignItems:'center',
+        width:screenWidth/2.5
     }
-});
+})
