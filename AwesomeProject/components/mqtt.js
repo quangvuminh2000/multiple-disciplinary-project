@@ -14,12 +14,12 @@ let maxAtmosphere = 70;
 class MqttClient {
   #client;
   sensorTopics = [
-    //'NPNLab_BBC/feeds/bk-iot-temp-humid',
+    //'CSE_BBC/feeds/bk-iot-temp-humid',
     'Group12/feeds/air-moisture',
     'Group12/feeds/temperature',
-    //'NPNLab_BBC/feeds/bk-iot-soil',
+    //'CSE_BBC/feeds/bk-iot-soil',
     'Group12/feeds/soil-moisture',
-    //'NPNLab_BBC/feeds/bk-iot-light',
+    //'CSE_BBC1/feeds/bk-iot-light',
     'Group12/feeds/light',
     'Group12/feeds/test2',
   ];
@@ -165,7 +165,7 @@ class SoilMonitor {
 
     //? Publish data to relay
     //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
-    //this.client.publish('Group12/feeds/test2', data);
+    //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
   }
@@ -177,7 +177,7 @@ class SoilMonitor {
 
     //? Publish data to relay
     //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
-    //this.client.publish('Group12/feeds/test2', data);
+    //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '0', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
   }
@@ -227,7 +227,7 @@ class AirMonitor {
 
     // ? Publish data to the relay
     //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
-    //this.client.publish('NPNLab_BBC/feeds/bk-iot-relay', data);
+    //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
   }
@@ -239,7 +239,7 @@ class AirMonitor {
 
     // ? Publish data to the relay
     //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
-    //this.client.publish('NPNLab_BBC/feeds/bk-iot-relay', data);
+    //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '0', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
   }
@@ -270,7 +270,7 @@ class LightMonitor {
 
     //? Publish data into drv
     let data = {id: '10', name: 'DRV_PWM', data: '255', unit: ''};
-    //this.client.publish('NPNLab_BBC/feeds/bk-iot-drv', data);
+    //this.client.publish('CSE_BBC1/feeds/bk-iot-drv', data);
     this.client.publish('Group12/feeds/drv', data);
   }
 
@@ -281,7 +281,7 @@ class LightMonitor {
 
     //? Publish data into drv
     let data = {id: '10', name: 'DRV_PWM', data: '-255', unit: ''};
-    //this.client.publish('NPNLab_BBC/feeds/bk-iot-drv', data);
+    //this.client.publish('CSE_BBC1/feeds/bk-iot-drv', data);
     this.client.publish('Group12/feeds/drv', data);
   }
 }
