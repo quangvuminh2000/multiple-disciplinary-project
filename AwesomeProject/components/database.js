@@ -30,7 +30,7 @@ export default class Database {
 
   async setUser(username) {
     let [result] = await this.db.executeSql(
-      'SELECT plant_id, max_air_humidity, max_soil_humidity, min_soil_humidity, min_air_humidity, max_temperature, min_temperature FROM plant NATURAL JOIN user WHERE username = ? ORDER BY time DESC LIMIT 5',
+      'SELECT plant_id, max_air_humidity, max_soil_humidity, min_soil_humidity, min_air_humidity, max_temperature, min_temperature FROM plant NATURAL JOIN user WHERE username = ?',
       [username],
     );
     let rows = result.rows;
