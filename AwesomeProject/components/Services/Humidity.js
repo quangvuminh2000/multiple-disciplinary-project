@@ -91,8 +91,17 @@ export default function App({navigation}){
         // console.log("Soil Humid", client.soilHumid)
         setPercent2(client.airHumid);
         // console.log("Air Humid", client.airHumid)
-
-    }, [client.soilHumid, client.airHumid]);
+		client.messageCallbacks.push(data => {
+			if (data.id === 7) {
+				let airHumid = parseInt(data.data.split('-')[1]);
+				setPercent2(airHumid);
+			}
+			if (data.id === 9) {
+				let soilHumid = parseInt(data.data);
+				setPercent1(soilHumid);
+			}
+		});
+    }, []);
 
     // useEffect(() => {
     //     // const fetchSoilData = async db => {

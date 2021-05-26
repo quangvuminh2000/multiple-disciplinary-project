@@ -48,7 +48,7 @@ const Item = ({source,title}) => (
 
 
 export default function App({navigation}){
-    // const [temp,setTemp] = useState([0,0,0]);
+    const [temp,setTemp] = useState([0,0,0]);
     const [per3,setPercent3] = useState(0);
 
     const MqttObj = useContext(AppStateContext);
@@ -57,20 +57,25 @@ export default function App({navigation}){
     const airmonitor = MqttObj.airmonitor;
     const lightmonitor = MqttObj.lightmonitor;
 	const database = MqttObj.database;
-	const temp = database.temperature;
+
     useEffect(() => {
         // Update the document title using the browser API
         // console.log('ok');
         //let client = new MqttClient(callback);
         //setClient(new MqttClient(callback));
         setPercent3(client.temp);
-
-    }, [client.temp]);
+        client.messageCallbacks.push(data => {
+            if (data.id === 7) {
+                let temp = parseInt(data.data.split('-')[0]);
+                setPercent3(temp);
+            }
+        });
+        setInterval(() => {
+            if (client.connected) { MqttObj.airmonitor.checkCondition(); }
+        }, 1000);
+    }, []);
 
     useEffect(() => {
-        setInterval(() => {
-            if (client.client.connected) { airmonitor.checkCondition(); }
-        }, 1000);
         // setInterval(async () => {
         //     let db = await MqttObj.db;
         //     let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -82,9 +87,13 @@ export default function App({navigation}){
         //         console.log('Registration Failed');
         //     }
         // }, 300000);
-		setInterval(async () => await database.updateData('temperature', client.temp), 300000);
-		// database.fetchData('temperature', setTemp);
-	// setTemp(database.temperature);
+        setInterval(() => {
+            database
+                .updateData('temperature', temp)
+                .then(() => setTemp(database.temperature));
+        }, 300000);
+        // database.fetchData('temperature', setTemp);
+    // setTemp(database.temperature);
     }, []);
 
     // useEffect(() => {
