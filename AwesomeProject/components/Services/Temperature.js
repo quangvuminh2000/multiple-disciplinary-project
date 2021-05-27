@@ -68,7 +68,6 @@ export default function App({navigation}){
             if (data.id === 7) {
                 let temp = parseInt(data.data.split('-')[0]);
                 setPercent3(temp);
-                client.temp = temp;
                 database.updateData('temperature', temp);
             }
         });

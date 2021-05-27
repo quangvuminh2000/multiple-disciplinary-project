@@ -93,13 +93,11 @@ export default function App({navigation}){
             if (data.id === 7) {
                 let airHumid = parseInt(data.data.split('-')[1]);
                 setPercent2(airHumid);
-                client.airHumid = airHumid;
                 database.updateData('air', airHumid);
             }
             if (data.id === 9) {
                 let soilHumid = parseInt(data.data);
                 setPercent1(soilHumid);
-                client.soilHumid = soilHumid;
                 database.updateData('soil', soilHumid);
             }
         });

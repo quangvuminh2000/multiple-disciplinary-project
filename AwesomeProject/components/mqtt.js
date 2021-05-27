@@ -219,7 +219,6 @@ class SoilMonitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
-    console.log('Soil activated')
   }
 
   deactivate_pump() {
@@ -268,8 +267,6 @@ class AirMonitor {
   checkCondition() {
     let temp = this.client.temp;
     let humid = this.client.airHumid;
-    console.log('temp:', temp);
-    console.log('humid:', humid);
     if (humid <= this.minAtmosphere && temp >= this.maxTemp && !this.mistSpray){
       this.activate_spray();
       this.airPush();
@@ -288,7 +285,6 @@ class AirMonitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
-    console.log('Air activated');
   }
 
   deactivate_spray() {

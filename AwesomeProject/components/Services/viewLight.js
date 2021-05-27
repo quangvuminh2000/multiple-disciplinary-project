@@ -74,7 +74,6 @@ export default function App({navigation}){
             if (data.id === 13) {
                 const light = parseInt(data.data);
                 setPercent4(light);
-                client.light = light;
                 database.updateData('light', light);
                 console.log('Light', light);
             }
