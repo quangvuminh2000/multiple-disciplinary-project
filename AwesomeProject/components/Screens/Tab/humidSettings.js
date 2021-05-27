@@ -1,13 +1,21 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {View,Text,TouchableOpacity,Dimensions,StyleSheet} from 'react-native';
 import {TextInput} from 'react-native';
 import {Divider} from 'react-native-elements'
+import {AppStateContext} from '../../../App';
 const screenWidth = Dimensions.get('window').width
 export default function App(){
     const [maxSoil,setmaxSoil] = useState(70);
     const [minSoil,setminSoil] = useState(65);
     const [maxAtmosphere,setmaxAtmos] = useState(70);
     const [minAtmosphere,setminAtmos] = useState(65);
+
+    const MqttObj = useContext(AppStateContext);
+
+    const soilmonitor = MqttObj.soilmonitor;
+    const airmonitor = MqttObj.airmonitor;
+
+    console.log(soilmonitor.maxSoil)
     return(
         <View style={styles.container}>
             <View style={styles.inputContainer}>
@@ -132,7 +140,7 @@ export default function App(){
             </View>
 
             <View style = {styles.btnContainer}>
-            <TouchableOpacity style={styles.setBtn}>
+            <TouchableOpacity style={styles.setBtn}onPress={set}>
                 <Text style={{color:'azure',fontSize:18}}>Set</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.resetBtn} onPress={reset}>
@@ -143,10 +151,16 @@ export default function App(){
         </View>
     )
     function reset(){
-        setminSoil(65)
-        setmaxSoil(70)
-        setminAtmos(65)
-        setmaxAtmos(70)
+        setMinSoil(65);
+        setMaxSoil(70);
+        setMinAtmosphere(65);
+        setMaxAtmosphere(70);
+    }
+    function set(){
+        soilmonitor.minSoil = minSoil;
+        soilmonitor.maxSoil = maxSoil;
+        airmonitor.minAtmosphere = minAtmosphere;
+        airmonitor.maxAtmosphere = maxAtmosphere;
     }
 }
 

@@ -1,10 +1,17 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {View,Text,TextInput,TouchableOpacity,Dimensions,StyleSheet} from 'react-native';
-
+import {AppStateContext} from '../../../App';
 const screenWidth = Dimensions.get('window').width
 export default function App(){
     const [maxTemp,setmaxTemp] = useState(37);
     const [minTemp,setminTemp] = useState(32);
+
+    const MqttObj = useContext(AppStateContext);
+    const client = MqttObj.client;
+    const soilmonitor = MqttObj.soilmonitor;
+    const airmonitor = MqttObj.airmonitor;
+    const lightmonitor = MqttObj.lightmonitor;
+    console.log("LIGHT TEMP: ",MqttObj.lightmonitor.minTemp);
     return(
         <View style={styles.container}>
             <View style={styles.minContainer}>
@@ -31,7 +38,7 @@ export default function App(){
             </View>
 
             <View style = {styles.btnContainer}>
-            <TouchableOpacity style={styles.setBtn}>
+            <TouchableOpacity style={styles.setBtn}onPress={set}>
                 <Text style={{color:'azure',fontSize:18}}>Set</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.resetBtn} onPress={reset}>
@@ -42,8 +49,19 @@ export default function App(){
         </View>
     )
     function reset(){
-        setminTemp(32)
-        setmaxTemp(37)
+        setminTemp(32);
+        setmaxTemp(37);
+    }
+    function set(){
+
+        soilmonitor.minTemp = minTemp;
+        soilmonitor.maxTemp = maxTemp;
+
+        airmonitor.minTemp = minTemp;
+        airmonitor.maxTemp = maxTemp;
+
+        lightmonitor.minTemp = minTemp;
+        lightmonitor.maxTemp = maxTemp;
     }
 }
 

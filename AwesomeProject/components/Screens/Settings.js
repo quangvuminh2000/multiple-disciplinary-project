@@ -91,8 +91,8 @@ export default function App({navigation}){
         setMaxTemp(37);
         setMinSoil(65);
         setMaxSoil(70);
-        setMinAtmosphere(65);
-        setMaxAtmosphere(70);
+        setMinAtmos(65);
+        setMaxAtmos(70);
     }
     function set(){
         soilmonitor.minSoil = minSoil;
