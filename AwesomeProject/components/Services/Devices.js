@@ -87,8 +87,13 @@ export default function App({navigation}){
                 return require('./DRV.jpg');
         }
     }
-    const Online = () => {
-
+    const Online = (text) => {
+        switch(text){
+            case 0:
+                return 'red';
+            case 1:
+                return 'green'           
+        }
     }
     return (
         <View style = {styles.container}>
@@ -102,6 +107,13 @@ export default function App({navigation}){
                     style={styles.photo}
                   />
                   <Text style={styles.title}>{item.name}</Text>
+                  <View style={{width:10,
+                                height:10,
+                                borderRadius:5,
+                                backgroundColor:Online(item.online),
+                                position:'relative',
+                                marginLeft:15}}>
+                  </View>
                 </View>
               }
             />
@@ -188,5 +200,13 @@ const styles = StyleSheet.create({
         //position:'relative',
         marginRight:10,
         borderRadius:30
+    },
+    circle:{
+        width:10,
+        height:10,
+        borderRadius:5,
+        backgroundColor:'green',
+        position:'relative',
+        marginLeft:10
     }
 })
