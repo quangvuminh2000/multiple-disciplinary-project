@@ -141,6 +141,9 @@ export default function Home({ navigation }) {
         <Text style={styles.text3}>{text3}</Text>
       </TouchableOpacity>
     </View>
+    <TouchableOpacity style={{backgroundColor:'white'}} onPress={()=>{navigation.navigate('Insert')}}>
+      <Text>Go to insert</Text>
+    </TouchableOpacity>
     </View>
   );
 }

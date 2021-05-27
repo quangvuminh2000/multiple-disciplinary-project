@@ -43,14 +43,14 @@ const Item = ({source,title}) => (
     <View style={styles.item}>
     <Image
         source={source}
-        style={{height:30,width:30}}/>
+        style={{height:30,width:30,borderRadius:15}}/>
     <Text style={styles.title}>{title}</Text>
     </View>
 );
 
 var SQLite = require('react-native-sqlite-storage');
 //var db = SQLite.openDatabase({name:'test1.db',createFromLocation:'~test1.db'})
-var db1 = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
+var db1 = SQLite.openDatabase({name:'test4.db',createFromLocation:1})
 
 export default function App({navigation}){
     const [temp,setTemp] = useState([0,0,0]);
@@ -195,12 +195,20 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         marginHorizontal: 16,
         flexDirection:'row',
-        borderRadius:10
+        borderRadius:10,
+        shadowColor:'#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.39,
+        shadowRadius: 8.30, 
+        elevation: 14,
     },
     title:{
         fontSize: 20,
         marginLeft:10,
-        color:`rgba(0,200,170,255)`
+        color:'cyan'
     },
     separator:{
         borderBottomColor: 'azure',
@@ -209,6 +217,15 @@ const styles = StyleSheet.create({
         marginBottom: 15
     },
     lineBackGround:{
-        borderRadius: 25
+        //backgroundColor:'blue',
+        borderRadius: 25,
+        shadowColor:'#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.39,
+        shadowRadius: 8.30, 
+        elevation: 14,
     }
 })

@@ -59,7 +59,7 @@ const Item = ({source,title}) => (
     <View style={styles.item}>
     <Image 
         source={source}
-        style={{height:30,width:30}}/>
+        style={{height:30,width:30,borderRadius:15}}/>
     <Text style={styles.title}>{title}</Text>
     </View>
 );
@@ -69,7 +69,7 @@ const screenHeight = Dimensions.get("window").height;
 
 
 var SQLite = require('react-native-sqlite-storage');
-var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
+var db = SQLite.openDatabase({name:'test4.db',createFromLocation:1})
 
 
 export default function App({navigation}){
@@ -110,6 +110,7 @@ export default function App({navigation}){
                             //console.log(results.rows.item(i).value);
                         }
                     setVal1(soilList.reverse());
+                    console.log(val1);
                     }
                 });
             });
@@ -278,7 +279,15 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         marginHorizontal: 16,
         flexDirection:'row',
-        borderRadius:10
+        borderRadius:10,
+        shadowColor:'#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.39,
+        shadowRadius: 8.30, 
+        elevation: 14,
     },
     title:{
         fontSize: 20,

@@ -24,6 +24,7 @@ import viewLight from './components/Services/viewLight';
 import tempSettings from './components/Screens/Tab/tempSettings';
 import humidSettings from './components/Screens/Tab/humidSettings';
 import Settings from './components/Screens/Settings';
+import Insert from './components/insert';
 
 import {
   MqttClient,
@@ -204,6 +205,7 @@ function MyStack() {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="Reset" component={Reset} />
+      <Stack.Screen name="Insert" component={Insert}/>
       <Stack.Screen
         name="My App"
         component={MyDrawer}
