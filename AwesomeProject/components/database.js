@@ -8,6 +8,8 @@ function range(end) {
 export default class Database {
   #fetchIntervalID;
   dataTable = ['light', 'temperature', 'air', 'soil'];
+  fetchCallbacks = [];
+
   constructor(args) {
     SQLite.DEBUG(true);
     SQLite.enablePromise(true);
@@ -37,14 +39,30 @@ export default class Database {
     this.plants = range(rows.length).map(i => rows.item(i));
   }
 
-  async fetchData3() {
+  fetchData3 = async () => {
     for (const table of this.dataTable) {
       let [result] = await this.db.executeSql(
         'SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5',
       );
       console.log('result query', result);
       let rows = result.rows;
-      this[table] = range(rows.length).map(i => rows.item(i).value);
+      this[table] = range(rows.length).reverse().map(i => rows.item(i).value);
+    }
+	for (const callback of this.fetchCallbacks) {
+		callback.bind(this)();
+	}
+  }
+
+  async fetchData2() {
+    let results = await this.db.transaction(tx => {
+      for (const table of this.dataTable) {
+        tx.executeSql('SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5');
+      }
+    });
+    console.log('result query', results);
+    for (const i of this.dataTable.keys()) {
+      let rows = results[i].rows;
+      this[this.dataTable[i]] = range(rows.length).map(i => rows.item(i).value);
     }
   }
 

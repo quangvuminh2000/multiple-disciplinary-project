@@ -170,7 +170,7 @@ function MyStack() {
   );
 }
 
-const database = new Database('test2.db');
+const database = new Database({name: 'test4.db', createFromLocation: '~test4.db'});
 
 export default function App() {
   useEffect(() => {

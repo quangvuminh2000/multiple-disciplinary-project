@@ -71,36 +71,23 @@ export default function App({navigation}){
 	const database = MqttObj.database;
 
     useEffect(() => {
-
         setInterval(() => {
             if (client.connected) { lightmonitor.checkCondition(); }
         }, 1000);
 
+        setLight(database.light);
         client.messageCallbacks.push(data => {
             if (data.id === 13) {
                 const light = parseInt(data.data);
                 setPercent4(light);
+                database.updateData('light', light);
                 console.log('Light', light);
             }
         });
-
+        database.fetchCallbacks.push(function() {
+            setLight(this.light);
+        });
     }, []);
-
-
-    // useEffect(() => {
-    //     // const fetchLightData = async db => {
-    //     //     let [result] = await db.executeSql('SELECT * FROM light ORDER BY time DESC LIMIT 5');
-    //     //     var rows = result.rows;
-    //     //     if (rows.length > 0) {
-    //     //         let lightList = [...Array(rows.length).keys()].map(i => rows.item(i).value);
-    //     //         setLight(lightList.reverse());
-    //     //     }
-    //     // };
-    //     // MqttObj.db.then(fetchLightData);
-		// database.fetchData('light', setLight);
-    // }, []);
-
-
 
     const data2 = {
         labels: ["20'","15'","10'","5'","Now"],

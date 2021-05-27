@@ -59,41 +59,22 @@ export default function App({navigation}){
 	const database = MqttObj.database;
 
     useEffect(() => {
-        // Update the document title using the browser API
-        // console.log('ok');
-        //let client = new MqttClient(callback);
-        //setClient(new MqttClient(callback));
+        setInterval(() => {
+            if (client.connected) { airmonitor.checkCondition(); }
+        }, 1000);
+
         setPercent3(client.temp);
+        setTemp(database.temperature);
         client.messageCallbacks.push(data => {
             if (data.id === 7) {
                 let temp = parseInt(data.data.split('-')[0]);
                 setPercent3(temp);
+                database.updateData('temperature', temp);
             }
         });
-        setInterval(() => {
-            if (client.connected) { MqttObj.airmonitor.checkCondition(); }
-        }, 1000);
-    }, []);
-
-    useEffect(() => {
-        // setInterval(async () => {
-        //     let db = await MqttObj.db;
-        //     let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        //     let [result] = await db.executeSql('INSERT INTO temperature(time, value) VALUES (?,?)', [date, client.temp]);
-        //     console.log('Results', result.rowsAffected);
-        //     if (result.rowsAffected > 0) {
-        //         console.log('Success');
-        //     } else {
-        //         console.log('Registration Failed');
-        //     }
-        // }, 300000);
-        setInterval(() => {
-            database
-                .updateData('temperature', temp)
-                .then(() => setTemp(database.temperature));
-        }, 300000);
-        // database.fetchData('temperature', setTemp);
-    // setTemp(database.temperature);
+        database.fetchCallbacks.push(function() {
+            setTemp(this.temperature);
+        });
     }, []);
 
     // useEffect(() => {
