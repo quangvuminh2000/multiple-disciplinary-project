@@ -39,20 +39,20 @@ class MqttClient {
       console.log('MQTT Message:', topic, message.toString());
       const data = JSON.parse(message);
       data.id = parseInt(data.id);
-      // switch (parseInt(data.id)) {
-      //     case 7:
-      //         let temp, humid;
-      //         [temp, humid] = data.data.split('-');
-      //         this.temp = parseInt(temp);
-      //         this.airHumid = parseInt(humid);
-      //         break;
-      //     case 9:
-      //         this.soilHumid = parseInt(data.data);
-      //         break;
-      //     case 13:
-      //         this.light = parseInt(data.data);
-      //         break;
-      // }
+      switch (parseInt(data.id)) {
+          case 7:
+              let temp, humid;
+              [temp, humid] = data.data.split('-');
+              this.temp = parseInt(temp);
+              this.airHumid = parseInt(humid);
+              break;
+          case 9:
+              this.soilHumid = parseInt(data.data);
+              break;
+          case 13:
+              this.light = parseInt(data.data);
+              break;
+      }
       for (const callback of this.messageCallbacks) {
         callback.bind(this)(data);
       }
