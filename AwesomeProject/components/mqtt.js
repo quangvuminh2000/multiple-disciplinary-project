@@ -94,20 +94,24 @@ class MqttClient {
       connectCallback.bind(this)();
     });
 
-    this.#client.connect(
-      {
-        clientId: this.#client.id,
-        enableSsl: false,
-        username: 'Group12',
-        password: 'aio_atNP67yCNWakTjSOUHXJ2WpLiIdG',
-        autoReconnect: true,
-      },
-      (err) => { if(err){ console.error("Error",err); }},
-    );
+    if (!this.connected) {
+        this.#client.connect(
+          {
+            clientId: this.#client.id,
+            enableSsl: false,
+            username: 'Group12',
+            password: 'aio_atNP67yCNWakTjSOUHXJ2WpLiIdG',
+            autoReconnect: true,
+          },
+          (err) => { if(err){ console.error("Error",err); }},
+        );
+    }
   }
 
   stop() {
-    this.#client.close();
+    if (!this.#client.closed) {
+        this.#client.close();
+    }
   }
 }
 
