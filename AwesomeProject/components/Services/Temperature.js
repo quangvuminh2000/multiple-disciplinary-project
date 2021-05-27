@@ -33,7 +33,7 @@ const data = [
     {
         id: "2",
         title: "Water Pumper",
-        source: require('./pumper.png')
+        source: require('./pump.jpg')
     }
 ]
 

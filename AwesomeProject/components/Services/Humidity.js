@@ -43,13 +43,13 @@ const data = [
     {
         id: "2",
         title: "Soil Moisture Sensor",
-        source: require('./soilsensor.png')
+        source: require('./soilsensor.jpg')
     },
     
     {
         id: "3",
         title: "Water Pumper",
-        source: require('./pumper.png')
+        source: require('./pump.jpg')
     }
 ]
 
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     title:{
         fontSize: 20,
         marginLeft:10,
-        color:`rgba(0,200,170,255)`
+        color:'cyan'
     },
     separator:{
         marginVertical: 8,

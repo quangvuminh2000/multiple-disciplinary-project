@@ -19,7 +19,7 @@ export default class Database {
   async init() {
     this.db = await SQLite.openDatabase(this.args);
     await this.fetchData3();
-    this.#fetchIntervalID = setInterval(this.fetchData3, 300000);
+    this.#fetchIntervalID = setInterval(this.fetchData3,2000); //300000);
   }
 
   async cleanup() {

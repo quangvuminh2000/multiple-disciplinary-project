@@ -15,11 +15,7 @@ import { LightMonitor } from '../mqtt';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
-const Separator = () => {
-    return(
-        <View style={styles.separator}/>
-    )
-}
+
 const chartConfig = {
     backgroundGradientFrom: '#353c57',
     backgroundGradientFromOpacity: 1,
@@ -43,7 +39,7 @@ const data = [
     {
         id: "2",
         title: "RC Servo",
-        source: require('./servo.jpg')
+        source: require('./rc.jpg')
     }
 ]
 const Item = ({source,title}) => (

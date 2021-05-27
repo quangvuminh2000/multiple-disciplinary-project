@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, Button, Image, BackHandler} from 'react-native';
+import Icon from 'react-native-elements';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
@@ -9,7 +10,8 @@ import {
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
-
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs'
 import Login from './components/Screens/Login';
 import Home from './components/Screens/Home';
 import Reset from './components/Screens/Reset';
@@ -18,6 +20,8 @@ import Devices from './components/Services/Devices';
 import Humidity from './components/Services/Humidity';
 import Temperature from './components/Services/Temperature';
 import viewLight from './components/Services/viewLight';
+import tempSettings from './components/Screens/Tab/tempSettings';
+import humidSettings from './components/Screens/Tab/humidSettings';
 import Settings from './components/Screens/Settings';
 import Database from './components/database';
 
@@ -31,7 +35,45 @@ import {
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
+const Tab = createMaterialTopTabNavigator();
+function MyTab(){
+  return(
+    <Tab.Navigator 
+    tabBarOptions={{
+      bounces: true,
+      activeTintColor:'azure',
+      pressColor:'azure',
+      showIcon:true,
+      style:{backgroundColor:'#353c57'},
+    }}
+    >
+      <Tab.Screen 
+        name = 'Temperature' 
+        component={tempSettings}
+        options = {{
+          tabBarIcon: ({tintColor}) => (
+            <Image
+              source={require('./thermo1.png')}
+              style={[styles.icon, {tintColor: tintColor}]}
+            />
+          )
+        }}
+      />
+      <Tab.Screen 
+        name = 'Humidity' 
+        component={humidSettings}
+        options = {{
+          tabBarIcon: ({tintColor}) => (
+            <Image
+              source={require('./humid3.png')}
+              style={[styles.icon, {tintColor: tintColor}]}
+            />
+          )
+        }}
+      />
+    </Tab.Navigator>
+  )
+}
 function MyDrawer() {
   return (
     <Drawer.Navigator
@@ -119,10 +161,10 @@ function MyDrawer() {
         }}
       />
       <Drawer.Screen
-        name="Devices manager"
+        name="Devices Manager"
         component={Devices}
         options={{
-          drawerLabel: 'Devices manager',
+          drawerLabel: 'Devices Manager',
           headerShown: true,
           headerStyle: {backgroundColor: 'rgba(0,200,170,255)'},
           drawerIcon: ({tintColor}) => (
@@ -135,7 +177,7 @@ function MyDrawer() {
       />
       <Drawer.Screen
         name="Settings"
-        component={Settings}
+        component={MyTab}
         options={{
           drawerLabel: 'Settings',
           headerShown: true,
