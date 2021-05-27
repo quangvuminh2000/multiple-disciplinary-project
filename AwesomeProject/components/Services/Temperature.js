@@ -53,9 +53,8 @@ export default function App({navigation}){
 
     const MqttObj = useContext(AppStateContext);
     const client = MqttObj.client;
-    const soilmonitor = MqttObj.soilmonitor;
+
     const airmonitor = MqttObj.airmonitor;
-    const lightmonitor = MqttObj.lightmonitor;
 	const database = MqttObj.database;
 
     useEffect(() => {
@@ -69,6 +68,7 @@ export default function App({navigation}){
             if (data.id === 7) {
                 let temp = parseInt(data.data.split('-')[0]);
                 setPercent3(temp);
+                client.temp = temp;
                 database.updateData('temperature', temp);
             }
         });

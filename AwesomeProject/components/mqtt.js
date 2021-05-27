@@ -1,6 +1,8 @@
 import * as Mqtt from 'react-native-native-mqtt';
 import VIForegroundService from '@voximplant/react-native-foreground-service';
 import BackgroundTimer from 'react-native-background-timer';
+import PushNotificationIOS from "@react-native-community/push-notification-ios";
+import PushNotification from "react-native-push-notification";
 import {Buffer} from 'buffer';
 import { useState } from 'react';
 
@@ -54,7 +56,37 @@ class MqttClient {
       for (const callback of this.messageCallbacks) {
         callback.bind(this)(data);
       }
-      // Update notification
+
+
+      PushNotification.createChannel({
+      channelId: "12", // (required)
+      channelName: "Group12", // (required)
+
+    },
+    (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+  );
+      //Notification setting
+      PushNotification.configure({
+      onRegister: function (token) {
+        console.log("TOKEN:", token);
+      },
+
+      onNotification: function (notification) {
+        console.log("NOTIFICATION:", notification);
+
+        notification.finish(PushNotificationIOS.FetchResult.NoData);
+      },
+
+
+
+      permissions: {
+        alert: true,
+        badge: true,
+        sound: true,
+      },
+      popInitialNotification: true,
+      requestPermissions: true,
+    });
     });
 
     this.#client.on(Mqtt.Event.Error, error => {
@@ -76,13 +108,7 @@ class MqttClient {
     this.#client.publish(topic, data, 1);
   }
 
-  checkCondition() {
-    if (this.light > 80 && this.airTemp > 35) {
-      // Notify user
-      // Activate shading net
-      // Log data
-    }
-  }
+
 
   start(connectCallback) {
     this.#client.on(Mqtt.Event.Connect, () => {
@@ -151,14 +177,35 @@ class SoilMonitor {
     this.maxSoil = 70;
     this.minTemp = 32;
     this.maxTemp = 37;
-  }
+  };
+
+  soilPush = ()=>{
+    PushNotification.localNotification({
+    /* Android Only Properties */
+    channelId: "12",
+    showWhen: true, // (optional) default: true
+    autoCancel: true, // (optional) default: true
+    subText: "This is a subText", // (optional) default: none
+    vibrate: true, // (optional) default: true
+    vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+    //ignoreInForeground: true, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
+    timeoutAfter: 3000, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
+    invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
+
+    title: "Soil Manager", // (optional)
+    message: "Your soil irrigation is on", // (required)
+
+  });}
 
   checkCondition() {
 	  // console.log('Check condition');
     let temp = this.client.temp;
     let humid = this.client.soilHumid;
 
-    if (humid <= this.minSoil && temp >= this.maxTemp && !this.soilIrrigation) this.activate_pump();
+    if (humid <= this.minSoil && temp >= this.maxTemp && !this.soilIrrigation){
+       this.activate_pump();
+       this.soilPush();
+      }
     if (humid >= this.maxSoil && temp <= this.minTemp && this.soilIrrigation) this.deactivate_pump();
   }
 
@@ -172,6 +219,7 @@ class SoilMonitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
+    console.log('Soil activated')
   }
 
   deactivate_pump() {
@@ -199,29 +247,35 @@ class AirMonitor {
     this.maxTemp = 37;
   }
 
+  airPush = ()=>{
+    PushNotification.localNotification({
+    /* Android Only Properties */
+    channelId: "12",
+    showWhen: true, // (optional) default: true
+    autoCancel: true, // (optional) default: true
+    subText: "This is a subText", // (optional) default: none
+    vibrate: true, // (optional) default: true
+    vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+    //ignoreInForeground: true, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
+    timeoutAfter: 3000, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
+    invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
+
+    title: "Atmosphere manager", // (optional)
+    message: "Your sprinkler is on", // (required)
+
+  });}
+
   checkCondition() {
     let temp = this.client.temp;
     let humid = this.client.airHumid;
-
-    if (humid <= this.minAtmosphere && temp >= this.maxTemp && !this.mistSpray) this.activate_spray();
+    console.log('temp:', temp);
+    console.log('humid:', humid);
+    if (humid <= this.minAtmosphere && temp >= this.maxTemp && !this.mistSpray){
+      this.activate_spray();
+      this.airPush();
+      }
     if (humid >= this.maxAtmosphere && temp <= this.minTemp && this.mistSpray) this.deactivate_spray();
-    /*isCritical && !this.mistSpray
-    isCitical         mistSpray             result
-    true              true                  false
-    true              false                 true
-    false             true                  false
-    false             false                 false
 
-    !isCitical && this.mistSpray
-    isCitical         mistSpray             result
-    true              true                  false
-    true              false                 false
-    false             true                  true
-    false             false                 false
-
-    ==> The mist spray dvc will be manually on/off by the user when
-          (isCitical, mistSpray) = (true, true), (false, false) // Pretty accurate
-    */
   }
 
   activate_spray() {
@@ -234,6 +288,7 @@ class AirMonitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
     this.client.publish('Group12/feeds/relay', data);
+    console.log('Air activated');
   }
 
   deactivate_spray() {
@@ -259,11 +314,33 @@ class LightMonitor {
     this.maxTemp = 37;
   }
 
+
+  lightPush = ()=>{
+    PushNotification.localNotification({
+    /* Android Only Properties */
+    channelId: "12",
+    showWhen: true, // (optional) default: true
+    autoCancel: true, // (optional) default: true
+    subText: "This is a subText", // (optional) default: none
+    vibrate: true, // (optional) default: true
+    vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+    //ignoreInForeground: true, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
+    timeoutAfter: 3000, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
+    invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
+
+    title: "It's too bright!", // (optional)
+    message: "Initiate Shader", // (required)
+
+  });}
+
   checkCondition() {
     let light = this.client.light;
     let temp = this.client.temp;
 
-    if (light > 70 && temp >= this.minTemp && this.net == false) this.activate_net();
+    if (light > 70 && temp >= this.minTemp && this.net == false){
+      this.activate_net();
+      this.lightPush();
+    }
     if (light < 50 && this.net == true) this.deactivate_net();
   }
 

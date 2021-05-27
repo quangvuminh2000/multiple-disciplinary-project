@@ -61,8 +61,6 @@ export default function App({navigation}){
 
     const MqttObj = useContext(AppStateContext);
     const client = MqttObj.client;
-    const soilmonitor = MqttObj.soilmonitor;
-    const airmonitor = MqttObj.airmonitor;
     const lightmonitor = MqttObj.lightmonitor;
 	const database = MqttObj.database;
 
@@ -76,6 +74,7 @@ export default function App({navigation}){
             if (data.id === 13) {
                 const light = parseInt(data.data);
                 setPercent4(light);
+                client.light = light;
                 database.updateData('light', light);
                 console.log('Light', light);
             }

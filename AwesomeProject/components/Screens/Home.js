@@ -4,7 +4,6 @@ import { Button, Icon } from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
 
 import {AppStateContext} from '../../App';
-import {AirMonitor,  MqttClient, SoilMonitor, LightMonitor,} from '../mqtt';
 export default function Home({ navigation }) {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
