@@ -185,16 +185,31 @@ class LightMonitor extends Monitor {
     });
   };
 
-  checkCondition() {
+
+
+  checkCondition = () => {
     let light = this.client.light;
     let temp = this.client.temp;
-
-    if (light >= 70 && temp >= this.minTemp && this.net == false) {
+    if (
+      this.data.light >= 70 &&
+      this.data.temp >= this.data.maxTemp &&
+      !this.net
+    ) {
       this.activate_net();
       this.lightPush();
     }
-    if (light < 50 && this.net == true) this.deactivate_net();
-  }
+    if (
+      this.data.light < 50 &&
+      this.data.temp <= this.data.minTemp &&
+      this.net
+    ) {
+      this.deactivate_net();
+    }
+
+    if (this.running) {
+      setTimeout(this.checkCondition, this.interval);
+    }
+  };
 
   activate_net() {
     //? re-setting conditions
