@@ -122,4 +122,29 @@ export default class Database {
   // updatePlant = async (param, value) => {
   //   let [result] = await this.db.executeSql(
   //     'UPDATE (
+  async updateStatus(sensorname, value) {
+    let [result] = await this.db.executeSql(
+      'UPDATE sensor SET online = ? WHERE name = ' + sensorname,
+      [value],
+    );
+    console.log('Results', result.rowsAffected);
+    if (result.rowsAffected > 0) {
+      console.log('Update Success');
+    } else {
+      console.log('Update Failed');
+    }
+  }
+  async fetchSensor() {
+    let [result] = await this.db.executeSql(
+      'SELECT name, online FROM sensor',
+    );
+    var rows = result.rows;
+
+    if (rows.length > 0) {
+      let dataList = range(rows.length).map(i => [(rows.item(i).name), (rows.item(i).online)]);
+      console.log("DATAFUCK: ", dataList);
+      return dataList;
+    }
+
+  }
 }

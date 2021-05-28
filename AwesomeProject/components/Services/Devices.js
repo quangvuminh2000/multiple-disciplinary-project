@@ -1,12 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {View,Text,TouchableOpacity,StyleSheet,FlatList,Image,SafeAreaView,Dimensions} from 'react-native';
-import {Icon} from 'react-native-elements';
+import React, { useEffect, useState, useContext } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, SafeAreaView, Dimensions } from 'react-native';
+import { Icon } from 'react-native-elements';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { set } from 'react-native-reanimated';
 const screenWidth = Dimensions.get("window").width
 const screenHeight = Dimensions.get("window").height
+import { AppStateContext } from '../../App';
 
-var SQLite = require('react-native-sqlite-storage');
-var db = SQLite.openDatabase({name:'test4.db',createFromLocation:'~test4.db'})
+//var SQLite = require('react-native-sqlite-storage');
+//var db = SQLite.openDatabase({name:'test4.db',createFromLocation:'~test4.db'})
 
 /*const data = [
     {
@@ -44,13 +46,19 @@ var db = SQLite.openDatabase({name:'test4.db',createFromLocation:'~test4.db'})
 ]
 */
 
-export default function App({navigation}){
-    
-    const [list,setList] = useState([]);
-    useEffect(()=>{
+export default function App({ navigation }) {
+
+    const [list, setList] = useState([]);
+
+    const MqttObj = useContext(AppStateContext);
+    const client = MqttObj.client;
+    const soilmonitor = MqttObj.soilmonitor;
+    const database = MqttObj.database;
+
+    /*useEffect(()=>{
       db.transaction((tx) => {
           tx.executeSql(
-              'SELECT * FROM sensor', [], (_tx, results) => {
+              'SELECT online FROM sensor', [], (_tx, results) => {
                   var len = results.rows.length;
                   if(len > 0){
                       let deviceList = [];
@@ -64,10 +72,34 @@ export default function App({navigation}){
               });
           });
     }, []);
-    console.log(list)
+    */
+
+
+
+
+    const [sensorName, setsensorName] = useState([]);
+    const [online, setOnline] = useState([]);
+    useEffect(() => {
+        var db = database.fetchSensor().then((data) => { setsensorName(data) })
+        console.log("HERE", sensorName)
+        /*
+        var len = setsensorName.length
+        if (len > 0) {
+            let temp1 = [];
+            //let temp2 = [];
+            for (let i = 0; i < len; i++) {
+                temp1.push(data[i]);
+                //temp2.push();
+            }
+        }
+        console.log(temp1)
+        */
+    }, []);
+
+    //console.log(list)
     //const [devname, setDev] = useState();
     const Images = (text) => {
-        switch(text){
+        switch (text) {
             case "DHT11":
                 return require('./DHT11.jpg');
             case "Soil Moisture":
@@ -84,23 +116,37 @@ export default function App({navigation}){
                 return require('./DRV.jpg');
         }
     }
-    const Online = () => {
-
+    const Online = (text) => {
+        switch (text) {
+            case 0:
+                return 'red';
+            case 1:
+                return 'green';
+        }
     }
     return (
-        <View style = {styles.container}>
+        <View style={styles.container}>
             <FlatList
                 data={list}
-                keyExtractor={(item,index) => index.toString()}
-                renderItem={({item}) =>
-                <View style={styles.item}>  
-                  <Image
-                    source={Images(item.name)}
-                    style={styles.photo}
-                  />
-                  <Text style={styles.title}>{item.name}</Text>
-                </View>
-              }
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) =>
+                    <View style={styles.item}>
+                        <Image
+                            source={Images(item.name)}
+                            style={styles.photo}
+                        />
+                        <Text style={styles.title}>{item.name}</Text>
+                        <View style={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: 5,
+                            backgroundColor: Online(item.online),
+                            marginLeft: 15
+                        }}
+
+                        />
+                    </View>
+                }
             />
         </View>
     )
@@ -111,7 +157,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor:'#20222f'
+        backgroundColor: '#20222f'
     },
     button: {
         backgroundColor: 'indigo',
@@ -121,39 +167,39 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 10
     },
-    item:{
-        flex:1,
-        backgroundColor:'#353c57',
-        alignItems:'center',
+    item: {
+        flex: 1,
+        backgroundColor: '#353c57',
+        alignItems: 'center',
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
         marginTop: 20,
-        flexDirection:'row',
-        width: screenWidth/1.15,
-        height:100,
-        borderRadius:20,
-        
-        shadowColor:'#000',
+        flexDirection: 'row',
+        width: screenWidth / 1.15,
+        height: 100,
+        borderRadius: 20,
+
+        shadowColor: '#000',
         shadowOffset: {
             width: 0,
             height: 6,
         },
         shadowOpacity: 0.39,
-        shadowRadius: 8.30, 
+        shadowRadius: 8.30,
         elevation: 14,
     },
-    title:{
+    title: {
         fontSize: 20,
-        marginLeft:10,
-        color:'cyan'
+        marginLeft: 10,
+        color: 'cyan'
     },
     userInput: {
         backgroundColor: 'grey',
         height: 40,
-        width: screenWidth/1.25,
+        width: screenWidth / 1.25,
         borderRadius: 25,
-        height: screenHeight/14
+        height: screenHeight / 14
     },
     loginIcon: {
         padding: 11,
@@ -161,29 +207,29 @@ const styles = StyleSheet.create({
         width: 46,
         resizeMode: 'stretch'
     },
-    loginSec:{
+    loginSec: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'grey',
         height: 50,
         borderRadius: 5,
-        width: screenWidth/1.1,
-        height: screenHeight/11.8,
+        width: screenWidth / 1.1,
+        height: screenHeight / 11.8,
         margin: 10,
     },
-    image:{
-        borderWidth:1,
-        borderColor:'cyan',
-        width:40,
-        height:40,
-        backgroundColor:'white'
+    image: {
+        borderWidth: 1,
+        borderColor: 'cyan',
+        width: 40,
+        height: 40,
+        backgroundColor: 'white'
     },
-    photo:{
-        width:60,
-        height:60,
+    photo: {
+        width: 60,
+        height: 60,
         //position:'relative',
-        marginRight:10,
-        borderRadius:30
+        marginRight: 10,
+        borderRadius: 30
     }
 })
