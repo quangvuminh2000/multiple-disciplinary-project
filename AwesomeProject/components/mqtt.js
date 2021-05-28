@@ -19,13 +19,12 @@ class MqttClient {
   #client;
   sensorTopics = [
     //'CSE_BBC/feeds/bk-iot-temp-humid',
-    'Group12/feeds/air-moisture',
-    'Group12/feeds/temperature',
     //'CSE_BBC/feeds/bk-iot-soil',
-    'Group12/feeds/soil-moisture',
     //'CSE_BBC1/feeds/bk-iot-light',
-    'Group12/feeds/light',
-    'Group12/feeds/test2',
+    'Group12/feeds/bk-iot-temp-humid',
+    'Group12/feeds/bk-iot-soil',
+    'Group121/feeds/bk-iot-light',
+
   ];
   messageCallbacks = [];
 
@@ -154,20 +153,20 @@ const testClient = new MqttClient(
     password: 'aio_atNP67yCNWakTjSOUHXJ2WpLiIdG',
   },
   [
-    'Group12/feeds/air-moisture',
-    'Group12/feeds/temperature',
-    'Group12/feeds/soil-moisture',
-    'Group12/feeds/light',
-    'Group12/feeds/test2',
+    'Group12/feeds/bk-iot-temp-humid',
+    'Group12/feeds/bk-iot-soil',
   ],
 );
 
 const testClient1 = new MqttClient(
   {
-    username: 'group121',
+    username: 'Group121',
     password: 'aio_LkQT69vjPHPMV7o5zNfUOzR5YSza',
   },
-  ['group121/feeds/test'],
+  [ 'Group121/feeds/bk-iot-light',
+    'Group121/feeds/bk-iot-relay',
+    'Group121/feeds/bk-iot-drv'
+  ],
 );
 
 const mqttClient = new MqttClient(
@@ -183,7 +182,10 @@ const mqttClient1 = new MqttClient(
     username: 'CSE_BBC1',
     password: 'aio_yqUQ00Ryi2liePf8ElzL3yq3dNij',
   },
-  ['CSE_BBC1/feeds/bk-iot-light'],
+  ['CSE_BBC1/feeds/bk-iot-light',
+    'CSE_BBC1/feeds/bk-iot-relay',
+    'CSE_BBC1/feeds/bk-iot-drv'
+  ],
 );
 
 async function startForegroundService() {
@@ -263,7 +265,7 @@ class SoilMonitor {
     //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
-    this.client.publish('Group12/feeds/relay', data);
+    this.client.publish('Group121/feeds/bk-iot-relay', data);
   }
 
   deactivate_pump() {
@@ -275,7 +277,7 @@ class SoilMonitor {
     //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '0', unit: ''};
-    this.client.publish('Group12/feeds/relay', data);
+    this.client.publish('Group121/feeds/bk-iot-relay', data);
   }
 }
 
@@ -329,7 +331,7 @@ class AirMonitor {
     //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
-    this.client.publish('Group12/feeds/relay', data);
+    this.client.publish('Group121/feeds/bk-iot-relay', data);
   }
 
   deactivate_spray() {
@@ -341,7 +343,7 @@ class AirMonitor {
     //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '0', unit: ''};
-    this.client.publish('Group12/feeds/relay', data);
+    this.client.publish('Group121/feeds/bk-iot-relay', data);
   }
 }
 
@@ -393,7 +395,7 @@ class LightMonitor {
     //? Publish data into drv
     let data = {id: '10', name: 'DRV_PWM', data: '255', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-drv', data);
-    this.client.publish('Group12/feeds/drv', data);
+    this.client.publish('Group121/feeds/bk-iot-drv', data);
   }
 
   deactivate_net() {
@@ -404,7 +406,7 @@ class LightMonitor {
     //? Publish data into drv
     let data = {id: '10', name: 'DRV_PWM', data: '-255', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-drv', data);
-    this.client.publish('Group12/feeds/drv', data);
+    this.client.publish('Group121/feeds/bk-iot-drv', data);
   }
 }
 
