@@ -44,9 +44,9 @@ export default class Database {
     );
     let rows = results[0].rows;
     if (rows.length === 0) {
-      throw ('Cannot find user with email ' + email);
+      throw 'Cannot find user with email ' + email;
     }
-    this.userId = rows.item(0);
+    this.userId = rows.item(0).user_id;
     results = await this.db.executeSql(
       'SELECT max_air_humidity, max_soil_humidity, min_soil_humidity, min_air_humidity, max_temperature, min_temperature FROM plant WHERE user_id = ?',
       [this.userId],
@@ -123,7 +123,9 @@ export default class Database {
   //   let [result] = await this.db.executeSql(
   //     'UPDATE (
   async updateStatus(sensorname, value) {
-    let [result] = await this.db.executeSql(
+    let [
+      result,
+    ] = await this.db.executeSql(
       'UPDATE sensor SET online = ? WHERE name = ' + sensorname,
       [value],
     );
@@ -135,16 +137,16 @@ export default class Database {
     }
   }
   async fetchSensor() {
-    let [result] = await this.db.executeSql(
-      'SELECT name, online FROM sensor',
-    );
+    let [result] = await this.db.executeSql('SELECT name, online FROM sensor');
     var rows = result.rows;
 
     if (rows.length > 0) {
-      let dataList = range(rows.length).map(i => [(rows.item(i).name), (rows.item(i).online)]);
-      console.log("DATAFUCK: ", dataList);
+      let dataList = range(rows.length).map(i => [
+        rows.item(i).name,
+        rows.item(i).online,
+      ]);
+      console.log('DATAFUCK: ', dataList);
       return dataList;
     }
-
   }
 }
