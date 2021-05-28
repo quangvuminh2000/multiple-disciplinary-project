@@ -79,6 +79,8 @@ class SoilMonitor extends Monitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
+    this.data.database.updateStatus('Relay Circuit',1);
+    this.data.database.updateStatus('Mini Pump',1);
   }
 
   deactivate_pump() {
@@ -91,6 +93,8 @@ class SoilMonitor extends Monitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '0', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
+    this.data.database.updateStatus('Relay Circuit',0);
+    this.data.database.updateStatus('Mini Pump',0)
   }
 }
 
@@ -149,6 +153,8 @@ class AirMonitor extends Monitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
+    this.data.database.updateStatus('Relay Circuit 2',1);
+    this.data.database.updateStatus('Mini Pump 2',1);
   }
 
   deactivate_spray() {
@@ -161,6 +167,8 @@ class AirMonitor extends Monitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '0', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
+        this.data.database.updateStatus('Relay Circuit',0);
+        this.data.database.updateStatus('Mini Pump',0);
   }
 }
 
@@ -220,6 +228,8 @@ class LightMonitor extends Monitor {
     let data = {id: '10', name: 'DRV_PWM', data: '255', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-drv', data);
     this.client.publish('Group12/feeds/bk-iot-drv', data);
+    this.data.database.updateStatus('DRV Circuit',1);
+    this.data.database.updateStatus('RC Servo 590',1);
   }
 
   deactivate_net() {
@@ -231,6 +241,8 @@ class LightMonitor extends Monitor {
     let data = {id: '10', name: 'DRV_PWM', data: '-255', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-drv', data);
     this.client.publish('Group12/feeds/bk-iot-drv', data);
+    this.data.database.updateStatus('DRV Circuit',0);
+    this.data.database.updateStatus('RC Servo 590',0);
   }
 }
 

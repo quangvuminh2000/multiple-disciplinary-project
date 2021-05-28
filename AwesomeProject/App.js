@@ -216,7 +216,7 @@ const database = new Database({
   name: 'test4.db',
   createFromLocation: '~test4.db',
 }, userData);
-
+userData.database = database;
 export default function App() {
   useEffect(() => {
     database.init();

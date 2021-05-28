@@ -126,7 +126,7 @@ export default class Database {
     let [
       result,
     ] = await this.db.executeSql(
-      'UPDATE sensor SET online = ? WHERE name = ' + sensorname,
+      'UPDATE sensor SET online = ? WHERE name = \'' + sensorname + '\'',
       [value],
     );
     console.log('Results', result.rowsAffected);
