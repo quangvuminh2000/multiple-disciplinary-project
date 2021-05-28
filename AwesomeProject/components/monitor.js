@@ -78,7 +78,7 @@ class SoilMonitor extends Monitor {
     //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
-    this.client.publish('Group12/feeds/relay', data);
+    this.client1.publish('Group121/feeds/bk-iot-relay', data);
   }
 
   deactivate_pump() {
@@ -90,7 +90,7 @@ class SoilMonitor extends Monitor {
     //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '0', unit: ''};
-    this.client.publish('Group12/feeds/relay', data);
+    this.client1.publish('Group121/feeds/bk-iot-relay', data);
   }
 }
 
@@ -148,7 +148,7 @@ class AirMonitor extends Monitor {
     //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
-    this.client.publish('Group12/feeds/relay', data);
+    this.client1.publish('Group121/feeds/bk-iot-relay', data);
   }
 
   deactivate_spray() {
@@ -160,7 +160,7 @@ class AirMonitor extends Monitor {
     //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '0', unit: ''};
-    this.client.publish('Group12/feeds/relay', data);
+    this.client1.publish('Group121/feeds/bk-iot-relay', data);
   }
 }
 
@@ -189,7 +189,7 @@ class LightMonitor extends Monitor {
     let light = this.client.light;
     let temp = this.client.temp;
 
-    if (light > 70 && temp >= this.minTemp && this.net == false) {
+    if (light >= 70 && temp >= this.minTemp && this.net == false) {
       this.activate_net();
       this.lightPush();
     }
@@ -204,7 +204,7 @@ class LightMonitor extends Monitor {
     //? Publish data into drv
     let data = {id: '10', name: 'DRV_PWM', data: '255', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-drv', data);
-    this.client.publish('Group12/feeds/drv', data);
+    this.client.publish('Group12/feeds/bk-iot-drv', data);
   }
 
   deactivate_net() {
@@ -215,7 +215,7 @@ class LightMonitor extends Monitor {
     //? Publish data into drv
     let data = {id: '10', name: 'DRV_PWM', data: '-255', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-drv', data);
-    this.client.publish('Group12/feeds/drv', data);
+    this.client.publish('Group12/feeds/bk-iot-drv', data);
   }
 }
 
