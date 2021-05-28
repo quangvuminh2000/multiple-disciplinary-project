@@ -63,8 +63,8 @@ export default function App({navigation}){
             if (client.connected) { airmonitor.checkCondition(); }
         }, 1000);
 
-        setPercent3(client.temp);
         setTemp(database.temperature);
+        setPercent3(database.temperature[database.temperature.length - 1]);
         client.messageCallbacks.push(data => {
             if (data.id === 7) {
                 let temp = parseInt(data.data.split('-')[0]);

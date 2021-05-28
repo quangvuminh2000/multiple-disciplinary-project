@@ -17,12 +17,28 @@ export default class Database {
   }
 
   async init() {
+	console.log(this.dataTable);
+    // await SQLite.deleteDatabase({name: 'test4.db', location: 'default'});
     this.db = await SQLite.openDatabase(this.args);
+	// await this.db.transaction(this.populateDB);
+	// await this.updateData('soil', 50);
     await this.fetchData3();
-    this.#fetchIntervalID = setInterval(this.fetchData3,300000); //300000);
+    this.#fetchIntervalID = setInterval(this.fetchData3, 5000);
+    console.log('database', this.db);
   }
 
+	populateDB(tx) {
+		tx.executeSql('CREATE TABLE air (time datetime NOT NULL, value integer NOT NULL, PRIMARY KEY(time));');
+		tx.executeSql('CREATE TABLE light (time datetime NOT NULL, value integer NOT NULL, PRIMARY KEY(time));');
+		tx.executeSql('CREATE TABLE plant (plant_id integer NOT NULL, max_air_humidity integer NOT NULL, max_soil_humidity integer NOT NULL, min_soil_humidity integer NOT NULL, min_air_humidity integer NOT NULL, max_temperature integer NOT NULL, min_temperature integer NOT NULL, user_user_id integer NOT NULL, PRIMARY KEY (plant_id));');
+		tx.executeSql('CREATE TABLE sensor (id integer NOT NULL, name varchar(100) NOT NULL, online boolean NOT NULL, user_user_id integer NOT NULL, PRIMARY KEY (id));');
+		tx.executeSql('CREATE TABLE soil (time datetime NOT NULL, value integer NOT NULL, PRIMARY KEY (time));');
+		tx.executeSql('CREATE TABLE temperature (time datetime NOT NULL, value integer NOT NULL, PRIMARY KEY (time));');
+		tx.executeSql('CREATE TABLE user (user_id integer NOT NULL, username varchar(100) NOT NULL, password varchar(100) NOT NULL, phone_number varchar(10), email varchar(100) NOT NULL, PRIMARY KEY (user_id));');
+	}
+
   async cleanup() {
+    console.log('close database');
     if (this.#fetchIntervalID) {
       clearInterval(this.#fetchIntervalID);
       this.#fetchIntervalID = undefined;
@@ -78,10 +94,12 @@ export default class Database {
   }
 
   async updateData(table, value) {
-    let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    // let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    let date = new Date();
+    let time = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     let [result] = await this.db.executeSql(
       'INSERT INTO ' + table + '(time, value) VALUES (?,?)',
-      [date, value],
+      [time, value],
     );
     console.log('Results', result.rowsAffected);
     if (result.rowsAffected > 0) {

@@ -2,7 +2,7 @@ import * as Mqtt from 'react-native-native-mqtt';
 import VIForegroundService from '@voximplant/react-native-foreground-service';
 import BackgroundTimer from 'react-native-background-timer';
 import {Buffer} from 'buffer';
-import { useState } from 'react';
+import {useState} from 'react';
 
 let minTemp = 32;
 let maxTemp = 37;
@@ -10,6 +10,10 @@ let minSoil = 65;
 let maxSoil = 70;
 let minAtmosphere = 65;
 let maxAtmosphere = 70;
+
+type MqttMessage = {
+  id: string,
+};
 
 class MqttClient {
   #client;
@@ -25,14 +29,23 @@ class MqttClient {
   ];
   messageCallbacks = [];
 
-  constructor() {
-    this.airHumid = 70;
-    this.temp = 30;
-    this.soilHumid = 70;
-    this.light = 0;
+  constructor(options, subscribedTopics) {
+    // this.airHumid = 70;
+    // this.temp = 30;
+    // this.soilHumid = 70;
+    // this.light = 0;
 
+    this.options = options;
+    this.subscribedTopics = subscribedTopics;
     //client = new Mqtt.Client('[SCHEME]://[URL]:[PORT]');
     this.#client = new Mqtt.Client('tcp://io.adafruit.com:1883');
+    this.#client.on(Mqtt.Event.Connect, () => {
+      console.log('MQTT Connect');
+      this.#client.subscribe(
+        this.subscribedTopics,
+        Array(this.subscribedTopics.length).fill(1),
+      );
+    });
     this.#client.on(Mqtt.Event.Message, (topic, message) => {
       console.log('MQTT Message:', topic, message.toString());
       const data = JSON.parse(message);
@@ -76,44 +89,70 @@ class MqttClient {
     this.#client.publish(topic, data, 1);
   }
 
-  checkCondition() {
-    if (this.light > 80 && this.airTemp > 35) {
-      // Notify user
-      // Activate shading net
-      // Log data
-    }
-  }
-
   start(connectCallback) {
-    this.#client.on(Mqtt.Event.Connect, () => {
-      console.log('MQTT Connect');
-      this.#client.subscribe(
-        this.sensorTopics,
-        Array(this.sensorTopics.length).fill(1),
-      );
-      connectCallback.bind(this)();
-    });
+    if (connectCallback) {
+      this.#client.on(Mqtt.Event.Connect, () => {
+        connectCallback.bind(this)();
+      });
+    }
 
+    let connOpts = {
+      clientId: this.#client.id,
+      enableSsl: false,
+      autoReconnect: true,
+      ...this.options,
+    };
     if (!this.connected) {
-        this.#client.connect(
-          {
-            clientId: this.#client.id,
-            enableSsl: false,
-            username: 'Group12',
-            password: 'aio_atNP67yCNWakTjSOUHXJ2WpLiIdG',
-            autoReconnect: true,
-          },
-          (err) => { if(err){ console.error("Error",err); }},
-        );
+      this.#client.connect(connOpts, err => {
+        if (err) {
+          console.error('Error', err);
+        }
+      });
     }
   }
 
   stop() {
-    if (!this.#client.closed) {
-        this.#client.close();
-    }
+    this.#client.disconnect();
   }
 }
+
+const testClient = new MqttClient(
+  {
+    username: 'Group12',
+    password: 'aio_atNP67yCNWakTjSOUHXJ2WpLiIdG',
+  },
+  [
+    'Group12/feeds/air-moisture',
+    'Group12/feeds/temperature',
+    'Group12/feeds/soil-moisture',
+    'Group12/feeds/light',
+    'Group12/feeds/test2',
+  ],
+);
+
+const testClient1 = new MqttClient(
+  {
+    username: 'group121',
+    password: 'aio_LkQT69vjPHPMV7o5zNfUOzR5YSza',
+  },
+  ['group121/feeds/test'],
+);
+
+const mqttClient = new MqttClient(
+  {
+    username: 'CSE_BBC',
+    password: 'aio_KXfp47zegx3CthMAEj6pB0ZeKoEm',
+  },
+  ['CSE_BBC/feeds/bk-iot-temp-humid', 'CSE_BBC/feeds/bk-iot-soil'],
+);
+
+const mqttClient1 = new MqttClient(
+  {
+    username: 'CSE_BBC1',
+    password: 'aio_yqUQ00Ryi2liePf8ElzL3yq3dNij',
+  },
+  ['CSE_BBC1/feeds/bk-iot-light'],
+);
 
 async function startForegroundService() {
   const channelConfig = {
@@ -154,12 +193,14 @@ class SoilMonitor {
   }
 
   checkCondition() {
-	  // console.log('Check condition');
+    // console.log('Check condition');
     let temp = this.client.temp;
     let humid = this.client.soilHumid;
 
-    if (humid <= this.minSoil && temp >= this.maxTemp && !this.soilIrrigation) this.activate_pump();
-    if (humid >= this.maxSoil && temp <= this.minTemp && this.soilIrrigation) this.deactivate_pump();
+    if (humid <= this.minSoil && temp >= this.maxTemp && !this.soilIrrigation)
+      this.activate_pump();
+    if (humid >= this.maxSoil && temp <= this.minTemp && this.soilIrrigation)
+      this.deactivate_pump();
   }
 
   activate_pump() {
@@ -203,8 +244,10 @@ class AirMonitor {
     let temp = this.client.temp;
     let humid = this.client.airHumid;
 
-    if (humid <= this.minAtmosphere && temp >= this.maxTemp && !this.mistSpray) this.activate_spray();
-    if (humid >= this.maxAtmosphere && temp <= this.minTemp && this.mistSpray) this.deactivate_spray();
+    if (humid <= this.minAtmosphere && temp >= this.maxTemp && !this.mistSpray)
+      this.activate_spray();
+    if (humid >= this.maxAtmosphere && temp <= this.minTemp && this.mistSpray)
+      this.deactivate_spray();
     /*isCritical && !this.mistSpray
     isCitical         mistSpray             result
     true              true                  false
@@ -263,7 +306,8 @@ class LightMonitor {
     let light = this.client.light;
     let temp = this.client.temp;
 
-    if (light > 70 && temp >= this.minTemp && this.net == false) this.activate_net();
+    if (light > 70 && temp >= this.minTemp && this.net == false)
+      this.activate_net();
     if (light < 50 && this.net == true) this.deactivate_net();
   }
 
@@ -296,4 +340,8 @@ export {
   AirMonitor,
   LightMonitor,
   startForegroundService,
+  testClient,
+  testClient1,
+  mqttClient,
+  mqttClient1,
 };
