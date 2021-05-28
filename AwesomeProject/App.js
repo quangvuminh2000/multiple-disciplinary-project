@@ -10,8 +10,9 @@ import {
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+
 import Login from './components/Screens/Login';
 import Home from './components/Screens/Home';
 import Reset from './components/Screens/Reset';
@@ -24,57 +25,53 @@ import tempSettings from './components/Screens/Tab/tempSettings';
 import humidSettings from './components/Screens/Tab/humidSettings';
 import Settings from './components/Screens/Settings';
 import Database from './components/database';
-
 import {
   MqttClient,
-  SoilMonitor,
-  AirMonitor,
-  LightMonitor,
   startForegroundService,
   testClient,
   testClient1,
 } from './components/mqtt';
+import {SoilMonitor, AirMonitor, LightMonitor} from './components/monitor';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createMaterialTopTabNavigator();
-function MyTab(){
-  return(
-    <Tab.Navigator 
-    tabBarOptions={{
-      bounces: true,
-      activeTintColor:'azure',
-      pressColor:'azure',
-      showIcon:true,
-      style:{backgroundColor:'#353c57'},
-    }}
-    >
-      <Tab.Screen 
-        name = 'Temperature' 
+function MyTab() {
+  return (
+    <Tab.Navigator
+      tabBarOptions={{
+        bounces: true,
+        activeTintColor: 'azure',
+        pressColor: 'azure',
+        showIcon: true,
+        style: {backgroundColor: '#353c57'},
+      }}>
+      <Tab.Screen
+        name="Temperature"
         component={tempSettings}
-        options = {{
+        options={{
           tabBarIcon: ({tintColor}) => (
             <Image
               source={require('./thermo1.png')}
               style={[styles.icon, {tintColor: tintColor}]}
             />
-          )
+          ),
         }}
       />
-      <Tab.Screen 
-        name = 'Humidity' 
+      <Tab.Screen
+        name="Humidity"
         component={humidSettings}
-        options = {{
+        options={{
           tabBarIcon: ({tintColor}) => (
             <Image
               source={require('./humid3.png')}
               style={[styles.icon, {tintColor: tintColor}]}
             />
-          )
+          ),
         }}
       />
     </Tab.Navigator>
-  )
+  );
 }
 function MyDrawer() {
   return (
@@ -214,7 +211,11 @@ function MyStack() {
   );
 }
 
-const database = new Database({name: 'test4.db', createFromLocation: '~test4.db'});
+const userData = {};
+const database = new Database({
+  name: 'test4.db',
+  createFromLocation: '~test4.db',
+}, userData);
 
 export default function App() {
   useEffect(() => {
@@ -223,11 +224,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const callback = () => {
-      console.log('Implement callback!');
-    }
-    client.start(callback);
-    return client.stop;
+    MqttObj.client.start();
+    return MqttObj.client.stop;
   }, []);
 
   useEffect(() => {
@@ -238,7 +236,7 @@ export default function App() {
   return (
     <AppStateProvider>
       <NavigationContainer>
-        <MyStack/>
+        <MyStack />
       </NavigationContainer>
     </AppStateProvider>
   );
@@ -251,25 +249,45 @@ const styles = StyleSheet.create({
   },
 });
 
-// const client = new MqttClient();
-const client = testClient;
-const soilmonitor = new SoilMonitor(client);
-const airmonitor = new AirMonitor(client);
-const lightmonitor = new LightMonitor(client);
-
 const MqttObj = {
-  client: client,
+  client: testClient,
   client1: testClient1,
-  soilmonitor: soilmonitor,
-  airmonitor: airmonitor,
-  lightmonitor: lightmonitor,
+  soilmonitor: new SoilMonitor(testClient, testClient1, userData),
+  airmonitor: new AirMonitor(testClient, testClient1, userData),
+  lightmonitor: new LightMonitor(testClient, testClient1, userData),
   database: database,
-}
+  data: userData,
+};
 
-export const AppStateContext = React.createContext(client);
+testClient.messageCallbacks.push(data => {
+  switch (data.id) {
+    case 7:
+      var temp, humid;
+      [temp, humid] = data.data.split('-');
+      userData.temp = parseInt(temp);
+      database.updateData('temperature', userData.temp);
+      userData.airHumid = parseInt(humid);
+      database.updateData('air', userData.airHumid);
+      break;
+    case 9:
+      userData.soilHumid = parseInt(data.data);
+      database.updateData('soil', userData.soilHumid);
+      break;
+  }
+});
+testClient1.messageCallbacks.push(data => {
+  if (data.id === 13) {
+    userData.light = parseInt(data.data);
+    database.updateData('light', userData.light);
+  }
+});
 
-const AppStateProvider = (props) => {
-  return (<AppStateContext.Provider value={MqttObj}>
-    {props.children}
-    </AppStateContext.Provider>)
-}
+export const AppStateContext = React.createContext(testClient);
+
+const AppStateProvider = props => {
+  return (
+    <AppStateContext.Provider value={MqttObj}>
+      {props.children}
+    </AppStateContext.Provider>
+  );
+};

@@ -31,34 +31,18 @@ export default function Home({ navigation }) {
     ///////////////////////////////////////////////////
 
     setInterval(() => {
-        if (client.client.connected) {
-          soilmonitor.checkCondition();
-          setText1(soilmonitor.soilIrrigation ? 'On' : 'Off');
-          setColor1(soilmonitor.soilIrrigation ? `rgba(0,200,170,255)` : '#999');
-        }
+      setText1(soilmonitor.soilIrrigation ? 'On' : 'Off');
+      setColor1(soilmonitor.soilIrrigation ? 'rgba(0,200,170,255)' : '#999');
     }, soilmonitor.interval);
 
     setInterval(() => {
-        if (client.client.connected) {
-          airmonitor.checkCondition();
-          setText2(airmonitor.mistSpray ? 'On'  : 'Off');
-          setColor2(airmonitor.mistSpray ? '#04d9ff' : '#999');
-        }
+      setText2(airmonitor.mistSpray ? 'On' : 'Off');
+      setColor2(airmonitor.mistSpray ? '#04d9ff' : '#999');
     }, airmonitor.interval);
 
     setInterval(() => {
-      if (client.client.connected) {
-        lightmonitor.checkCondition();
-        setText3(lightmonitor.net ? 'On' : 'Off');
-        setColor3(lightmonitor.net ? 'yellow' : '#999');
-        // if (lightmonitor.net == true){
-        //   setText3('On');
-        //   setColor3('yellow');
-        // } else {
-        //   setText3('Off');
-        //   setColor3('#999');
-        // }
-      }
+      setText3(lightmonitor.net ? 'On' : 'Off');
+      setColor3(lightmonitor.net ? 'yellow' : '#999');
     }, lightmonitor.interval);
     ////////////////////////
     return subscriber; // unsubscribe on unmount
