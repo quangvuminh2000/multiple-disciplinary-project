@@ -87,8 +87,8 @@ export default function App({navigation}){
 
         setVal1(database.soil);
         setVal2(database.air);
-        setPercent1(client.soilHumid);
-        setPercent2(client.airHumid);
+        setPercent1(database.soil[database.soil.length - 1]);
+        setPercent2(database.air[database.air.length - 1]);
         client.messageCallbacks.push(data => {
             if (data.id === 7) {
                 let airHumid = parseInt(data.data.split('-')[1]);

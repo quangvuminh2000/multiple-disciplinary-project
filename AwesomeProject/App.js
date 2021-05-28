@@ -31,6 +31,8 @@ import {
   AirMonitor,
   LightMonitor,
   startForegroundService,
+  testClient,
+  testClient1,
 } from './components/mqtt';
 
 const Stack = createStackNavigator();
@@ -228,6 +230,11 @@ export default function App() {
     return client.stop;
   }, []);
 
+  useEffect(() => {
+    testClient1.start();
+    return testClient1.stop;
+  }, []);
+
   return (
     <AppStateProvider>
       <NavigationContainer>
@@ -244,13 +251,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const client = new MqttClient();
+// const client = new MqttClient();
+const client = testClient;
 const soilmonitor = new SoilMonitor(client);
 const airmonitor = new AirMonitor(client);
 const lightmonitor = new LightMonitor(client);
 
 const MqttObj = {
   client: client,
+  client1: testClient1,
   soilmonitor: soilmonitor,
   airmonitor: airmonitor,
   lightmonitor: lightmonitor,

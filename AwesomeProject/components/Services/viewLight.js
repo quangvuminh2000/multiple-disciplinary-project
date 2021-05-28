@@ -70,9 +70,10 @@ export default function App({navigation}){
         }, 1000);
 
         setLight(database.light);
+        setPercent4(database.light[database.light.length - 1]);
         client.messageCallbacks.push(data => {
             if (data.id === 13) {
-                const light = parseInt(data.data);
+                let light = parseInt(data.data);
                 setPercent4(light);
                 database.updateData('light', light);
                 console.log('Light', light);
