@@ -13,6 +13,7 @@ export default function Home({ navigation }) {
   const soilMonitor = MqttObj.soilmonitor;
   const airMonitor = MqttObj.airmonitor;
   const lightMonitor = MqttObj.lightmonitor;
+  const database = MqttObj.database;
 
   const [pumpActivated, setPumpActivated] = useState(soilMonitor.soilIrrigation);
   const [sprayActivated, setSprayActivated] = useState(airMonitor.mistSpray);
@@ -24,12 +25,32 @@ export default function Home({ navigation }) {
       setInitializing(false);
     };
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    ///////////////////////////////////////////////////
-    soilMonitor.start();
-    airMonitor.start();
-    lightMonitor.start();
-    ////////////////////////
     return subscriber; // unsubscribe on unmount
+  }, []);
+  useEffect(() => {
+    const prepare = async () => {
+      let sensorList = await database.fetchSensor();
+      sensorList.forEach(sensor => {
+        switch (sensor.name) {
+          case 'Relay Circuit':
+            soilMonitor.soilIrrigation = sensor.online;
+            setPumpActivated(sensor.online);
+            break;
+          case 'Relay Circuit 2':
+            airMonitor.mistSpray = sensor.online;
+            setSprayActivated(sensor.online);
+            break;
+          case 'DRV Circuit':
+            lightMonitor.net = sensor.online;
+            setNetActivated(sensor.online);
+            break;
+        }
+      });
+      soilMonitor.start();
+      airMonitor.start();
+      lightMonitor.start();
+    };
+    prepare();
   }, []);
   useEffect(() => {
     emitter.on('pumpActivated', setPumpActivated);
