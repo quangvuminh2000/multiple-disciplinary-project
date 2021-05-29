@@ -167,8 +167,8 @@ class AirMonitor extends Monitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '0', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
-        this.data.database.updateStatus('Relay Circuit',0);
-        this.data.database.updateStatus('Mini Pump',0);
+    this.data.database.updateStatus('Relay Circuit 2',0);
+    this.data.database.updateStatus('Mini Pump 2',0);
   }
 }
 

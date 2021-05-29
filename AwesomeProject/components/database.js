@@ -111,20 +111,20 @@ export default class Database {
       'INSERT INTO ' + table + '(time, value) VALUES (?,?)',
       [date, value],
     );
-    let [del] = await this.db.executeSql(
-      'DELETE FROM ' + table + 'WHERE date(\'now\',\'-7 day\') >= date(time)',
-    );
+    // let [del] = await this.db.executeSql(
+    //   'DELETE FROM ' + table + 'WHERE date(\'now\',\'-7 day\') >= date(time)',
+    // );
     console.log('Results', result.rowsAffected);
     if (result.rowsAffected > 0) {
       console.log('Success');
     } else {
       console.log('Registration Failed');
     }
-    if (del.rowsAffected > 0) {
-      console.log('Data cleaned!');
-    } else {
-      console.log('Cleaning Failed');
-    }
+    // if (del.rowsAffected > 0) {
+    //   console.log('Data cleaned!');
+    // } else {
+    //   console.log('Cleaning Failed');
+    // }
   }
 
   // updatePlant = async (param, value) => {
@@ -148,7 +148,6 @@ export default class Database {
   fetchSensor = async () => {
     let [result] = await this.db.executeSql('SELECT name, online FROM sensor');
     var rows = result.rows;
-
     let dataList = range(rows.length).map(i => rows.item(i));
     console.log('DATAFUCK: ', dataList);
     return dataList;

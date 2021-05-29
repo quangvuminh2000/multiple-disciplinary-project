@@ -7,95 +7,20 @@ const screenWidth = Dimensions.get("window").width
 const screenHeight = Dimensions.get("window").height
 import { AppStateContext } from '../../App';
 
-//var SQLite = require('react-native-sqlite-storage');
-//var db = SQLite.openDatabase({name:'test4.db',createFromLocation:'~test4.db'})
-
-/*const data = [
-    {
-        id: "1",
-        title: "DHT11",
-        source: require('./DHT11.jpg')
-    },
-    
-    {
-        id: "2",
-        title: "Soil Moisture Sensor",
-        source: require('./soilsensor.png')
-    },
-    
-    {
-        id: "3",
-        title: "Light Sensor",
-        source: require('./lightsensor.jpg')
-    },
-    {
-        id: "4",
-        title: "RC Servo",
-        source: require('./servo.jpg')
-    },
-    {
-        id: "5",
-        title: "Mini Pump",
-        source: require('./pumper.png')
-    },
-    {
-        id: "6",
-        title: "Propeller",
-        source: require('./soilsensor.png')
-    }
-]
-*/
 
 export default function App({ navigation }) {
 
-    const [list, setList] = useState([]);
+
 
     const MqttObj = useContext(AppStateContext);
-    const client = MqttObj.client;
-    const soilmonitor = MqttObj.soilmonitor;
     const database = MqttObj.database;
 
-    /*useEffect(()=>{
-      db.transaction((tx) => {
-          tx.executeSql(
-              'SELECT online FROM sensor', [], (_tx, results) => {
-                  var len = results.rows.length;
-                  if(len > 0){
-                      let deviceList = [];
-                      for(let i = 0; i < len; ++i){
-                          deviceList.push(results.rows.item(i));
-                          //console.log(results.rows.item(i).value);
-                      }
-                  setList(deviceList);
-                  //console.log(list);  
-                  }
-              });
-          });
-    }, []);
-    */
-
-
-
-
     const [sensorName, setsensorName] = useState([]);
-    const [online, setOnline] = useState([]);
     useEffect(() => {
         database.fetchSensor().then((data) => {
             setsensorName(data);
             console.log("HERE", sensorName);
         })
-        /*
-        var len = setsensorName.length
-        if (len > 0) {
-            let temp1 = [];
-            //let temp2 = [];
-            for (let i = 0; i < len; i++) {
-                temp1.push(data[i]);
-                //temp2.push();
-            }
-        }
-        console.log(temp1)
-        */
     }, []);
 
     //console.log(list)
@@ -110,9 +35,13 @@ export default function App({ navigation }) {
                 return require('./lightsensor.jpg');
             case "Relay Circuit":
                 return require('./relay.jpg');
+            case "Relay Circuit 2":
+                return require('./relay.jpg');
             case "RC Servo 590":
                 return require('./rc.jpg');
             case "Mini Pump":
+                return require('./pump.jpg');
+            case "Mini Pump 2":
                 return require('./pump.jpg');
             case "DRV Circuit":
                 return require('./DRV.jpg');
