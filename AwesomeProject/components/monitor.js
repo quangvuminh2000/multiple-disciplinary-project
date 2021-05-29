@@ -79,7 +79,7 @@ class SoilMonitor extends Monitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
-    emitter.emit('pumpActivated');
+    emitter.emit('pumpActivated', true);
   }
 
   deactivatePump() {
@@ -92,7 +92,7 @@ class SoilMonitor extends Monitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_SOIL', data: '0', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
-    emitter.emit('pumpDeactivated');
+    emitter.emit('pumpActivated', false);
   }
 }
 
@@ -149,7 +149,7 @@ class AirMonitor extends Monitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
-    emitter.emit('sprayActivated');
+    emitter.emit('sprayActivated', true);
   }
 
   deactivateSpray() {
@@ -162,7 +162,7 @@ class AirMonitor extends Monitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '0', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
-    emitter.emit('sprayDeactivated');
+    emitter.emit('sprayActivated', false);
   }
 }
 
@@ -218,7 +218,7 @@ class LightMonitor extends Monitor {
     let data = {id: '10', name: 'DRV_PWM', data: '255', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-drv', data);
     this.client.publish('Group12/feeds/bk-iot-drv', data);
-    emitter.emit('netActivated');
+    emitter.emit('netActivated', true);
   }
 
   deactivateNet() {
@@ -230,7 +230,7 @@ class LightMonitor extends Monitor {
     let data = {id: '10', name: 'DRV_PWM', data: '-255', unit: ''};
     //this.client.publish('CSE_BBC1/feeds/bk-iot-drv', data);
     this.client.publish('Group12/feeds/bk-iot-drv', data);
-    emitter.emit('netDeactivated');
+    emitter.emit('netActivated', false);
   }
 }
 

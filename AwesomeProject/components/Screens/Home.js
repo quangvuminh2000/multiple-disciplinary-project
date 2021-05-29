@@ -28,17 +28,20 @@ export default function Home({ navigation }) {
     soilMonitor.start();
     airMonitor.start();
     lightMonitor.start();
-
-    emitter.on('pumpActivated', () => setPumpActivated(true));
-    emitter.on('pumpDeactivated', () => setPumpActivated(false));
-
-    emitter.on('sprayActivated', () => setSprayActivated(true));
-    emitter.on('sprayDeactivated', () => setSprayActivated(false));
-
-    emitter.on('netActivated', () => setNetActivated(true));
-    emitter.on('netDeactivated', () => setNetActivated(false));
     ////////////////////////
     return subscriber; // unsubscribe on unmount
+  }, []);
+  useEffect(() => {
+    emitter.on('pumpActivated', setPumpActivated);
+    return () => emitter.off('pumpActivated', setPumpActivated);
+  }, []);
+  useEffect(() => {
+    emitter.on('sprayActivated', setSprayActivated);
+    return () => emitter.off('sprayActivated', setSprayActivated);
+  }, []);
+  useEffect(() => {
+    emitter.on('netActivated', () => setNetActivated(true));
+    return () => emitter.off('netActivated', setNetActivated);
   }, []);
 
   const text1 = pumpActivated ? 'On' : 'Off';
