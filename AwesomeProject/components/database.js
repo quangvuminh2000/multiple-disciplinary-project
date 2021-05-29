@@ -30,8 +30,8 @@ export default class Database {
       this.updateStatus('Mini Pump 2', 1);
     });
     emitter.on('sprayDeactivated', () => {
-      this.updateStatus('Relay Circuit', 0);
-      this.updateStatus('Mini Pump', 0);
+      this.updateStatus('Relay Circuit 2', 0);
+      this.updateStatus('Mini Pump 2', 0);
     });
     emitter.on('netActivated', () => {
       this.updateStatus('DRV Circuit', 1);
