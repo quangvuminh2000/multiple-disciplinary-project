@@ -50,8 +50,8 @@ export default class Database {
     // await this.db.transaction(this.populateDB);
     // await this.updateData('soil', 50);
     this.cleanupOldData();
-    this.fetchData3();
-    this.#fetchIntervalID = setInterval(this.fetchData3, 5000);
+    this.fetchData();
+    this.#fetchIntervalID = setInterval(this.fetchData, 5000);
     console.log('database', this.db);
   }
 
@@ -90,45 +90,20 @@ export default class Database {
     this.data.minTemp = parseInt(plant.min_temperature);
   }
 
-  fetchData3 = async () => {
+  fetchData = () => {
     for (const table of this.dataTable) {
-      let [result] = await this.db.executeSql(
-        'SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5',
-      );
-      console.log('result query', result);
-      let rows = result.rows;
-      this[table] = range(rows.length)
-        .reverse()
-        .map(i => rows.item(i).value);
-    }
-    for (const callback of this.fetchCallbacks) {
-      callback.bind(this)();
+      this.db
+        .executeSql('SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5')
+        .then(results => {
+          console.log('result query', results[0]);
+          let rows = results[0].rows;
+          this[table] = range(rows.length)
+            .reverse()
+            .map(i => rows.item(i).value);
+          emitter.emit('databaseFetched', table, this[table]);
+        });
     }
   };
-
-  async fetchData2() {
-    let results = await this.db.transaction(tx => {
-      for (const table of this.dataTable) {
-        tx.executeSql('SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5');
-      }
-    });
-    console.log('result query', results);
-    for (const i of this.dataTable.keys()) {
-      let rows = results[i].rows;
-      this[this.dataTable[i]] = range(rows.length).map(i => rows.item(i).value);
-    }
-  }
-
-  async fetchData(table, setter) {
-    let [result] = await this.db.executeSql(
-      'SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5',
-    );
-    var rows = result.rows;
-    if (rows.length > 0) {
-      let dataList = range(rows.length).map(i => rows.item(i).value);
-      setter(dataList.reverse());
-    }
-  }
 
   cleanupOldData = () => {
     for (const table of this.dataTable) {
@@ -147,18 +122,26 @@ export default class Database {
   };
 
   async updateData(table, value) {
-    let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    // let date = new Date();
-    // let time = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-    let [result] = await this.db.executeSql(
-      'INSERT INTO ' + table + '(time, value) VALUES (?,?)',
-      [date, value],
-    );
-    console.log('Results', result.rowsAffected);
-    if (result.rowsAffected > 0) {
-      console.log('Success');
-    } else {
-      console.log('Registration Failed');
+    try {
+      let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      // let date = new Date();
+      // let time = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+      let [result] = await this.db.executeSql(
+        'INSERT INTO ' + table + '(time, value) VALUES (?,?)',
+        [date, value],
+      );
+      console.log('Results', result.rowsAffected);
+      if (result.rowsAffected > 0) {
+        console.log('Success');
+      } else {
+        console.log('Registration Failed');
+      }
+    } catch (err) {
+      console.error(err.message);
+      let [result] = await this.db.executeSql('SELECT * FROM ' + table);
+      let rows = result.rows;
+      let data = range(rows.length).map(i => rows.item(i));
+      console.log('current data', data);
     }
   }
 

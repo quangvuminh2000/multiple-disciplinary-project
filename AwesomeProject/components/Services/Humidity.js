@@ -4,6 +4,7 @@ import {LineChart} from 'react-native-chart-kit'
 import ProgressCircle from 'react-native-progress-circle';
 import { AppStateContext } from '../../App';
 import { SoilMonitor,MqttClient,AirMonitor } from '../mqtt';
+import emitter from 'tiny-emitter/instance';
 
 const chartConfig3 = {
     backgroundGradientFrom: '#353c57',
@@ -63,25 +64,18 @@ export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-    const [val1,setVal1] = useState([0,0,0]);
-    const [val2,setVal2] = useState([0,0,0]);
-    const [per1,setPercent1] = useState(0);
-    const [per2,setPercent2] = useState(0);
-
     const MqttObj = useContext(AppStateContext);
     const client = MqttObj.client;
     const soilmonitor = MqttObj.soilmonitor;
-	const database = MqttObj.database;
+    const database = MqttObj.database;
+
+    const [val1,setVal1] = useState(database.soil);
+    const [val2,setVal2] = useState(database.air);
+    const [per1,setPercent1] = useState(database.soil[database.soil.length - 1]);
+    const [per2,setPercent2] = useState(database.air[database.air.length - 1]);
 
     useEffect(() => {
-        setInterval(() => {
-            if (client.connected) { soilmonitor.checkCondition(); }
-        }, 1000);
-
-        setVal1(database.soil);
-        setVal2(database.air);
-        setPercent1(database.soil[database.soil.length - 1]);
-        setPercent2(database.air[database.air.length - 1]);
+        console.log('test', database.soil, database.air);
         client.messageCallbacks.push(data => {
             if (data.id === 7) {
                 let airHumid = parseInt(data.data.split('-')[1]);
@@ -94,10 +88,17 @@ export default function App({navigation}){
                 database.updateData('soil', soilHumid);
             }
         });
-        database.fetchCallbacks.push(function() {
-            setVal1(this.soil);
-            setVal2(this.air);
-        });
+    }, []);
+    useEffect(() => {
+        const callback = (table, data) => {
+            if (table === 'soil') {
+                setVal1(data);
+            } else if (table === 'air') {
+                setVal2(data);
+            }
+        };
+        emitter.on('databaseFetched', callback);
+        return () => emitter.off('databaseFetched', callback);
     }, []);
 
     const data3 = { 

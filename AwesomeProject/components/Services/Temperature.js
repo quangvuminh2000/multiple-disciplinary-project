@@ -14,6 +14,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
 import {AppStateContext} from '../../App';
 import {AirMonitor, MqttClient} from '../mqtt';
+import emitter from 'tiny-emitter/instance';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
@@ -52,14 +53,15 @@ const Item = ({source, title}) => (
 );
 
 export default function App({navigation}) {
-  const [temp, setTemp] = useState([0, 0, 0]);
-  const [per3, setPercent3] = useState(0);
-
   const MqttObj = useContext(AppStateContext);
   const client = MqttObj.client;
-
   const database = MqttObj.database;
   const userData = MqttObj.data;
+
+  const [temp, setTemp] = useState(database.temperature);
+  const [per3, setPercent3] = useState(
+    database.temperature[database.temperature.length - 1],
+  );
 
   useEffect(() => {
     setTemp(database.temperature);
@@ -73,6 +75,15 @@ export default function App({navigation}) {
     database.fetchCallbacks.push(function () {
       setTemp(this.temperature);
     });
+  }, []);
+  useEffect(() => {
+    const callback = (table, data) => {
+      if (table === 'temperature') {
+        setTemp(data);
+      }
+    };
+    emitter.on('databaseFetched', callback);
+    return () => emitter.off('databaseFetched', callback);
   }, []);
 
   const renderItem = ({item}) => (

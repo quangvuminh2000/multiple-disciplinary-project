@@ -19,6 +19,8 @@ import {
 } from 'react-native-chart-kit';
 import {ScrollView} from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
+import emitter from 'tiny-emitter/instance';
+
 import {AppStateContext} from '../../App';
 import {LightMonitor} from '../mqtt';
 
@@ -62,25 +64,31 @@ export default function App({navigation}) {
   const renderItem = ({item}) => (
     <Item title={item.title} source={item.source} />
   );
-  const [light, setLight] = useState([0, 0, 0]);
-  const [per4, setPercent4] = useState(0);
-
   const MqttObj = useContext(AppStateContext);
   const client = MqttObj.client;
   const database = MqttObj.database;
 
+  const [light, setLight] = useState(database.light);
+  const [per4, setPercent4] = useState(
+    database.light[database.light.length - 1],
+  );
+
   useEffect(() => {
-    setLight(database.light);
-    setPercent4(database.light[database.light.length - 1]);
     client.messageCallbacks.push(data => {
       if (data.id === 13) {
         let light = parseInt(data.data);
         setPercent4(light);
       }
     });
-    database.fetchCallbacks.push(function () {
-      setLight(this.light);
-    });
+  }, []);
+  useEffect(() => {
+    const callback = (table, data) => {
+      if (table === 'light') {
+        setLight(data);
+      }
+    };
+    emitter.on('databaseFetched', callback);
+    return () => emitter.off('databaseFetched', callback);
   }, []);
 
   const data2 = {
