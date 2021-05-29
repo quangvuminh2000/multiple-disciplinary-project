@@ -41,6 +41,7 @@ export default class Database {
       this.updateStatus('DRV Circuit', 0);
       this.updateStatus('RC Servo 590', 0);
     });
+    emitter.on('sensorDataReceived', this.updateData);
   }
 
   async init() {
@@ -121,7 +122,7 @@ export default class Database {
     }
   };
 
-  async updateData(table, value) {
+  updateData = async (table, value) => {
     try {
       let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
       // let date = new Date();
@@ -143,7 +144,7 @@ export default class Database {
       let data = range(rows.length).map(i => rows.item(i));
       console.log('current data', data);
     }
-  }
+  };
 
   // updatePlant = async (param, value) => {
   //   let [result] = await this.db.executeSql(
