@@ -95,6 +95,7 @@ export default function App({navigation}) {
   };
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView>
       <View style={styles.progress}>
         <ProgressCircle
           percent={per3}
@@ -112,7 +113,7 @@ export default function App({navigation}) {
           Temperature
         </Text>
       </View>
-      <Text style={{color: 'lightgrey', marginBottom: 10, fontWeight: 'bold'}}>
+      <Text style={{color: 'lightgrey', marginBottom: 10, fontWeight: 'bold', alignSelf:'center'}}>
         ____________________________________________________
       </Text>
       <LineChart
@@ -123,7 +124,7 @@ export default function App({navigation}) {
         style={styles.lineBackGround}
       />
       <Text style={styles.text}>Devices</Text>
-      <Text style={{color: 'lightgrey', marginTop: -10, fontWeight: 'bold'}}>
+      <Text style={{color: 'lightgrey', marginTop: -10, fontWeight: 'bold',alignSelf:'center'}}>
         ____________________________________________________
       </Text>
       <View style={styles.devices}>
@@ -133,6 +134,7 @@ export default function App({navigation}) {
           keyExtractor={item => item.id}
         />
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -156,6 +158,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 10,
     color: 'cyan',
+    alignSelf:'center'
   },
   progress: {
     alignItems: 'center',
@@ -174,11 +177,19 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     flexDirection: 'row',
     borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 6,
+    },
+    shadowOpacity: 0.39,
+    shadowRadius: 8.30,
+    elevation: 14,
   },
   title: {
     fontSize: 20,
     marginLeft: 10,
-    color: `rgba(0,200,170,255)`,
+    color: 'cyan',
   },
   separator: {
     borderBottomColor: 'azure',
@@ -187,6 +198,16 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   lineBackGround: {
+    //backgroundColor:'#fff',
     borderRadius: 25,
+    alignSelf:'center',
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 6,
+    },
+    shadowOpacity: 0.39,
+    shadowRadius: 8.30,
+    elevation: 14,
   },
 });

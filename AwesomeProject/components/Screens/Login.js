@@ -23,21 +23,28 @@ export default function Login({navigation}) {
   const [showLoading, setShowLoading] = useState(false);
   const MqttObj = useContext(AppStateContext);
   const login = async () => {
-    setShowLoading(true);
-    try {
-      const doLogin = await auth().signInWithEmailAndPassword(email, password);
-      setShowLoading(false);
-      console.log(doLogin);
-      if (doLogin.user) {
-        navigation.navigate('My App');
-        await MqttObj.database.setUser(email);
-        MqttObj.soilmonitor.start();
-        MqttObj.airmonitor.start();
-        MqttObj.lightmonitor.start();
+    if (!email) {
+      alert('Please enter email !');
+    }
+    if (!password) {
+      alert('Please enter password !');
+    }
+    else {
+      try {
+        const doLogin = await auth().signInWithEmailAndPassword(email, password);
+        //setShowLoading(false);
+        console.log(doLogin);
+        if (doLogin.user) {
+          navigation.navigate('My App');
+          await MqttObj.database.setUser(email);
+          MqttObj.soilmonitor.start();
+          MqttObj.airmonitor.start();
+          MqttObj.lightmonitor.start();
+        }
+      } catch (e) {
+        //setShowLoading(false);
+        Alert.alert(e.message);
       }
-    } catch (e) {
-      setShowLoading(false);
-      Alert.alert(e.message);
     }
   };
   return (

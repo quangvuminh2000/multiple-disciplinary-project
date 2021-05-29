@@ -92,21 +92,21 @@ export default function Home({ navigation }) {
 
       <View style={styles.btnContainer}>
       
-      <View style={{backgroundColor:'#353c57',width:150,height:160,borderRadius:20,justifyContent:'center',alignItems:'center',marginRight:25}}>
+      <View style={styles.soilBox}>
           <Text style={{color:`rgba(0,200,170,255)`,fontWeight:'bold',marginBottom: 10}}>Soil Irrigation</Text>
           <TouchableOpacity style={[styles.soilBtn,{borderColor:borderColor1}]} onPress = {change1}>
           <Text style={styles.text1}>{text1}</Text>
           </TouchableOpacity>
       </View>
       
-      <View style={{backgroundColor:'#353c57',justifyContent:'center',alignItems:'center',textAlign:'center',width:150,height:160,borderRadius:25}}>
+      <View style={styles.mistBox}>
       <Text style={{color:'#04d9ff',alignSelf:'center',fontWeight:'bold',marginBottom:10}}>Mist spray</Text>
       <TouchableOpacity style={[styles.mistBtn,{borderColor:borderColor2}]} onPress = {change2}>
         <Text style={styles.text2}>{text2}</Text>
       </TouchableOpacity>
       </View>
     </View>
-    <View style={{backgroundColor:'#353c57',justifyContent:'center',alignItems:'center',textAlign:'center',width:150,height:160,borderRadius:25,marginTop:20}}>
+    <View style={styles.netBox}>
       <Text style={{color:'yellow',fontWeight:'bold',marginTop:10}}>Shading Net</Text>
       <TouchableOpacity style={[styles.netBtn,{borderColor:borderColor3}]}onPress = {change3}>
         <Text style={styles.text3}>{text3}</Text>
@@ -200,5 +200,61 @@ const styles = StyleSheet.create({
     borderBottomColor: 'grey',
     borderBottomWidth: StyleSheet.hairlineWidth,
     marginBottom: 15
+  },
+  soilBox:{
+    backgroundColor:'#353c57',
+    width:150,
+    height:160,
+    borderRadius:20,
+    justifyContent:'center',
+    alignItems:'center',
+    marginRight:25,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.39,
+    shadowRadius: 8.30,
+    elevation: 14,
+  },
+
+  mistBox:{
+    backgroundColor:'#353c57',
+    justifyContent:'center',
+    alignItems:'center',
+    textAlign:'center',
+    width:150,
+    height:160,
+    borderRadius:25,
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 6,
+    },
+    shadowOpacity: 0.39,
+    shadowRadius: 8.30,
+    elevation: 14,
+  },
+
+  netBox:{
+    backgroundColor:'#353c57',
+    justifyContent:'center',
+    alignItems:'center',
+    textAlign:'center',
+    width:150,
+    height:160,
+    borderRadius:25,
+    marginTop:20,
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 6,
+    },
+    shadowOpacity: 0.39,
+    shadowRadius: 8.30,
+    elevation: 14,
   }
+
+
 })

@@ -103,6 +103,7 @@ export default function App({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView>
       <View style={styles.progress}>
         <ProgressCircle
           percent={per4}
@@ -115,7 +116,7 @@ export default function App({navigation}) {
         </ProgressCircle>
         <Text style={{color: 'yellow', marginTop: 10}}>Light level</Text>
       </View>
-      <Text style={{color: 'lightgrey', marginBottom: 10, fontWeight: 'bold'}}>
+      <Text style={{color: 'lightgrey', marginBottom: 10, fontWeight: 'bold', alignSelf:'center'}}>
         ____________________________________________________
       </Text>
       <LineChart
@@ -128,7 +129,7 @@ export default function App({navigation}) {
         style={styles.lineBackGround}
       />
       <Text style={styles.text}>Devices</Text>
-      <Text style={{color: 'lightgrey', marginTop: -10, fontWeight: 'bold'}}>
+      <Text style={{color: 'lightgrey', marginTop: -10, fontWeight: 'bold', alignSelf:'center'}}>
         ____________________________________________________
       </Text>
       <View style={styles.devices}>
@@ -138,6 +139,7 @@ export default function App({navigation}) {
           keyExtractor={item => item.id}
         />
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -161,6 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 10,
     color: 'cyan',
+    alignSelf:'center'
   },
   progress: {
     alignItems: 'center',
@@ -183,7 +186,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginLeft: 10,
-    color: `rgba(0,200,170,255)`,
+    color: 'cyan',
   },
   separator: {
     borderBottomColor: 'azure',
@@ -193,5 +196,6 @@ const styles = StyleSheet.create({
   },
   lineBackGround: {
     borderRadius: 25,
+    alignSelf:'center'
   },
 });

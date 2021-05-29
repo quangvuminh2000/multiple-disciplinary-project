@@ -119,7 +119,7 @@ export default function App({navigation}){
     
     return(
         <SafeAreaView style = {styles.container}>
-        
+        <ScrollView>
         <View style = {styles.progressContainer}>
         <View style={styles.soilProgress}>
         <ProgressCircle
@@ -148,7 +148,7 @@ export default function App({navigation}){
         <Text style={{color:'#04d9ff',marginTop:10}}>Atmosphere moisture</Text>
         </View>
         </View>
-        <Text style={{color:'lightgrey',marginBottom:10,fontWeight:'bold'}}>
+        <Text style={{color:'lightgrey',marginBottom:10,fontWeight:'bold',alignSelf:'center'}}>
             ____________________________________________________
         </Text>
         <View style = {styles.lineContainer}>
@@ -171,8 +171,8 @@ export default function App({navigation}){
             />
         </ScrollView>
         </View>
-        <Text style={styles.text}>Devices</Text>
-        <Text style={{color:'lightgrey',marginTop:-10,fontWeight:'bold'}}>
+        <Text style={{fontSize:20,color:'cyan',alignSelf:'center'}}>Devices</Text>
+        <Text style={{color:'lightgrey',marginTop:-10,fontWeight:'bold',alignSelf:'center'}}>
             ____________________________________________________
         </Text>
         <View style={styles.devices}>
@@ -180,10 +180,12 @@ export default function App({navigation}){
            data={data}
            renderItem={renderItem}
            keyExtractor={(item) => item.id}
+           style = {styles.flatlist}
         />
         </View>
+        </ScrollView>
         
-    </SafeAreaView>
+        </SafeAreaView>
     ) 
 }
 
@@ -232,15 +234,25 @@ const styles = StyleSheet.create({
     },
     devices:{
         flex: 1,
-        width:screenWidth/1.1
+        width:screenWidth/1.1,
+        alignSelf:'center'
     },
     item:{
         backgroundColor:'#353c57',
         padding: 20,
+        //alignSelf:'center',
         marginVertical: 8,
         marginHorizontal: 16,
         flexDirection:'row',
-        borderRadius:10
+        borderRadius:10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.39,
+        shadowRadius: 8.30,
+        elevation: 14,
     },
     title:{
         fontSize: 20,
@@ -254,13 +266,33 @@ const styles = StyleSheet.create({
         marginBottom: 15
     },
     lineBackGround1:{
+        //backgroundColor:'#fff',
         borderRadius:25,
         marginLeft:40,
-        marginRight:20
+        marginRight:20,
+        alignSelf:'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.39,
+        shadowRadius: 8.30,
+        elevation: 14,
     },
     lineBackGround2:{
+        //backgroundColor:'#fff',
         borderRadius:25,
         marginLeft:10,
-        marginRight:15
+        marginRight:15,
+        alignSelf:'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.39,
+        shadowRadius: 8.30,
+        elevation: 14,
     }
 })
