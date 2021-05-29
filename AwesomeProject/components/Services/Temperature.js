@@ -54,9 +54,7 @@ const Item = ({source, title}) => (
 
 export default function App({navigation}) {
   const MqttObj = useContext(AppStateContext);
-  const client = MqttObj.client;
   const database = MqttObj.database;
-  const userData = MqttObj.data;
 
   const [temp, setTemp] = useState(database.temperature);
   const [per3, setPercent3] = useState(
@@ -64,17 +62,13 @@ export default function App({navigation}) {
   );
 
   useEffect(() => {
-    setTemp(database.temperature);
-    setPercent3(database.temperature[database.temperature.length - 1]);
-    client.messageCallbacks.push(data => {
-      if (data.id === 7) {
-        let temp = parseInt(data.data.split('-')[0]);
-        setPercent3(temp);
+    const callback = (dataType, data) => {
+      if (dataType === 'temperature') {
+        setPercent3(data);
       }
-    });
-    database.fetchCallbacks.push(function () {
-      setTemp(this.temperature);
-    });
+    };
+    emitter.on('sensorDataReceived', callback);
+    return () => emitter.off('sensorDataReceived', callback);
   }, []);
   useEffect(() => {
     const callback = (table, data) => {

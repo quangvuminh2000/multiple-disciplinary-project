@@ -65,7 +65,6 @@ export default function App({navigation}) {
     <Item title={item.title} source={item.source} />
   );
   const MqttObj = useContext(AppStateContext);
-  const client = MqttObj.client;
   const database = MqttObj.database;
 
   const [light, setLight] = useState(database.light);
@@ -74,12 +73,13 @@ export default function App({navigation}) {
   );
 
   useEffect(() => {
-    client.messageCallbacks.push(data => {
-      if (data.id === 13) {
-        let light = parseInt(data.data);
-        setPercent4(light);
+    const callback = (dataType, data) => {
+      if (dataType === 'light') {
+        setPercent4(data);
       }
-    });
+    };
+    emitter.on('sensorDataReceived', callback);
+    return () => emitter.off('sensorDataReceived', callback);
   }, []);
   useEffect(() => {
     const callback = (table, data) => {

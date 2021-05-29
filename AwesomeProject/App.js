@@ -12,6 +12,7 @@ import {
 } from '@react-navigation/drawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import emitter from 'tiny-emitter/instance';
 
 import Login from './components/Screens/Login';
 import Home from './components/Screens/Home';
@@ -262,26 +263,20 @@ const MqttObj = {
   database: database,
   data: userData,
 };
-testClient.messageCallbacks.push(data => {
-  switch (data.id) {
-    case 7:
-      var temp, humid;
-      [temp, humid] = data.data.split('-');
-      userData.temp = parseInt(temp);
-      database.updateData('temperature', userData.temp);
-      userData.airHumid = parseInt(humid);
-      database.updateData('air', userData.airHumid);
+emitter.on('sensorDataReceived', (dataType, data) => {
+  switch (dataType) {
+    case 'air':
+      userData.airHumid = data;
       break;
-    case 9:
-      userData.soilHumid = parseInt(data.data);
-      database.updateData('soil', userData.soilHumid);
+    case 'soil':
+      userData.soilHumid = data;
       break;
-  }
-});
-testClient1.messageCallbacks.push(data => {
-  if (data.id === 13) {
-    userData.light = parseInt(data.data);
-    database.updateData('light', userData.light);
+    case 'light':
+      userData.light = data;
+      break;
+    case 'temperature':
+      userData.temp = data;
+      break;
   }
 });
 

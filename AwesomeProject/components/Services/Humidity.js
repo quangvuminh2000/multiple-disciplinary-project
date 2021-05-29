@@ -65,8 +65,6 @@ export default function App({navigation}){
         <Item title={item.title} source={item.source}/>
     );
     const MqttObj = useContext(AppStateContext);
-    const client = MqttObj.client;
-    const soilmonitor = MqttObj.soilmonitor;
     const database = MqttObj.database;
 
     const [val1,setVal1] = useState(database.soil);
@@ -75,19 +73,15 @@ export default function App({navigation}){
     const [per2,setPercent2] = useState(database.air[database.air.length - 1]);
 
     useEffect(() => {
-        console.log('test', database.soil, database.air);
-        client.messageCallbacks.push(data => {
-            if (data.id === 7) {
-                let airHumid = parseInt(data.data.split('-')[1]);
-                setPercent2(airHumid);
-                database.updateData('air', airHumid);
+        const callback = (dataType, data) => {
+            if (dataType === 'soil') {
+                setPercent1(data);
+            } else if (dataType === 'air') {
+                setPercent2(data);
             }
-            if (data.id === 9) {
-                let soilHumid = parseInt(data.data);
-                setPercent1(soilHumid);
-                database.updateData('soil', soilHumid);
-            }
-        });
+        };
+        emitter.on('sensorDataReceived', callback);
+        return () => emitter.off('sensorDataReceived', callback);
     }, []);
     useEffect(() => {
         const callback = (table, data) => {

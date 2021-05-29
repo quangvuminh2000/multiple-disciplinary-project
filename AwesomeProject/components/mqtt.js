@@ -4,7 +4,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from 'react-native-push-notification';
 import {Buffer} from 'buffer';
-import {useState} from 'react';
+import emitter from 'tiny-emitter/instance';
 
 let minTemp = 32;
 let maxTemp = 37;
@@ -23,7 +23,6 @@ class MqttClient {
     'Group12/feeds/bk-iot-soil',
     'Group121/feeds/bk-iot-light',
   ];
-  messageCallbacks = [];
 
   constructor(options, subscribedTopics) {
     // this.airHumid = 70;
@@ -51,17 +50,18 @@ class MqttClient {
           let temp, humid;
           [temp, humid] = data.data.split('-');
           this.temp = parseInt(temp);
+          emitter.emit('sensorDataReceived', 'temperature', this.temp);
           this.airHumid = parseInt(humid);
+          emitter.emit('sensorDataReceived', 'air', this.airHumid);
           break;
         case 9:
           this.soilHumid = parseInt(data.data);
+          emitter.emit('sensorDataReceived', 'soil', this.soilHumid);
           break;
         case 13:
           this.light = parseInt(data.data);
+          emitter.emit('sensorDataReceived', 'light', this.light);
           break;
-      }
-      for (const callback of this.messageCallbacks) {
-        callback.bind(this)(data);
       }
 
       PushNotification.createChannel(
