@@ -41,7 +41,7 @@ export default function App() {
     database.db
       .executeSql(
         'UPDATE plant SET (max_temperature, min_temperature) = (?, ?) WHERE user_id = ?;',
-        [maxTemp, maxTemp, database.userId],
+        [maxTemp, minTemp, database.userId],
       )
       .then(results => console.log('update plant', results[0]));
   };
