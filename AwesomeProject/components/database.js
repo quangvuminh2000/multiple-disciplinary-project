@@ -111,11 +111,19 @@ export default class Database {
       'INSERT INTO ' + table + '(time, value) VALUES (?,?)',
       [date, value],
     );
+    let [del] = await this.db.executeSql(
+      'DELETE FROM ' + table + 'WHERE date(\'now\',\'-7 day\') >= date(time)',
+    );
     console.log('Results', result.rowsAffected);
     if (result.rowsAffected > 0) {
       console.log('Success');
     } else {
       console.log('Registration Failed');
+    }
+    if (del.rowsAffected > 0) {
+      console.log('Data cleaned!');
+    } else {
+      console.log('Cleaning Failed');
     }
   }
 
