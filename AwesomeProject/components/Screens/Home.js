@@ -71,16 +71,16 @@ export default function Home({ navigation }) {
   };
   const change2 = () => {
     if (sprayActivated) {
-      soilMonitor.deactivateSpray();
+      airMonitor.deactivateSpray();
     } else {
-      soilMonitor.activateSpray();
+      airMonitor.activateSpray();
     }
   };
   const change3 = () => {
     if (netActivated) {
-      soilMonitor.deactivateNet();
+      lightMonitor.deactivateNet();
     } else {
-      soilMonitor.activateNet();
+      lightMonitor.activateNet();
     }
   };
   const Separator = () => {
