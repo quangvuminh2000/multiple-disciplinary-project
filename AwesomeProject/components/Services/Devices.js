@@ -3,24 +3,36 @@ import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, SafeAreaView
 import { Icon } from 'react-native-elements';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { set } from 'react-native-reanimated';
+import emitter from 'tiny-emitter/instance';
+
 const screenWidth = Dimensions.get("window").width
 const screenHeight = Dimensions.get("window").height
 import { AppStateContext } from '../../App';
 
 
 export default function App({ navigation }) {
-
-
-
     const MqttObj = useContext(AppStateContext);
     const database = MqttObj.database;
 
     const [sensorName, setsensorName] = useState([]);
+
     useEffect(() => {
-        database.fetchSensor().then((data) => {
+        const fetchData = async () => {
+            let data = await database.fetchSensor()
             setsensorName(data);
-            console.log("HERE", sensorName);
-        })
+            console.log("HERE", data);
+        };
+        fetchData();
+        let events = ['pumpActivated', 'sprayActivated', 'netActivated'];
+        for (const event of events) {
+            emitter.on(event, fetchData);
+        }
+        const cleanup = () => {
+            for (const event of events) {
+                emitter.off(event, fetchData);
+            }
+        };
+        return cleanup;
     }, []);
 
     //console.log(list)
