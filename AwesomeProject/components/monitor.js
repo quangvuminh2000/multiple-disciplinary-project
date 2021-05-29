@@ -198,7 +198,6 @@ class LightMonitor extends Monitor {
     }
     if (
       this.data.light < 50 &&
-      this.data.temp <= this.data.minTemp &&
       this.net
     ) {
       this.deactivateNet();

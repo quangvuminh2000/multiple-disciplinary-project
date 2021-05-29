@@ -40,7 +40,7 @@ export default function Home({ navigation }) {
     return () => emitter.off('sprayActivated', setSprayActivated);
   }, []);
   useEffect(() => {
-    emitter.on('netActivated', () => setNetActivated(true));
+    emitter.on('netActivated',setNetActivated);
     return () => emitter.off('netActivated', setNetActivated);
   }, []);
 
