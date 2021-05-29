@@ -18,28 +18,28 @@ export default class Database {
     this.data = data;
 
     emitter.on('pumpActivated', () => {
-      this.updateStatus('Relay Circuit',1);
-      this.updateStatus('Mini Pump',1);
+      this.updateStatus('Relay Circuit', 1);
+      this.updateStatus('Mini Pump', 1);
     });
     emitter.on('pumpDeactivated', () => {
-      this.updateStatus('Relay Circuit',0);
-      this.updateStatus('Mini Pump',0);
+      this.updateStatus('Relay Circuit', 0);
+      this.updateStatus('Mini Pump', 0);
     });
     emitter.on('sprayActivated', () => {
-      this.updateStatus('Relay Circuit 2',1);
-      this.updateStatus('Mini Pump 2',1);
+      this.updateStatus('Relay Circuit 2', 1);
+      this.updateStatus('Mini Pump 2', 1);
     });
     emitter.on('sprayDeactivated', () => {
-      this.updateStatus('Relay Circuit',0);
-      this.updateStatus('Mini Pump',0);
+      this.updateStatus('Relay Circuit', 0);
+      this.updateStatus('Mini Pump', 0);
     });
     emitter.on('netActivated', () => {
-      this.updateStatus('DRV Circuit',1);
-      this.updateStatus('RC Servo 590',1);
+      this.updateStatus('DRV Circuit', 1);
+      this.updateStatus('RC Servo 590', 1);
     });
     emitter.on('netDeactivated', () => {
-      this.updateStatus('DRV Circuit',0);
-      this.updateStatus('RC Servo 590',0);
+      this.updateStatus('DRV Circuit', 0);
+      this.updateStatus('RC Servo 590', 0);
     });
   }
 
@@ -49,7 +49,8 @@ export default class Database {
     this.db = await SQLite.openDatabase(this.args);
     // await this.db.transaction(this.populateDB);
     // await this.updateData('soil', 50);
-    await this.fetchData3();
+    this.cleanupOldData();
+    this.fetchData3();
     this.#fetchIntervalID = setInterval(this.fetchData3, 5000);
     console.log('database', this.db);
   }
@@ -129,6 +130,22 @@ export default class Database {
     }
   }
 
+  cleanupOldData = () => {
+    for (const table of this.dataTable) {
+      this.db
+        .executeSql(
+          'DELETE FROM ' + table + " WHERE date('now', '-7 day') >= date(time)",
+        )
+        .then(results => {
+          if (results[0].rowsAffected > 0) {
+            console.log('Data cleaned!');
+          } else {
+            console.log('Cleaning Failed');
+          }
+        });
+    }
+  };
+
   async updateData(table, value) {
     let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
     // let date = new Date();
@@ -137,20 +154,12 @@ export default class Database {
       'INSERT INTO ' + table + '(time, value) VALUES (?,?)',
       [date, value],
     );
-    // let [del] = await this.db.executeSql(
-    //   'DELETE FROM ' + table + 'WHERE date(\'now\',\'-7 day\') >= date(time)',
-    // );
     console.log('Results', result.rowsAffected);
     if (result.rowsAffected > 0) {
       console.log('Success');
     } else {
       console.log('Registration Failed');
     }
-    // if (del.rowsAffected > 0) {
-    //   console.log('Data cleaned!');
-    // } else {
-    //   console.log('Cleaning Failed');
-    // }
   }
 
   // updatePlant = async (param, value) => {
