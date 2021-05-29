@@ -262,7 +262,6 @@ const MqttObj = {
   database: database,
   data: userData,
 };
-userData.database = database;
 testClient.messageCallbacks.push(data => {
   switch (data.id) {
     case 7:
