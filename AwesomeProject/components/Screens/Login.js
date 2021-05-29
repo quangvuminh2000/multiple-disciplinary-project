@@ -37,9 +37,6 @@ export default function Login({navigation}) {
         if (doLogin.user) {
           navigation.navigate('My App');
           await MqttObj.database.setUser(email);
-          MqttObj.soilmonitor.start();
-          MqttObj.airmonitor.start();
-          MqttObj.lightmonitor.start();
         }
       } catch (e) {
         //setShowLoading(false);

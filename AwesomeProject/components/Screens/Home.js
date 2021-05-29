@@ -25,6 +25,10 @@ export default function Home({ navigation }) {
     };
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     ///////////////////////////////////////////////////
+    soilMonitor.start();
+    airMonitor.start();
+    lightMonitor.start();
+
     emitter.on('pumpActivated', () => setPumpActivated(true));
     emitter.on('pumpDeactivated', () => setPumpActivated(false));
 
