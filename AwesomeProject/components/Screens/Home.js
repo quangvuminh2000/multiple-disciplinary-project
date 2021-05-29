@@ -2,51 +2,48 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
+import emitter from 'tiny-emitter/instance';
 
 import {AppStateContext} from '../../App';
 export default function Home({ navigation }) {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
 
-  const [text1,setText1] = useState('Off');
-  const [text2,setText2] = useState('Off');
-  const [text3,setText3] = useState('Off');
-  const [borderColor1,setColor1] = useState('#999');
-  const [borderColor2,setColor2] = useState('#999');
-  const [borderColor3,setColor3] = useState('#999');
-
-  function onAuthStateChanged(user) {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  }
-
   const MqttObj = useContext(AppStateContext);
-  const client = MqttObj.client;
-  const soilmonitor = MqttObj.soilmonitor;
-  const airmonitor = MqttObj.airmonitor;
-  const lightmonitor = MqttObj.lightmonitor;
+  const soilMonitor = MqttObj.soilmonitor;
+  const airMonitor = MqttObj.airmonitor;
+  const lightMonitor = MqttObj.lightmonitor;
+
+  const [pumpActivated, setPumpActivated] = useState(soilMonitor.soilIrrigation);
+  const [sprayActivated, setSprayActivated] = useState(airMonitor.mistSpray);
+  const [netActivated, setNetActivated] = useState(lightMonitor.net);
 
   useEffect(() => {
+    const onAuthStateChanged = user => {
+      setUser(user);
+      setInitializing(false);
+    };
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     ///////////////////////////////////////////////////
+    emitter.on('pumpActivated', () => setPumpActivated(true));
+    emitter.on('pumpDeactivated', () => setPumpActivated(false));
 
-    setInterval(() => {
-      setText1(soilmonitor.soilIrrigation ? 'On' : 'Off');
-      setColor1(soilmonitor.soilIrrigation ? 'rgba(0,200,170,255)' : '#999');
-    }, soilmonitor.interval);
+    emitter.on('sprayActivated', () => setSprayActivated(true));
+    emitter.on('sprayDeactivated', () => setSprayActivated(false));
 
-    setInterval(() => {
-      setText2(airmonitor.mistSpray ? 'On' : 'Off');
-      setColor2(airmonitor.mistSpray ? '#04d9ff' : '#999');
-    }, airmonitor.interval);
-
-    setInterval(() => {
-      setText3(lightmonitor.net ? 'On' : 'Off');
-      setColor3(lightmonitor.net ? 'yellow' : '#999');
-    }, lightmonitor.interval);
+    emitter.on('netActivated', () => setNetActivated(true));
+    emitter.on('netDeactivated', () => setNetActivated(false));
     ////////////////////////
     return subscriber; // unsubscribe on unmount
   }, []);
+
+  const text1 = pumpActivated ? 'On' : 'Off';
+  const borderColor1 = pumpActivated ? 'rgba(0,200,170,255)' : '#999';
+  const text2 = sprayActivated ? 'On' : 'Off';
+  const borderColor2 = sprayActivated ? '#04d9ff' : '#999';
+  const text3 = netActivated ? 'On' : 'Off';
+  const borderColor3 = netActivated ? 'yellow' : '#999';
+
   if (initializing) return null;
   if (!user) {
     return navigation.navigate('Login');
@@ -58,36 +55,27 @@ export default function Home({ navigation }) {
     .then(()=>console.log('User signed out'))
   }
 
-  function change1(){
-    if(text1 === 'Off'){
-      setText1('On');
-      setColor1(`rgba(0,200,170,255)`);
+  const change1 = () => {
+    if (pumpActivated) {
+      soilMonitor.deactivatePump();
+    } else {
+      soilMonitor.activatePump();
     }
-    else if(text1 === 'On'){
-      setText1('Off');
-      setColor1('#999')
+  };
+  const change2 = () => {
+    if (sprayActivated) {
+      soilMonitor.deactivateSpray();
+    } else {
+      soilMonitor.activateSpray();
     }
-  }
-  function change2(){
-    if(text2 === 'Off'){
-      setText2('On');
-      setColor2('#04d9ff');
+  };
+  const change3 = () => {
+    if (netActivated) {
+      soilMonitor.deactivateNet();
+    } else {
+      soilMonitor.activateNet();
     }
-    else if(text2 === 'On'){
-      setText2('Off');
-      setColor2('#999')
-    }
-  }
-  function change3(){
-    if(text3 === 'Off'){
-      setText3('On');
-      setColor3('yellow');
-    }
-    else if(text3 === 'On'){
-      setText3('Off');
-      setColor3('#999')
-    }
-  }
+  };
   const Separator = () => {
     return(
         <View style={styles.separator}/>

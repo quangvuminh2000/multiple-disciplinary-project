@@ -1,8 +1,10 @@
 import PushNotification from 'react-native-push-notification';
+import emitter from 'tiny-emitter/instance';
 
 class Monitor {
   interval = 5000; // For the checking interval
   running = false;
+  callbacks = [];
 
   constructor(client, client1, data) {
     this.client = client;
@@ -45,15 +47,13 @@ class SoilMonitor extends Monitor {
 
   checkCondition = () => {
     // console.log('Check condition');
-    let temp = this.data.soilTemp;
-    let humid = this.data.soilHumid;
 
     if (
       this.data.soilHumid <= this.data.minSoilHumid &&
       this.data.temp >= this.data.maxTemp &&
       !this.soilIrrigation
     ) {
-      this.activate_pump();
+      this.activatePump();
       this.soilPush();
     }
     if (
@@ -61,7 +61,7 @@ class SoilMonitor extends Monitor {
       this.data.temp <= this.data.minTemp &&
       this.soilIrrigation
     ) {
-      this.deactivate_pump();
+      this.deactivatePump();
     }
 
     if (this.running) {
@@ -69,7 +69,7 @@ class SoilMonitor extends Monitor {
     }
   };
 
-  activate_pump() {
+  activatePump() {
     //? re-setting conditions
     this.interval = 1000;
     this.soilIrrigation = true;
@@ -81,9 +81,10 @@ class SoilMonitor extends Monitor {
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
     this.data.database.updateStatus('Relay Circuit',1);
     this.data.database.updateStatus('Mini Pump',1);
+    emitter.emit('pumpActivated');
   }
 
-  deactivate_pump() {
+  deactivatePump() {
     //? re-setting conditions
     this.interval = 5000;
     this.soilIrrigation = false;
@@ -94,7 +95,8 @@ class SoilMonitor extends Monitor {
     let data = {id: '11', name: 'RELAY_SOIL', data: '0', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
     this.data.database.updateStatus('Relay Circuit',0);
-    this.data.database.updateStatus('Mini Pump',0)
+    this.data.database.updateStatus('Mini Pump',0);
+    emitter.emit('pumpDeactivated');
   }
 }
 
@@ -120,14 +122,12 @@ class AirMonitor extends Monitor {
   };
 
   checkCondition = () => {
-    let temp = this.client.temp;
-    let humid = this.client.airHumid;
     if (
       this.data.airHumid <= this.data.minAirHumid &&
       this.data.temp >= this.data.maxTemp &&
       !this.mistSpray
     ) {
-      this.activate_spray();
+      this.activateSpray();
       this.airPush();
     }
     if (
@@ -135,7 +135,7 @@ class AirMonitor extends Monitor {
       this.data.temp <= this.data.minTemp &&
       this.mistSpray
     ) {
-      this.deactivate_spray();
+      this.deactivateSpray();
     }
 
     if (this.running) {
@@ -143,7 +143,7 @@ class AirMonitor extends Monitor {
     }
   };
 
-  activate_spray() {
+  activateSpray() {
     //? re-setting conditions
     this.mistSpray = true;
     this.interval = 1000;
@@ -155,9 +155,10 @@ class AirMonitor extends Monitor {
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
     this.data.database.updateStatus('Relay Circuit 2',1);
     this.data.database.updateStatus('Mini Pump 2',1);
+    emitter.emit('sprayActivated');
   }
 
-  deactivate_spray() {
+  deactivateSpray() {
     //? re-setting conditions
     this.mistSpray = false;
     this.interval = 5000;
@@ -167,8 +168,9 @@ class AirMonitor extends Monitor {
     //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
     let data = {id: '11', name: 'RELAY_AIR', data: '0', unit: ''};
     this.client1.publish('Group121/feeds/bk-iot-relay', data);
-    this.data.database.updateStatus('Relay Circuit 2',0);
-    this.data.database.updateStatus('Mini Pump 2',0);
+    this.data.database.updateStatus('Relay Circuit',0);
+    this.data.database.updateStatus('Mini Pump',0);
+    emitter.emit('sprayDeactivated');
   }
 }
 
@@ -193,17 +195,13 @@ class LightMonitor extends Monitor {
     });
   };
 
-
-
   checkCondition = () => {
-    let light = this.client.light;
-    let temp = this.client.temp;
     if (
       this.data.light >= 70 &&
       this.data.temp >= this.data.maxTemp &&
       !this.net
     ) {
-      this.activate_net();
+      this.activateNet();
       this.lightPush();
     }
     if (
@@ -211,7 +209,7 @@ class LightMonitor extends Monitor {
       this.data.temp <= this.data.minTemp &&
       this.net
     ) {
-      this.deactivate_net();
+      this.deactivateNet();
     }
 
     if (this.running) {
@@ -219,7 +217,7 @@ class LightMonitor extends Monitor {
     }
   };
 
-  activate_net() {
+  activateNet() {
     //? re-setting conditions
     this.net = true;
     this.interval = 1000;
@@ -230,9 +228,10 @@ class LightMonitor extends Monitor {
     this.client.publish('Group12/feeds/bk-iot-drv', data);
     this.data.database.updateStatus('DRV Circuit',1);
     this.data.database.updateStatus('RC Servo 590',1);
+    emitter.emit('netActivated');
   }
 
-  deactivate_net() {
+  deactivateNet() {
     //? re-setting conditions
     this.net = false;
     this.interval = 5000;
@@ -243,6 +242,7 @@ class LightMonitor extends Monitor {
     this.client.publish('Group12/feeds/bk-iot-drv', data);
     this.data.database.updateStatus('DRV Circuit',0);
     this.data.database.updateStatus('RC Servo 590',0);
+    emitter.emit('netDeactivated');
   }
 }
 
