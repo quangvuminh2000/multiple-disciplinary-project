@@ -80,8 +80,10 @@ export default function App({ navigation }) {
     const [sensorName, setsensorName] = useState([]);
     const [online, setOnline] = useState([]);
     useEffect(() => {
-        var db = database.fetchSensor().then((data) => { setsensorName(data) })
-        console.log("HERE", sensorName)
+        database.fetchSensor().then((data) => {
+            setsensorName(data);
+            console.log("HERE", sensorName);
+        })
         /*
         var len = setsensorName.length
         if (len > 0) {
@@ -127,7 +129,7 @@ export default function App({ navigation }) {
     return (
         <View style={styles.container}>
             <FlatList
-                data={list}
+                data={sensorName}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) =>
                     <View style={styles.item}>

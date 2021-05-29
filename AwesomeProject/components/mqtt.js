@@ -1,8 +1,8 @@
 import * as Mqtt from 'react-native-native-mqtt';
 import VIForegroundService from '@voximplant/react-native-foreground-service';
 import BackgroundTimer from 'react-native-background-timer';
-import PushNotificationIOS from "@react-native-community/push-notification-ios";
-import PushNotification from "react-native-push-notification";
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import PushNotification from 'react-native-push-notification';
 import {Buffer} from 'buffer';
 import {useState} from 'react';
 
@@ -13,8 +13,6 @@ let maxSoil = 70;
 let minAtmosphere = 65;
 let maxAtmosphere = 70;
 
-
-
 class MqttClient {
   #client;
   sensorTopics = [
@@ -24,7 +22,6 @@ class MqttClient {
     'Group12/feeds/bk-iot-temp-humid',
     'Group12/feeds/bk-iot-soil',
     'Group121/feeds/bk-iot-light',
-
   ];
   messageCallbacks = [];
 
@@ -50,53 +47,50 @@ class MqttClient {
       const data = JSON.parse(message);
       data.id = parseInt(data.id);
       switch (parseInt(data.id)) {
-          case 7:
-              let temp, humid;
-              [temp, humid] = data.data.split('-');
-              this.temp = parseInt(temp);
-              this.airHumid = parseInt(humid);
-              break;
-          case 9:
-              this.soilHumid = parseInt(data.data);
-              break;
-          case 13:
-              this.light = parseInt(data.data);
-              break;
+        case 7:
+          let temp, humid;
+          [temp, humid] = data.data.split('-');
+          this.temp = parseInt(temp);
+          this.airHumid = parseInt(humid);
+          break;
+        case 9:
+          this.soilHumid = parseInt(data.data);
+          break;
+        case 13:
+          this.light = parseInt(data.data);
+          break;
       }
       for (const callback of this.messageCallbacks) {
         callback.bind(this)(data);
       }
 
-
-      PushNotification.createChannel({
-      channelId: "12", // (required)
-      channelName: "Group12", // (required)
-
-    },
-    (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
-  );
+      PushNotification.createChannel(
+        {
+          channelId: '12', // (required)
+          channelName: 'Group12', // (required)
+        },
+        created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
+      );
       //Notification setting
       PushNotification.configure({
-      onRegister: function (token) {
-        console.log("TOKEN:", token);
-      },
+        onRegister: function (token) {
+          console.log('TOKEN:', token);
+        },
 
-      onNotification: function (notification) {
-        console.log("NOTIFICATION:", notification);
+        onNotification: function (notification) {
+          console.log('NOTIFICATION:', notification);
 
-        notification.finish(PushNotificationIOS.FetchResult.NoData);
-      },
+          notification.finish(PushNotificationIOS.FetchResult.NoData);
+        },
 
-
-
-      permissions: {
-        alert: true,
-        badge: true,
-        sound: true,
-      },
-      popInitialNotification: true,
-      requestPermissions: true,
-    });
+        permissions: {
+          alert: true,
+          badge: true,
+          sound: true,
+        },
+        popInitialNotification: true,
+        requestPermissions: true,
+      });
     });
 
     this.#client.on(Mqtt.Event.Error, error => {
@@ -117,8 +111,6 @@ class MqttClient {
     let data = Buffer.from(JSON.stringify(payload));
     this.#client.publish(topic, data, 1);
   }
-
-
 
   start(connectCallback) {
     if (connectCallback) {
@@ -155,7 +147,8 @@ const testClient = new MqttClient(
   [
     'Group12/feeds/bk-iot-temp-humid',
     'Group12/feeds/bk-iot-soil',
-    'Group12/feeds/bk-iot-drv'
+    'Group12/feeds/bk-iot-drv',
+    'Group12/feeds/test2',
   ],
 );
 
@@ -164,8 +157,10 @@ const testClient1 = new MqttClient(
     username: 'Group121',
     password: 'aio_LkQT69vjPHPMV7o5zNfUOzR5YSza',
   },
-  [ 'Group121/feeds/bk-iot-light',
-    'Group121/feeds/bk-iot-relay'
+  [
+    'Group121/feeds/bk-iot-light',
+    'Group121/feeds/bk-iot-relay',
+    'Group121/feeds/test',
   ],
 );
 
@@ -174,9 +169,11 @@ const mqttClient = new MqttClient(
     username: 'CSE_BBC',
     password: 'aio_KXfp47zegx3CthMAEj6pB0ZeKoEm',
   },
-  [ 'CSE_BBC/feeds/bk-iot-temp-humid',
+  [
+    'CSE_BBC/feeds/bk-iot-temp-humid',
     'CSE_BBC/feeds/bk-iot-soil',
-    'CSE_BBC/feeds/bk-iot-drv'],
+    'CSE_BBC/feeds/bk-iot-drv',
+  ],
 );
 
 const mqttClient1 = new MqttClient(
@@ -184,10 +181,7 @@ const mqttClient1 = new MqttClient(
     username: 'CSE_BBC1',
     password: 'aio_yqUQ00Ryi2liePf8ElzL3yq3dNij',
   },
-  ['CSE_BBC1/feeds/bk-iot-light',
-    'CSE_BBC1/feeds/bk-iot-relay'
-    
-  ],
+  ['CSE_BBC1/feeds/bk-iot-light', 'CSE_BBC1/feeds/bk-iot-relay'],
 );
 
 async function startForegroundService() {

@@ -213,11 +213,14 @@ function MyStack() {
 }
 
 const userData = {};
-const database = new Database({
-  name: 'test4.db',
-  createFromLocation: '~test4.db',
-}, userData);
-userData.database = database;
+const database = new Database(
+  {
+    name: 'test4.db',
+    createFromLocation: '~test4.db',
+  },
+  userData,
+);
+
 export default function App() {
   useEffect(() => {
     database.init();

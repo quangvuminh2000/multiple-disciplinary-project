@@ -22,9 +22,10 @@ export default function App() {
   console.log('LIGHT TEMP: ', MqttObj.lightmonitor.minTemp);
 
   useEffect(() => {
+    console.log('LIGHT TEMP:', userData);
     setmaxTemp(userData.maxTemp);
     setminTemp(userData.minTemp);
-  }, [userData]);
+  }, []);
 
   const intSetter = setter => text => {
     setter(parseInt(text));

@@ -144,17 +144,13 @@ export default class Database {
       console.log('Update Failed');
     }
   }
-  async fetchSensor() {
+
+  fetchSensor = async () => {
     let [result] = await this.db.executeSql('SELECT name, online FROM sensor');
     var rows = result.rows;
 
-    if (rows.length > 0) {
-      let dataList = range(rows.length).map(i => [
-        rows.item(i).name,
-        rows.item(i).online,
-      ]);
-      console.log('DATAFUCK: ', dataList);
-      return dataList;
-    }
-  }
+    let dataList = range(rows.length).map(i => rows.item(i));
+    console.log('DATAFUCK: ', dataList);
+    return dataList;
+  };
 }
