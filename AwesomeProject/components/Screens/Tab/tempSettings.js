@@ -8,7 +8,8 @@ import {
   Dimensions,
   StyleSheet,
 } from 'react-native';
-import {AppStateContext} from '../../../App';
+
+import {database, plantData} from '../../backend/service';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -16,15 +17,10 @@ export default function App() {
   const [maxTemp, setmaxTemp] = useState(37);
   const [minTemp, setminTemp] = useState(32);
 
-  const MqttObj = useContext(AppStateContext);
-  const database = MqttObj.database;
-  const userData = MqttObj.data;
-  console.log('LIGHT TEMP: ', MqttObj.lightmonitor.minTemp);
-
   useEffect(() => {
-    console.log('LIGHT TEMP:', userData);
-    setmaxTemp(userData.maxTemp);
-    setminTemp(userData.minTemp);
+    console.log('LIGHT TEMP:', plantData);
+    setmaxTemp(plantData.maxTemp);
+    setminTemp(plantData.minTemp);
   }, []);
 
   const intSetter = setter => text => {
@@ -36,8 +32,8 @@ export default function App() {
     setmaxTemp(37);
   };
   const set = () => {
-    userData.minTemp = minTemp;
-    userData.maxTemp = maxTemp;
+    plantData.minTemp = minTemp;
+    plantData.maxTemp = maxTemp;
     database.db
       .executeSql(
         'UPDATE plant SET (max_temperature, min_temperature) = (?, ?) WHERE user_id = ?;',

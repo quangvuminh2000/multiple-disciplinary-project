@@ -4,20 +4,15 @@ import { Button, Icon } from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
 import emitter from 'tiny-emitter/instance';
 
-import {AppStateContext} from '../../App';
+import {plantData} from '../backend/service';
+
 export default function Home({ navigation }) {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
 
-  const MqttObj = useContext(AppStateContext);
-  const soilMonitor = MqttObj.soilmonitor;
-  const airMonitor = MqttObj.airmonitor;
-  const lightMonitor = MqttObj.lightmonitor;
-  const database = MqttObj.database;
-
-  const [pumpActivated, setPumpActivated] = useState(soilMonitor.soilIrrigation);
-  const [sprayActivated, setSprayActivated] = useState(airMonitor.mistSpray);
-  const [netActivated, setNetActivated] = useState(lightMonitor.net);
+  const [pumpActivated, setPumpActivated] = useState(plantData.soilIrrigation);
+  const [sprayActivated, setSprayActivated] = useState(plantData.mistSpray);
+  const [netActivated, setNetActivated] = useState(plantData.net);
 
   useEffect(() => {
     const onAuthStateChanged = user => {
@@ -26,28 +21,6 @@ export default function Home({ navigation }) {
     };
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
-  }, []);
-  useEffect(() => {
-    const prepare = async () => {
-      let sensorList = await database.fetchSensor();
-      sensorList.forEach(sensor => {
-        switch (sensor.name) {
-          case 'Relay Circuit':
-            soilMonitor.soilIrrigation = sensor.online;
-            setPumpActivated(sensor.online);
-            break;
-          case 'Relay Circuit 2':
-            airMonitor.mistSpray = sensor.online;
-            setSprayActivated(sensor.online);
-            break;
-          case 'DRV Circuit':
-            lightMonitor.net = sensor.online;
-            setNetActivated(sensor.online);
-            break;
-        }
-      });
-    };
-    prepare();
   }, []);
   useEffect(() => {
     emitter.on('pumpActivated', setPumpActivated);

@@ -2,9 +2,9 @@ import React, {useContext, useEffect, useState} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet,Dimensions,SafeAreaView,ScrollView,FlatList,Image,SectionList} from 'react-native';
 import {LineChart} from 'react-native-chart-kit'
 import ProgressCircle from 'react-native-progress-circle';
-import { AppStateContext } from '../../App';
-import { SoilMonitor,MqttClient,AirMonitor } from '../mqtt';
 import emitter from 'tiny-emitter/instance';
+
+import {plantData} from '../backend/service';
 
 const chartConfig3 = {
     backgroundGradientFrom: '#353c57',
@@ -64,13 +64,11 @@ export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-    const MqttObj = useContext(AppStateContext);
-    const database = MqttObj.database;
 
-    const [val1,setVal1] = useState(database.soil);
-    const [val2,setVal2] = useState(database.air);
-    const [per1,setPercent1] = useState(database.soil[database.soil.length - 1]);
-    const [per2,setPercent2] = useState(database.air[database.air.length - 1]);
+    const [val1,setVal1] = useState(plantData.soilList);
+    const [val2,setVal2] = useState(plantData.airList);
+    const [per1,setPercent1] = useState(plantData.soilHumid);
+    const [per2,setPercent2] = useState(plantData.airHumid);
 
     useEffect(() => {
         const callback = (dataType, data) => {

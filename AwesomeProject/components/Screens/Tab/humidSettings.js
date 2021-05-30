@@ -8,38 +8,20 @@ import {
 } from 'react-native';
 import {TextInput} from 'react-native';
 import {Divider} from 'react-native-elements';
-import {AppStateContext} from '../../../App';
+
+import {database, plantData} from '../../backend/service';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function App() {
-  const MqttObj = useContext(AppStateContext);
-
-  const database = MqttObj.database;
-  const userData = MqttObj.data;
-  const [maxSoil, setMaxSoil] = useState(70);
-  const [minSoil, setMinSoil] = useState(65);
-  const [maxAtmosphere, setMaxAtmosphere] = useState(70);
-  const [minAtmosphere, setMinAtmosphere] = useState(65);
-
-  // const [maxSoil, setMaxSoil] = useState(userData.maxSoilHumid);
-  // const [minSoil, setMinSoil] = useState(userData.minSoilHumid);
-  // const [maxAtmosphere, setMaxAtmosphere] = useState(userData.maxAirHumid);
-  // const [minAtmosphere, setMinAtmosphere] = useState(userData.minAirHumid);
-  // console.log('soil', userData.minSoilHumid);
+  const [maxSoil, setMaxSoil] = useState(plantData.maxSoilHumid);
+  const [minSoil, setMinSoil] = useState(plantData.minSoilHumid);
+  const [maxAtmosphere, setMaxAtmosphere] = useState(plantData.maxAirHumid);
+  const [minAtmosphere, setMinAtmosphere] = useState(plantData.minAirHumid);
 
   const intSetter = setter => text => {
     setter(parseInt(text));
   };
-
-  useEffect(() => {
-    console.log('soil userdata', userData);
-    setMaxSoil(userData.maxSoilHumid);
-    setMinSoil(userData.minSoilHumid);
-    setMaxAtmosphere(userData.maxAirHumid);
-    setMinAtmosphere(userData.minAirHumid);
-    console.log('soil', userData.minSoilHumid);
-  }, [userData]);
 
   const reset = () => {
     setMinSoil(65);
@@ -48,14 +30,10 @@ export default function App() {
     setMaxAtmosphere(70);
   };
   const set = () => {
-    // soilmonitor.minSoil = minSoil;
-    // soilmonitor.maxSoil = maxSoil;
-    // airmonitor.minAtmosphere = minAtmosphere;
-    // airmonitor.maxAtmosphere = maxAtmosphere;
-    userData.minSoilHumid = minSoil;
-    userData.maxSoilHumid = maxSoil;
-    userData.minAirHumid = minAtmosphere;
-    userData.maxAirHumid = maxAtmosphere;
+    plantData.minSoilHumid = minSoil;
+    plantData.maxSoilHumid = maxSoil;
+    plantData.minAirHumid = minAtmosphere;
+    plantData.maxAirHumid = maxAtmosphere;
     database.db
       .executeSql(
         'UPDATE plant SET (max_air_humidity, max_soil_humidity, min_soil_humidity, min_air_humidity) = (?, ?, ?, ?) WHERE user_id = ?;',

@@ -21,8 +21,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
 import emitter from 'tiny-emitter/instance';
 
-import {AppStateContext} from '../../App';
-import {LightMonitor} from '../mqtt';
+import {plantData} from '../backend/service';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -64,13 +63,9 @@ export default function App({navigation}) {
   const renderItem = ({item}) => (
     <Item title={item.title} source={item.source} />
   );
-  const MqttObj = useContext(AppStateContext);
-  const database = MqttObj.database;
 
-  const [light, setLight] = useState(database.light);
-  const [per4, setPercent4] = useState(
-    database.light[database.light.length - 1],
-  );
+  const [light, setLight] = useState(plantData.lightList);
+  const [per4, setPercent4] = useState(plantData.light);
 
   useEffect(() => {
     const callback = (dataType, data) => {

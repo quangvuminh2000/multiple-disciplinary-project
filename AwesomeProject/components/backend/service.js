@@ -5,7 +5,9 @@ import Database from './database';
 import {testClient, testClient1} from './mqtt';
 import {SoilMonitor, AirMonitor, LightMonitor} from './monitor';
 
-export default class ForegroundService {
+class ForegroundService {
+  running = false;
+
   constructor() {
     this.channelId = 'channelId';
     this.plantData = {};
@@ -45,6 +47,10 @@ export default class ForegroundService {
   }
 
   start = async () => {
+    if (this.running) {
+      return;
+    }
+    this.running = true;
     const channelConfig = {
       id: this.channelId,
       name: 'Channel name',
@@ -64,6 +70,7 @@ export default class ForegroundService {
       this.client.start();
       this.client1.start();
       await this.database.init();
+      await this.database.preparePlantData(this.plantData);
       emitter.once('userLogin', this.startMonitors);
     } catch (e) {
       console.error(e);
@@ -71,31 +78,32 @@ export default class ForegroundService {
   };
 
   startMonitors = async userEmail => {
-    let plant = await this.database.getUserSettings(userEmail);
-    this.plantData.maxAirHumid = plant.max_air_humidity;
-    this.plantData.maxSoilHumid = plant.max_soil_humidity;
-    this.plantData.minSoilHumid = plant.min_soil_humidity;
-    this.plantData.minAirHumid = plant.min_air_humidity;
-    this.plantData.maxTemp = plant.max_temperature;
-    this.plantData.minTemp = plant.min_temperature;
-    this.database.fetchData();
-    this.plantData.soilHumid = this.database.soil[
-      this.database.soil.length - 1
-    ];
-    this.plantData.airHumid = this.database.air[this.database.air.length - 1];
-    this.plantData.temp = this.database.temperature[
-      this.database.temperature.length - 1
-    ];
-    this.plantData.light = this.database.light[this.database.light.length - 1];
+    // let plant = await this.database.getUserSettings(userEmail);
+    // this.database.fetchData();
+    // this.plantData.soilHumid = this.database.soil[
+    //   this.database.soil.length - 1
+    // ];
+    // this.plantData.airHumid = this.database.air[this.database.air.length - 1];
+    // this.plantData.temp = this.database.temperature[
+    //   this.database.temperature.length - 1
+    // ];
+    // this.plantData.light = this.database.light[this.database.light.length - 1];
     this.soilMonitor.start();
     this.airMonitor.start();
     this.lightMonitor.start();
   };
 
   stop = async () => {
+    this.running = false;
     this.client.stop();
     this.client1.stop();
     await this.database.cleanup();
     await VIForegroundService.stopService();
   };
 }
+
+const service = new ForegroundService();
+const plantData = service.plantData;
+const database = service.database;
+
+export {service, plantData, database};

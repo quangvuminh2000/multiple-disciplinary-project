@@ -12,9 +12,10 @@ import {
 import {LineChart, ProgressChart} from 'react-native-chart-kit';
 import {ScrollView} from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
-import {AppStateContext} from '../../App';
-import {AirMonitor, MqttClient} from '../mqtt';
 import emitter from 'tiny-emitter/instance';
+
+import {plantData} from '../backend/service';
+
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
@@ -53,13 +54,8 @@ const Item = ({source, title}) => (
 );
 
 export default function App({navigation}) {
-  const MqttObj = useContext(AppStateContext);
-  const database = MqttObj.database;
-
-  const [temp, setTemp] = useState(database.temperature);
-  const [per3, setPercent3] = useState(
-    database.temperature[database.temperature.length - 1],
-  );
+  const [temp, setTemp] = useState(plantData.tempList);
+  const [per3, setPercent3] = useState(plantData.temp);
 
   useEffect(() => {
     const callback = (dataType, data) => {

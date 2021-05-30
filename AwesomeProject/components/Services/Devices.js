@@ -5,15 +5,12 @@ import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { set } from 'react-native-reanimated';
 import emitter from 'tiny-emitter/instance';
 
+import {database} from '../backend/service';
+
 const screenWidth = Dimensions.get("window").width
 const screenHeight = Dimensions.get("window").height
-import { AppStateContext } from '../../App';
-
 
 export default function App({ navigation }) {
-    const MqttObj = useContext(AppStateContext);
-    const database = MqttObj.database;
-
     const [sensorName, setsensorName] = useState([]);
 
     useEffect(() => {

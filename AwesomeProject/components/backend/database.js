@@ -32,7 +32,6 @@ export default class Database {
   }
 
   async init() {
-    console.log(this.dataTable);
     // await SQLite.deleteDatabase({name: 'test4.db', location: 'default'});
     this.db = await SQLite.openDatabase(this.args);
     // await this.db.transaction(this.populateDB);
@@ -52,7 +51,33 @@ export default class Database {
     await this.db.close();
   }
 
-  getUserSettings = async email => {
+  preparePlantData = async plantData => {
+    plantData.soilList = await this.fetchTable('soil');
+    plantData.soilHumid = plantData.soilList[plantData.soilList.length - 1];
+    plantData.airList = await this.fetchTable('air');
+    plantData.airHumid = plantData.airList[plantData.airList.length - 1];
+    plantData.tempList = await this.fetchTable('temperature');
+    plantData.temp = plantData.tempList[plantData.tempList.length - 1];
+    plantData.lightList = await this.fetchTable('light');
+    plantData.light = plantData.lightList[plantData.lightList.length - 1];
+    let sensorList = await this.fetchSensor();
+    sensorList.forEach(sensor => {
+      switch (sensor.name) {
+        case 'Relay Circuit':
+          plantData.soilIrrigation = sensor.online;
+          break;
+        case 'Relay Circuit 2':
+          plantData.mistSpray = sensor.online;
+          break;
+        case 'DRV Circuit':
+          plantData.net = sensor.online;
+          break;
+      }
+    });
+    emitter.once('userLogin', this.getUserSettings(plantData));
+  };
+
+  getUserSettings = plantData => async email => {
     let results = await this.db.executeSql(
       'SELECT user_id FROM user WHERE email = ?',
       [email],
@@ -70,23 +95,28 @@ export default class Database {
     // this.plants = range(rows.length).map(i => rows.item(i));
     let plant = results[0].rows.item(0);
     console.log('query plant', plant);
-    return plant;
+    plantData.maxAirHumid = plant.max_air_humidity;
+    plantData.maxSoilHumid = plant.max_soil_humidity;
+    plantData.minSoilHumid = plant.min_soil_humidity;
+    plantData.minAirHumid = plant.min_air_humidity;
+    plantData.maxTemp = plant.max_temperature;
+    plantData.minTemp = plant.min_temperature;
   };
 
-  fetchData = () => {
-    for (const table of this.dataTable) {
-      this.db
-        .executeSql('SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5')
-        .then(results => {
-          console.log('result query', results[0]);
-          let rows = results[0].rows;
-          this[table] = range(rows.length)
-            .reverse()
-            .map(i => rows.item(i).value);
-          emitter.emit('databaseFetched', table, this[table]);
-        });
-    }
+  fetchTable = async table => {
+    let results = await this.db.executeSql(
+      'SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5',
+    );
+    console.log('result query', results[0]);
+    let rows = results[0].rows;
+    let data = range(rows.length)
+      .reverse()
+      .map(i => rows.item(i).value);
+    emitter.emit('databaseFetched', table, data);
+    return data;
   };
+
+  fetchData = () => Promise.all(this.dataTable.map(this.fetchTable));
 
   cleanupOldData = () => {
     for (const table of this.dataTable) {

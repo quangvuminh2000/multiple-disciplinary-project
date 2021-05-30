@@ -12,7 +12,6 @@ import {
 } from '@react-navigation/drawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import emitter from 'tiny-emitter/instance';
 
 import Login from './components/Screens/Login';
 import Home from './components/Screens/Home';
@@ -24,8 +23,8 @@ import Temperature from './components/Services/Temperature';
 import viewLight from './components/Services/viewLight';
 import tempSettings from './components/Screens/Tab/tempSettings';
 import humidSettings from './components/Screens/Tab/humidSettings';
-import Settings from './components/Screens/Settings';
-import ForegroundService from './components/foreground';
+// import Settings from './components/Screens/Settings';
+import {service} from './components/backend/service';
 
 
 const Stack = createStackNavigator();
@@ -209,15 +208,12 @@ function MyStack() {
 export default function App() {
   useEffect(() => {
     service.start();
-    return service.stop;
   }, []);
 
   return (
-    <AppStateProvider>
-      <NavigationContainer>
-        <MyStack />
-      </NavigationContainer>
-    </AppStateProvider>
+    <NavigationContainer>
+      <MyStack />
+    </NavigationContainer>
   );
 }
 const styles = StyleSheet.create({
@@ -227,24 +223,3 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
 });
-
-const service = new ForegroundService();
-const MqttObj = {
-  client: service.client,
-  client1: service.client1,
-  soilmonitor: service.soilMonitor,
-  airmonitor: service.airMonitor,
-  lightmonitor: service.lightMonitor,
-  database: service.database,
-  data: service.plantData,
-};
-
-export const AppStateContext = React.createContext();
-
-const AppStateProvider = props => {
-  return (
-    <AppStateContext.Provider value={MqttObj}>
-      {props.children}
-    </AppStateContext.Provider>
-  );
-};
