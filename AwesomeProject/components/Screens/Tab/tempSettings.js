@@ -14,14 +14,8 @@ import {database, plantData} from '../../backend/service';
 const screenWidth = Dimensions.get('window').width;
 
 export default function App() {
-  const [maxTemp, setmaxTemp] = useState(37);
-  const [minTemp, setminTemp] = useState(32);
-
-  useEffect(() => {
-    console.log('LIGHT TEMP:', plantData);
-    setmaxTemp(plantData.maxTemp);
-    setminTemp(plantData.minTemp);
-  }, []);
+  const [maxTemp, setmaxTemp] = useState(plantData.maxTemp);
+  const [minTemp, setminTemp] = useState(plantData.minTemp);
 
   const intSetter = setter => text => {
     setter(parseInt(text));

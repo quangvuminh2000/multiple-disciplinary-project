@@ -28,7 +28,7 @@ class Monitor {
 }
 
 class SoilMonitor extends Monitor {
-  soilIrrigation = false; // To know if the soil irrigation machine is activated
+  // soilIrrigation = false; // To know if the soil irrigation machine is activated
 
   soilPush = (message) => {
     PushNotification.localNotification({
@@ -49,12 +49,12 @@ class SoilMonitor extends Monitor {
   };
 
   checkCondition = () => {
-    // console.log('Check condition');
+    console.log('Check condition', this.data.soilHumid, this.data.temp, this.data.soilIrrigation);
 
     if (
       this.data.soilHumid <= this.data.minSoilHumid &&
       this.data.temp >= this.data.maxTemp &&
-      !this.soilIrrigation
+      !this.data.soilIrrigation
     ) {
       this.activatePump();
       this.soilPush('Your soil irrigation is On');
@@ -62,7 +62,7 @@ class SoilMonitor extends Monitor {
     if (
       this.data.soilHumid >= this.data.maxSoilHumid &&
       this.data.temp <= this.data.minTemp &&
-      this.soilIrrigation
+      this.data.soilIrrigation
     ) {
       this.deactivatePump();
       this.soilPush('Soil Irrigation Off');
@@ -76,7 +76,7 @@ class SoilMonitor extends Monitor {
   activatePump() {
     //? re-setting conditions
     this.interval = 1000;
-    this.soilIrrigation = true;
+    this.data.soilIrrigation = true;
 
     //? Publish data to relay
     //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
@@ -89,7 +89,7 @@ class SoilMonitor extends Monitor {
   deactivatePump() {
     //? re-setting conditions
     this.interval = 5000;
-    this.soilIrrigation = false;
+    this.data.soilIrrigation = false;
 
     //? Publish data to relay
     //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
@@ -101,7 +101,7 @@ class SoilMonitor extends Monitor {
 }
 
 class AirMonitor extends Monitor {
-  mistSpray = false; // To know if the mist-spray machine is activated
+  // mistSpray = false; // To know if the mist-spray machine is activated
 
   airPush = (message) => {
     PushNotification.localNotification({
@@ -125,7 +125,7 @@ class AirMonitor extends Monitor {
     if (
       this.data.airHumid <= this.data.minAirHumid &&
       this.data.temp >= this.data.maxTemp &&
-      !this.mistSpray
+      !this.data.mistSpray
     ) {
       this.activateSpray();
       this.airPush('Your sprinkler is on');
@@ -133,7 +133,7 @@ class AirMonitor extends Monitor {
     if (
       this.data.airHumid >= this.data.maxAirHumid &&
       this.data.temp <= this.data.minTemp &&
-      this.mistSpray
+      this.data.mistSpray
     ) {
       this.deactivateSpray();
       this.airPush('Sprinkler is Off');
@@ -146,7 +146,7 @@ class AirMonitor extends Monitor {
 
   activateSpray() {
     //? re-setting conditions
-    this.mistSpray = true;
+    this.data.mistSpray = true;
     this.interval = 1000;
 
     // ? Publish data to the relay
@@ -159,7 +159,7 @@ class AirMonitor extends Monitor {
 
   deactivateSpray() {
     //? re-setting conditions
-    this.mistSpray = false;
+    this.data.mistSpray = false;
     this.interval = 5000;
 
     // ? Publish data to the relay
@@ -172,7 +172,7 @@ class AirMonitor extends Monitor {
 }
 
 class LightMonitor extends Monitor {
-  net = false;
+  // net = false;
 
   lightPush = (message) => {
     PushNotification.localNotification({
@@ -196,14 +196,14 @@ class LightMonitor extends Monitor {
     if (
       this.data.light >= 70 &&
       this.data.temp >= this.data.maxTemp &&
-      !this.net
+      !this.data.net
     ) {
       this.activateNet();
       this.lightPush('Initiate Shader');
     }
     if (
       this.data.light < 50 &&
-      this.net
+      this.data.net
     ) {
       this.deactivateNet();
       this.lightPush('Deactivate Shader');
@@ -216,7 +216,7 @@ class LightMonitor extends Monitor {
 
   activateNet() {
     //? re-setting conditions
-    this.net = true;
+    this.data.net = true;
     this.interval = 1000;
 
     //? Publish data into drv
@@ -228,7 +228,7 @@ class LightMonitor extends Monitor {
 
   deactivateNet() {
     //? re-setting conditions
-    this.net = false;
+    this.data.net = false;
     this.interval = 5000;
 
     //? Publish data into drv
