@@ -266,8 +266,8 @@ const styles = StyleSheet.create({
     lineBackGround1:{
         //backgroundColor:'#fff',
         borderRadius:25,
-        marginLeft:40,
-        marginRight:20,
+        marginLeft:30,
+        marginRight:25,
         alignSelf:'center',
         shadowColor: '#000',
         shadowOffset: {
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
         //backgroundColor:'#fff',
         borderRadius:25,
         marginLeft:10,
-        marginRight:15,
+        marginRight:30,
         alignSelf:'center',
         shadowColor: '#000',
         shadowOffset: {
