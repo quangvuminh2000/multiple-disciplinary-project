@@ -15,12 +15,15 @@ class Monitor {
   start = (client, data) => {
     // this.client = client;
     // this.data = data;
-    this.running = true;
+    // this.running = true;
+    // this.checkCondition();
     this.checkCondition();
+    emitter.on('sensorDataReceived', this.checkCondition);
   };
 
   stop = () => {
-    this.running = false;
+    // this.running = false;
+    emitter.off('sensorDataReceived', this.checkCondition);
   };
 }
 
@@ -65,9 +68,9 @@ class SoilMonitor extends Monitor {
       this.soilPush('Soil Irrigation Off');
     }
 
-    if (this.running) {
-      setTimeout(this.checkCondition, this.interval);
-    }
+    // if (this.running) {
+    //   setTimeout(this.checkCondition, this.interval);
+    // }
   };
 
   activatePump() {
@@ -136,9 +139,9 @@ class AirMonitor extends Monitor {
       this.airPush('Sprinkler is Off');
     }
 
-    if (this.running) {
-      setTimeout(this.checkCondition, this.interval);
-    }
+    // if (this.running) {
+    //   setTimeout(this.checkCondition, this.interval);
+    // }
   };
 
   activateSpray() {
@@ -206,9 +209,9 @@ class LightMonitor extends Monitor {
       this.lightPush('Deactivate Shader');
     }
 
-    if (this.running) {
-      setTimeout(this.checkCondition, this.interval);
-    }
+    // if (this.running) {
+    //   setTimeout(this.checkCondition, this.interval);
+    // }
   };
 
   activateNet() {

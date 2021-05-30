@@ -1,38 +1,15 @@
 import * as Mqtt from 'react-native-native-mqtt';
-import VIForegroundService from '@voximplant/react-native-foreground-service';
-import BackgroundTimer from 'react-native-background-timer';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from 'react-native-push-notification';
 import {Buffer} from 'buffer';
 import emitter from 'tiny-emitter/instance';
 
-let minTemp = 32;
-let maxTemp = 37;
-let minSoil = 65;
-let maxSoil = 70;
-let minAtmosphere = 65;
-let maxAtmosphere = 70;
-
 class MqttClient {
   #client;
-  sensorTopics = [
-    //'CSE_BBC/feeds/bk-iot-temp-humid',
-    //'CSE_BBC/feeds/bk-iot-soil',
-    //'CSE_BBC1/feeds/bk-iot-light',
-    'Group12/feeds/bk-iot-temp-humid',
-    'Group12/feeds/bk-iot-soil',
-    'Group121/feeds/bk-iot-light',
-  ];
 
   constructor(options, subscribedTopics) {
-    // this.airHumid = 70;
-    // this.temp = 30;
-    // this.soilHumid = 70;
-    // this.light = 0;
-
     this.options = options;
     this.subscribedTopics = subscribedTopics;
-    //client = new Mqtt.Client('[SCHEME]://[URL]:[PORT]');
     this.#client = new Mqtt.Client('tcp://io.adafruit.com:1883');
     this.#client.on(Mqtt.Event.Connect, () => {
       console.log('MQTT Connect');
@@ -184,35 +161,8 @@ const mqttClient1 = new MqttClient(
   ['CSE_BBC1/feeds/bk-iot-light', 'CSE_BBC1/feeds/bk-iot-relay'],
 );
 
-async function startForegroundService() {
-  const channelConfig = {
-    id: 'channelId',
-    name: 'Channel name',
-    description: 'Channel description',
-    enableVibration: false,
-  };
-  VIForegroundService.createNotificationChannel(channelConfig);
-  const notificationConfig = {
-    channelId: 'channelId',
-    id: 3456,
-    title: 'Title',
-    text: 'Some text',
-    icon: 'ic_icon',
-  };
-  try {
-    await VIForegroundService.startService(notificationConfig);
-    // mqttClient = new MqttClient(channelConfig.id).start();
-    // mqttClient.start();
-    // monitors = [SoilMonitor(mqttClient), AirMonitor(mqttClient), LightMonitor(mqttClient)];
-    // BackgroundTimer.runBackgroundTimer(() => monitors.forEach(monitor => monitor.checkCondition()) , 300000);
-  } catch (e) {
-    console.error(e);
-  }
-}
-
 export {
   MqttClient,
-  startForegroundService,
   testClient,
   testClient1,
   mqttClient,

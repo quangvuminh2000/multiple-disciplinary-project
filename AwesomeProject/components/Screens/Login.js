@@ -14,14 +14,13 @@ import {
 import auth from '@react-native-firebase/auth';
 import {Icon} from 'react-native-elements';
 import {ScrollView} from 'react-native-gesture-handler';
-import {AppStateContext} from '../../App';
+import emitter from 'tiny-emitter/instance';
 
 const screenWidth = Dimensions.get('window').width;
 export default function Login({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showLoading, setShowLoading] = useState(false);
-  const MqttObj = useContext(AppStateContext);
   const login = async () => {
     if (!email) {
       alert('Please enter email !');
@@ -36,7 +35,7 @@ export default function Login({navigation}) {
         console.log(doLogin);
         if (doLogin.user) {
           navigation.navigate('My App');
-          await MqttObj.database.setUser(email);
+          emitter.emit('userLogin', doLogin.user.email);
         }
       } catch (e) {
         //setShowLoading(false);

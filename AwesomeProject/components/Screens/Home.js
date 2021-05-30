@@ -46,9 +46,6 @@ export default function Home({ navigation }) {
             break;
         }
       });
-      soilMonitor.start();
-      airMonitor.start();
-      lightMonitor.start();
     };
     prepare();
   }, []);

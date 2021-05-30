@@ -25,14 +25,7 @@ import viewLight from './components/Services/viewLight';
 import tempSettings from './components/Screens/Tab/tempSettings';
 import humidSettings from './components/Screens/Tab/humidSettings';
 import Settings from './components/Screens/Settings';
-import Database from './components/database';
-import {
-  MqttClient,
-  startForegroundService,
-  testClient,
-  testClient1,
-} from './components/mqtt';
-import {SoilMonitor, AirMonitor, LightMonitor} from './components/monitor';
+import ForegroundService from './components/foreground';
 
 
 const Stack = createStackNavigator();
@@ -213,29 +206,10 @@ function MyStack() {
   );
 }
 
-const userData = {};
-const database = new Database(
-  {
-    name: 'test4.db',
-    createFromLocation: '~test4.db',
-  },
-  userData,
-);
-
 export default function App() {
   useEffect(() => {
-    database.init();
-    return database.cleanup;
-  }, []);
-
-  useEffect(() => {
-    MqttObj.client.start();
-    return MqttObj.client.stop;
-  }, []);
-
-  useEffect(() => {
-    testClient1.start();
-    return testClient1.stop;
+    service.start();
+    return service.stop;
   }, []);
 
   return (
@@ -254,33 +228,18 @@ const styles = StyleSheet.create({
   },
 });
 
+const service = new ForegroundService();
 const MqttObj = {
-  client: testClient,
-  client1: testClient1,
-  soilmonitor: new SoilMonitor(testClient, testClient1, userData),
-  airmonitor: new AirMonitor(testClient, testClient1, userData),
-  lightmonitor: new LightMonitor(testClient, testClient1, userData),
-  database: database,
-  data: userData,
+  client: service.client,
+  client1: service.client1,
+  soilmonitor: service.soilMonitor,
+  airmonitor: service.airMonitor,
+  lightmonitor: service.lightMonitor,
+  database: service.database,
+  data: service.plantData,
 };
-emitter.on('sensorDataReceived', (dataType, data) => {
-  switch (dataType) {
-    case 'air':
-      userData.airHumid = data;
-      break;
-    case 'soil':
-      userData.soilHumid = data;
-      break;
-    case 'light':
-      userData.light = data;
-      break;
-    case 'temperature':
-      userData.temp = data;
-      break;
-  }
-});
 
-export const AppStateContext = React.createContext(testClient);
+export const AppStateContext = React.createContext();
 
 const AppStateProvider = props => {
   return (

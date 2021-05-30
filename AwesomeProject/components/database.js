@@ -11,11 +11,10 @@ export default class Database {
   dataTable = ['light', 'temperature', 'air', 'soil'];
   fetchCallbacks = [];
 
-  constructor(args, data) {
+  constructor(args) {
     SQLite.DEBUG(true);
     SQLite.enablePromise(true);
     this.args = args;
-    this.data = data;
 
     emitter.on('pumpActivated', activated => {
       this.updateStatus('Relay Circuit', activated);
@@ -53,7 +52,7 @@ export default class Database {
     await this.db.close();
   }
 
-  async setUser(email) {
+  getUserSettings = async email => {
     let results = await this.db.executeSql(
       'SELECT user_id FROM user WHERE email = ?',
       [email],
@@ -71,13 +70,8 @@ export default class Database {
     // this.plants = range(rows.length).map(i => rows.item(i));
     let plant = results[0].rows.item(0);
     console.log('query plant', plant);
-    this.data.maxAirHumid = parseInt(plant.max_air_humidity);
-    this.data.maxSoilHumid = parseInt(plant.max_soil_humidity);
-    this.data.minSoilHumid = parseInt(plant.min_soil_humidity);
-    this.data.minAirHumid = parseInt(plant.min_air_humidity);
-    this.data.maxTemp = parseInt(plant.max_temperature);
-    this.data.minTemp = parseInt(plant.min_temperature);
-  }
+    return plant;
+  };
 
   fetchData = () => {
     for (const table of this.dataTable) {
