@@ -71,7 +71,7 @@ export default function App({navigation}){
     const [per2,setPercent2] = useState(plantData.airHumid);
     const exp = async () => {
         database.exportTable('soil');
-        database.exportTable('air')
+        database.exportTable('air');
         };
     useEffect(() => {
         const callback = (dataType, data) => {

@@ -105,7 +105,7 @@ export default class Database {
 
   fetchTable = async table => {
     let results = await this.db.executeSql(
-      'SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 5',
+      'SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 10',
     );
     console.log('result query', results[0]);
     let rows = results[0].rows;
