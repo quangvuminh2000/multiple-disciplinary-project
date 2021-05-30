@@ -183,4 +183,19 @@ export default class Database {
     console.log('DATAFUCK: ', dataList);
     return dataList;
   };
+
+  exportTable = async table => {
+    let content = 'time,value\n';
+    let results = await this.db.executeSql(
+      'SELECT * FROM ' + table + ' ORDER BY time',
+    );
+    let rows = results[0].rows;
+    content += range(rows.length)
+      .map(i => rows.item(i))
+      .map(row => row.time + ',' + row.value)
+      .join('\n');
+    let path = `${RNFS.ExternalStorageDirectoryPath}/${table}.csv`;
+    RNFS.writeFile(path, content);
+    console.log('File written to ' + path);
+  };
 }
