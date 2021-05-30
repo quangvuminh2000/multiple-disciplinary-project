@@ -161,8 +161,17 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    width: screenWidth / 1.1,
+    width: screenWidth / 1.2,
+    alignSelf:'center',
     marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 6,
+    },
+    shadowOpacity: 0.39,
+    shadowRadius: 8.30,
+    elevation: 14,
   },
   text: {
     fontSize: 20,
