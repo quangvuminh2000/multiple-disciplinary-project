@@ -54,7 +54,7 @@ const data = [
 ];
 const Item = ({source, title}) => (
   <View style={styles.item}>
-    <Image source={source} style={{height: 30, width: 30}} />
+    <Image source={source} style={{height: 30, width: 30, borderRadius:15}} />
     <Text style={styles.title}>{title}</Text>
   </View>
 );
@@ -132,6 +132,7 @@ export default function App({navigation}) {
           data={data}
           renderItem={renderItem}
           keyExtractor={item => item.id}
+          style={{height:200}}
         />
       </View>
       </ScrollView>
@@ -177,6 +178,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     flexDirection: 'row',
     borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 6,
+    },
+    shadowOpacity: 0.39,
+    shadowRadius: 8.30,
+    elevation: 14,
   },
   title: {
     fontSize: 20,
@@ -190,7 +199,16 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   lineBackGround: {
+    //backgroundColor:'#fff',
     borderRadius: 25,
-    alignSelf:'center'
+    alignSelf:'center',
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 6,
+    },
+    shadowOpacity: 0.39,
+    shadowRadius: 8.30,
+    elevation: 14,
   },
 });

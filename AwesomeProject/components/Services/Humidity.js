@@ -51,7 +51,7 @@ const Item = ({source,title}) => (
     <View style={styles.item}>
     <Image 
         source={source}
-        style={{height:30,width:30}}/>
+        style={{height:30,width:30,borderRadius:15}}/>
     <Text style={styles.title}>{title}</Text>
     </View>
 );
@@ -178,7 +178,7 @@ export default function App({navigation}){
            data={data}
            renderItem={renderItem}
            keyExtractor={(item) => item.id}
-           style = {styles.flatlist}
+           style = {{height:270}}
         />
         </View>
         </ScrollView>
