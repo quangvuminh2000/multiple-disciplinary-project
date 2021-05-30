@@ -21,7 +21,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
 import emitter from 'tiny-emitter/instance';
 
-import {plantData} from '../backend/service';
+import {plantData, database} from '../backend/service';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -66,7 +66,7 @@ export default function App({navigation}) {
 
   const [light, setLight] = useState(plantData.lightList);
   const [per4, setPercent4] = useState(plantData.light);
-  const exp = async () => {}
+    const exp = async () => {database.exportTable('light');};
   useEffect(() => {
     const callback = (dataType, data) => {
       if (dataType === 'light') {

@@ -4,7 +4,7 @@ import {LineChart} from 'react-native-chart-kit'
 import ProgressCircle from 'react-native-progress-circle';
 import emitter from 'tiny-emitter/instance';
 
-import {plantData} from '../backend/service';
+import {plantData,database} from '../backend/service';
 
 const chartConfig3 = {
     backgroundGradientFrom: '#353c57',
@@ -69,7 +69,10 @@ export default function App({navigation}){
     const [val2,setVal2] = useState(plantData.airList);
     const [per1,setPercent1] = useState(plantData.soilHumid);
     const [per2,setPercent2] = useState(plantData.airHumid);
-    const exp = async () => {}
+    const exp = async () => {
+        database.exportTable('soil');
+        database.exportTable('air')
+        };
     useEffect(() => {
         const callback = (dataType, data) => {
             if (dataType === 'soil') {

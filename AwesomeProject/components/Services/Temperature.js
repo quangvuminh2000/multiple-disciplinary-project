@@ -14,7 +14,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
 import emitter from 'tiny-emitter/instance';
 
-import {plantData} from '../backend/service';
+import {plantData, database} from '../backend/service';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -56,7 +56,7 @@ const Item = ({source, title}) => (
 export default function App({navigation}) {
   const [temp, setTemp] = useState(plantData.tempList);
   const [per3, setPercent3] = useState(plantData.temp);
-const exp = async () => {}
+    const exp = async () => {database.exportTable('temperature')};
   useEffect(() => {
     const callback = (dataType, data) => {
       if (dataType === 'temperature') {
