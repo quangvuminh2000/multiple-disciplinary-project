@@ -25,28 +25,27 @@ class Monitor {
     // this.running = false;
     emitter.off('sensorDataReceived', this.checkCondition);
   };
-}
-
-class SoilMonitor extends Monitor {
-  // soilIrrigation = false; // To know if the soil irrigation machine is activated
-
-  soilPush = (message) => {
+  notiPush = (manager,message) => {
     PushNotification.localNotification({
       /* Android Only Properties */
       channelId: '12',
       showWhen: true, // (optional) default: true
-      autoCancel: true, // (optional) default: true
-      subText: 'This is a subText', // (optional) default: none
+      autoCancel: false, // (optional) default: true
+      ongoing: true,
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
       //ignoreInForeground: true, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
       timeoutAfter: 5000, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
       invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
-      title: 'Soil Manager', // (optional)
+      title: manager, // (optional)
       message: message, // (required)
     });
   };
+}
+
+class SoilMonitor extends Monitor {
+  // soilIrrigation = false; // To know if the soil irrigation machine is activated
 
   checkCondition = () => {
     console.log('Check condition', this.data.soilHumid, this.data.temp, this.data.soilIrrigation);
@@ -57,7 +56,7 @@ class SoilMonitor extends Monitor {
       !this.data.soilIrrigation
     ) {
       this.activatePump();
-      this.soilPush('Your soil irrigation is On');
+      this.notiPush('Soil Manager','Your soil irrigation is On');
     }
     if (
       this.data.soilHumid >= this.data.maxSoilHumid &&
@@ -65,7 +64,7 @@ class SoilMonitor extends Monitor {
       this.data.soilIrrigation
     ) {
       this.deactivatePump();
-      this.soilPush('Soil Irrigation Off');
+      this.notiPush('Soil Manager','Soil Irrigation Off');
     }
 
     // if (this.running) {
@@ -103,23 +102,7 @@ class SoilMonitor extends Monitor {
 class AirMonitor extends Monitor {
   // mistSpray = false; // To know if the mist-spray machine is activated
 
-  airPush = (message) => {
-    PushNotification.localNotification({
-      /* Android Only Properties */
-      channelId: '12',
-      showWhen: true, // (optional) default: true
-      autoCancel: true, // (optional) default: true
-      subText: 'This is a subText', // (optional) default: none
-      vibrate: true, // (optional) default: true
-      vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-      //ignoreInForeground: true, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
-      timeoutAfter: 5000, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
-      invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
-      title: 'Atmosphere manager', // (optional)
-      message: message, // (required)
-    });
-  };
 
   checkCondition = () => {
     if (
@@ -128,7 +111,7 @@ class AirMonitor extends Monitor {
       !this.data.mistSpray
     ) {
       this.activateSpray();
-      this.airPush('Your sprinkler is on');
+      this.notiPush('Atmosphere Manager','Your sprinkler is on');
     }
     if (
       this.data.airHumid >= this.data.maxAirHumid &&
@@ -136,7 +119,7 @@ class AirMonitor extends Monitor {
       this.data.mistSpray
     ) {
       this.deactivateSpray();
-      this.airPush('Sprinkler is Off');
+      this.notiPush('Atmosphere Manager','Sprinkler is Off');
     }
 
     // if (this.running) {
@@ -174,24 +157,6 @@ class AirMonitor extends Monitor {
 class LightMonitor extends Monitor {
   // net = false;
 
-  lightPush = (message) => {
-    PushNotification.localNotification({
-      /* Android Only Properties */
-      channelId: '12',
-      showWhen: true, // (optional) default: true
-      autoCancel: true, // (optional) default: true
-      subText: 'This is a subText', // (optional) default: none
-      vibrate: true, // (optional) default: true
-      vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-      //ignoreInForeground: true, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
-      timeoutAfter: 5000, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
-      invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
-
-      title: "It's too bright!", // (optional)
-      message: message, // (required)
-    });
-  };
-
   checkCondition = () => {
     if (
       this.data.light >= 70 &&
@@ -199,14 +164,14 @@ class LightMonitor extends Monitor {
       !this.data.net
     ) {
       this.activateNet();
-      this.lightPush('Initiate Shader');
+      this.notiPush('Lighting Manager','Initiate Shader');
     }
     if (
       this.data.light < 50 &&
       this.data.net
     ) {
       this.deactivateNet();
-      this.lightPush('Deactivate Shader');
+      this.notiPush('Lighting Manager','Deactivate Shader');
     }
 
     // if (this.running) {
