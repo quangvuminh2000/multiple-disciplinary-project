@@ -69,7 +69,7 @@ export default function App({navigation}){
     const [val2,setVal2] = useState(plantData.airList);
     const [per1,setPercent1] = useState(plantData.soilHumid);
     const [per2,setPercent2] = useState(plantData.airHumid);
-
+    const exp = async () => {}
     useEffect(() => {
         const callback = (dataType, data) => {
             if (dataType === 'soil') {
@@ -169,6 +169,9 @@ export default function App({navigation}){
             />
         </ScrollView>
         </View>
+        <TouchableOpacity style={styles.exportBtn} onPress={() => exp()}>
+            <Text style={{fontWeight: 'bold'}}>Export</Text>
+        </TouchableOpacity>
         <Text style={{fontSize:20,color:'cyan',alignSelf:'center'}}>Devices</Text>
         <Text style={{color:'lightgrey',marginTop:-10,fontWeight:'bold',alignSelf:'center'}}>
             ____________________________________________________
@@ -211,6 +214,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 10
     },
+  exportBtn: {
+    height: 40,
+    backgroundColor: `rgba(0,200,170,255)`,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: screenWidth / 1.1,
+    marginTop: 20,
+    marginBottom: 10,
+    marginLeft: 20,
+  },
     soilProgress:{
         marginLeft:50,
         marginRight: 90,

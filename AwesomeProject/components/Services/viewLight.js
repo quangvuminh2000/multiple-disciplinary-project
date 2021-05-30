@@ -66,7 +66,7 @@ export default function App({navigation}) {
 
   const [light, setLight] = useState(plantData.lightList);
   const [per4, setPercent4] = useState(plantData.light);
-
+  const exp = async () => {}
   useEffect(() => {
     const callback = (dataType, data) => {
       if (dataType === 'light') {
@@ -123,6 +123,9 @@ export default function App({navigation}) {
         yAxisLabel="%"
         style={styles.lineBackGround}
       />
+      <TouchableOpacity style={styles.exportBtn} onPress={() => exp()}>
+        <Text style={{fontWeight: 'bold'}}>Export</Text>
+      </TouchableOpacity>
       <Text style={styles.text}>Devices</Text>
       <Text style={{color: 'lightgrey', marginTop: -10, fontWeight: 'bold', alignSelf:'center'}}>
         ____________________________________________________
@@ -154,6 +157,15 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     marginTop: 10,
+  },
+  exportBtn: {
+    height: 40,
+    backgroundColor: `rgba(0,200,170,255)`,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: screenWidth / 1.1,
+    marginTop: 20,
   },
   text: {
     fontSize: 20,

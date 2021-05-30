@@ -56,7 +56,7 @@ const Item = ({source, title}) => (
 export default function App({navigation}) {
   const [temp, setTemp] = useState(plantData.tempList);
   const [per3, setPercent3] = useState(plantData.temp);
-
+const exp = async () => {}
   useEffect(() => {
     const callback = (dataType, data) => {
       if (dataType === 'temperature') {
@@ -119,6 +119,9 @@ export default function App({navigation}) {
         chartConfig={chartConfig}
         style={styles.lineBackGround}
       />
+      <TouchableOpacity style={styles.exportBtn} onPress={() => exp()}>
+        <Text style={{fontWeight: 'bold'}}>Export</Text>
+      </TouchableOpacity>
       <Text style={styles.text}>Devices</Text>
       <Text style={{color: 'lightgrey', marginTop: -10, fontWeight: 'bold',alignSelf:'center'}}>
         ____________________________________________________
@@ -131,6 +134,7 @@ export default function App({navigation}) {
           style = {{height:200}}
         />
       </View>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -150,6 +154,15 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     marginTop: 10,
+  },
+  exportBtn: {
+    height: 40,
+    backgroundColor: `rgba(0,200,170,255)`,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: screenWidth / 1.1,
+    marginTop: 20,
   },
   text: {
     fontSize: 20,
