@@ -1,9 +1,32 @@
 import VIForegroundService from '@voximplant/react-native-foreground-service';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import PushNotification from 'react-native-push-notification';
 import emitter from 'tiny-emitter/instance';
 
 import Database from './database';
 import {testClient, testClient1} from './mqtt';
 import {SoilMonitor, AirMonitor, LightMonitor} from './monitor';
+
+PushNotification.createChannel({
+  channelId: '12', // (required)
+  channelName: 'Group12', // (required)
+});
+//Notification setting
+PushNotification.configure({
+  onRegister: function (token) {},
+
+  onNotification: function (notification) {
+    notification.finish(PushNotificationIOS.FetchResult.NoData);
+  },
+
+  permissions: {
+    alert: true,
+    badge: true,
+    sound: true,
+  },
+  popInitialNotification: true,
+  requestPermissions: true,
+});
 
 class ForegroundService {
   running = false;

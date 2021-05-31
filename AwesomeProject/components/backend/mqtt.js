@@ -1,6 +1,4 @@
 import * as Mqtt from 'react-native-native-mqtt';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import PushNotification from 'react-native-push-notification';
 import {Buffer} from 'buffer';
 import emitter from 'tiny-emitter/instance';
 
@@ -52,27 +50,6 @@ class MqttClient {
         emitter.emit('sensorDataReceived', 'light', this.light);
         break;
     }
-
-    PushNotification.createChannel({
-      channelId: '12', // (required)
-      channelName: 'Group12', // (required)
-    });
-    //Notification setting
-    PushNotification.configure({
-      onRegister: function (token) {},
-
-      onNotification: function (notification) {
-        notification.finish(PushNotificationIOS.FetchResult.NoData);
-      },
-
-      permissions: {
-        alert: true,
-        badge: true,
-        sound: true,
-      },
-      popInitialNotification: true,
-      requestPermissions: true,
-    });
   };
 
   get connected() {
