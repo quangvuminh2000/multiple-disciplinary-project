@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {Icon} from 'react-native-elements';
-import {ScrollView} from 'react-native-gesture-handler';
 import emitter from 'tiny-emitter/instance';
 
 const screenWidth = Dimensions.get('window').width;
@@ -27,10 +26,12 @@ export default function Login({navigation}) {
     }
     if (!password) {
       Alert.alert('Please enter password !');
-    }
-    else {
+    } else {
       try {
-        const doLogin = await auth().signInWithEmailAndPassword(email, password);
+        const doLogin = await auth().signInWithEmailAndPassword(
+          email,
+          password,
+        );
         if (doLogin.user) {
           navigation.navigate('My App');
           emitter.emit('userLogin', doLogin.user.email);
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     textAlign: 'center',
     fontWeight: 'bold',
-    color: `rgba(0,200,170,255)`,
+    color: 'rgba(0,200,170,255)',
   },
   loginIcon: {
     padding: 11,
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: `rgba(0,200,170,255)`,
+    backgroundColor: 'rgba(0,200,170,255)',
     height: 50,
     borderRadius: 5,
     width: screenWidth / 1.2,
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     margin: 5,
     width: screenWidth / 1.5,
-    backgroundColor: `rgba(0,200,170,255)`,
+    backgroundColor: 'rgba(0,200,170,255)',
     borderRadius: 25,
   },
   loginBtn: {

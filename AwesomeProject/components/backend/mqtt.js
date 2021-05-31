@@ -44,21 +44,19 @@ class MqttClient {
         emitter.emit('sensorDataReceived', 'air', this.airHumid);
         break;
       case 9:
-        this.soilHumid = Math.round(parseInt(data.data) / 1023 * 100);
+        this.soilHumid = Math.round((parseInt(data.data) / 1023) * 100);
         emitter.emit('sensorDataReceived', 'soil', this.soilHumid);
         break;
       case 13:
-        this.light = Math.round(parseInt(data.data) / 1023 * 100);
+        this.light = Math.round((parseInt(data.data) / 1023) * 100);
         emitter.emit('sensorDataReceived', 'light', this.light);
         break;
     }
 
-    PushNotification.createChannel(
-      {
-        channelId: '12', // (required)
-        channelName: 'Group12', // (required)
-      },
-    );
+    PushNotification.createChannel({
+      channelId: '12', // (required)
+      channelName: 'Group12', // (required)
+    });
     //Notification setting
     PushNotification.configure({
       onRegister: function (token) {},
@@ -158,10 +156,4 @@ const mqttClient1 = new MqttClient(
   ['CSE_BBC1/feeds/bk-iot-light', 'CSE_BBC1/feeds/bk-iot-relay'],
 );
 
-export {
-  MqttClient,
-  testClient,
-  testClient1,
-  mqttClient,
-  mqttClient1,
-};
+export {MqttClient, testClient, testClient1, mqttClient, mqttClient1};

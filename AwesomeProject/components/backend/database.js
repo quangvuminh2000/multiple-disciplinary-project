@@ -36,7 +36,7 @@ export default class Database {
     this.db = await SQLite.openDatabase(this.args);
     this.cleanupOldData();
     this.fetchData();
-    this.#fetchIntervalID = setInterval(this.fetchData, 5000);  
+    this.#fetchIntervalID = setInterval(this.fetchData, 5000);
   }
 
   async cleanup() {
@@ -112,36 +112,30 @@ export default class Database {
 
   cleanupOldData = () => {
     for (const table of this.dataTable) {
-      this.db
-        .executeSql(
-          'DELETE FROM ' + table + " WHERE date('now', '-7 day') >= date(time)",
-        )
+      this.db.executeSql(
+        'DELETE FROM ' + table + " WHERE date('now', '-7 day') >= date(time)",
+      );
     }
   };
 
   updateData = async (table, value) => {
     try {
       let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-      let [result] = await this.db.executeSql(
+      await this.db.executeSql(
         'INSERT INTO ' + table + '(time, value) VALUES (?,?)',
         [date, value],
       );
     } catch (err) {
       console.error(err.message);
-      let [result] = await this.db.executeSql('SELECT * FROM ' + table);
-      let rows = result.rows;
-      let data = range(rows.length).map(i => rows.item(i));
     }
   };
 
-  async updateStatus(sensorname, value) {
-    let [
-      result,
-    ] = await this.db.executeSql(
-      'UPDATE sensor SET online = ? WHERE name = ?',
-      [value, sensorname],
-    );
-  }
+  updateStatus = (sensorname, value) => (
+    this.db.executeSql('UPDATE sensor SET online = ? WHERE name = ?', [
+      value,
+      sensorname,
+    ])
+  );
 
   fetchSensor = async () => {
     let [result] = await this.db.executeSql('SELECT name, online FROM sensor');

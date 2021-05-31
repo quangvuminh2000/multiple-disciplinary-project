@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {
-  Alert,
   View,
   Text,
   TextInput,
@@ -28,11 +27,10 @@ export default function App() {
   const set = () => {
     plantData.minTemp = minTemp;
     plantData.maxTemp = maxTemp;
-    database.db
-      .executeSql(
-        'UPDATE plant SET (max_temperature, min_temperature) = (?, ?) WHERE user_id = ?;',
-        [maxTemp, minTemp, database.userId],
-      )
+    database.db.executeSql(
+      'UPDATE plant SET (max_temperature, min_temperature) = (?, ?) WHERE user_id = ?;',
+      [maxTemp, minTemp, database.userId],
+    );
   };
   return (
     <View style={styles.container}>
@@ -60,7 +58,7 @@ export default function App() {
       <View style={styles.maxContainer}>
         <Text
           style={{
-            color: `rgba(255,49,49,255)`,
+            color: 'rgba(255,49,49,255)',
             marginRight: 20,
             marginTop: 3,
             fontSize: 18,
@@ -94,7 +92,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //justifyContent:'center',
     alignItems: 'center',
     backgroundColor: '#20222f',
   },
@@ -103,28 +100,20 @@ const styles = StyleSheet.create({
   },
   textInput1: {
     backgroundColor: '#353c57',
-    //margin:8,
     borderRadius: 10,
     width: 70,
     height: 70,
-    color: `rgba(255,49,49,255)`,
-    //borderWidth:1,
-    //borderColor:'azure',
+    color: 'rgba(255,49,49,255)',
     textAlign: 'center',
     fontSize: 18,
     marginTop: 4,
   },
   textInput2: {
     backgroundColor: '#353c57',
-    //margin:8,
-    //marginBottom:20,
     borderRadius: 10,
     height: 70,
     width: 70,
     color: '#5634ec',
-    //marginTop:40,
-    //borderWidth:1,
-    //borderColor:'azure',
     textAlign: 'center',
     fontSize: 18,
     marginTop: 4,
@@ -132,8 +121,6 @@ const styles = StyleSheet.create({
   setBtn: {
     backgroundColor: '#353c57',
     marginRight: 50,
-    width: 80,
-    height: 40,
     borderRadius: 20,
     marginTop: 20,
     justifyContent: 'center',
@@ -152,8 +139,6 @@ const styles = StyleSheet.create({
   },
   resetBtn: {
     backgroundColor: '#353c57',
-    width: 80,
-    height: 40,
     borderRadius: 20,
     marginTop: 20,
     justifyContent: 'center',

@@ -77,17 +77,7 @@ class ForegroundService {
     }
   };
 
-  startMonitors = async userEmail => {
-    // let plant = await this.database.getUserSettings(userEmail);
-    // this.database.fetchData();
-    // this.plantData.soilHumid = this.database.soil[
-    //   this.database.soil.length - 1
-    // ];
-    // this.plantData.airHumid = this.database.air[this.database.air.length - 1];
-    // this.plantData.temp = this.database.temperature[
-    //   this.database.temperature.length - 1
-    // ];
-    // this.plantData.light = this.database.light[this.database.light.length - 1];
+  startMonitors = userEmail => {
     this.soilMonitor.start();
     this.airMonitor.start();
     this.lightMonitor.start();

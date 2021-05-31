@@ -21,7 +21,7 @@ class Monitor {
     // this.running = false;
     emitter.off('sensorDataReceived', this.checkCondition);
   };
-  notiPush = (manager,message) => {
+  notiPush = (manager, message) => {
     PushNotification.localNotification({
       /* Android Only Properties */
       channelId: '12',
@@ -41,16 +41,14 @@ class Monitor {
 }
 
 class SoilMonitor extends Monitor {
-
   checkCondition = () => {
-
     if (
       this.data.soilHumid <= this.data.minSoilHumid &&
       this.data.temp >= this.data.maxTemp &&
       !this.data.soilIrrigation
     ) {
       this.activatePump();
-      this.notiPush('Soil Manager','Your soil irrigation is On');
+      this.notiPush('Soil Manager', 'Your soil irrigation is On');
     }
     if (
       this.data.soilHumid >= this.data.maxSoilHumid &&
@@ -58,10 +56,8 @@ class SoilMonitor extends Monitor {
       this.data.soilIrrigation
     ) {
       this.deactivatePump();
-      this.notiPush('Soil Manager','Soil Irrigation Off');
+      this.notiPush('Soil Manager', 'Soil Irrigation Off');
     }
-
-
   };
 
   activatePump() {
@@ -88,7 +84,6 @@ class SoilMonitor extends Monitor {
 }
 
 class AirMonitor extends Monitor {
-
   checkCondition = () => {
     if (
       this.data.airHumid <= this.data.minAirHumid &&
@@ -96,7 +91,7 @@ class AirMonitor extends Monitor {
       !this.data.mistSpray
     ) {
       this.activateSpray();
-      this.notiPush('Atmosphere Manager','Your sprinkler is on');
+      this.notiPush('Atmosphere Manager', 'Your sprinkler is on');
     }
     if (
       this.data.airHumid >= this.data.maxAirHumid &&
@@ -104,12 +99,11 @@ class AirMonitor extends Monitor {
       this.data.mistSpray
     ) {
       this.deactivateSpray();
-      this.notiPush('Atmosphere Manager','Sprinkler is Off');
+      this.notiPush('Atmosphere Manager', 'Sprinkler is Off');
     }
   };
 
   activateSpray() {
-
     this.data.mistSpray = true;
     this.interval = 1000;
 
@@ -121,7 +115,6 @@ class AirMonitor extends Monitor {
   }
 
   deactivateSpray() {
-
     this.data.mistSpray = false;
     this.interval = 5000;
 
@@ -134,8 +127,6 @@ class AirMonitor extends Monitor {
 }
 
 class LightMonitor extends Monitor {
-
-
   checkCondition = () => {
     if (
       this.data.light >= 70 &&
@@ -143,16 +134,12 @@ class LightMonitor extends Monitor {
       !this.data.net
     ) {
       this.activateNet();
-      this.notiPush('Lighting Manager','Initiate Shader');
+      this.notiPush('Lighting Manager', 'Initiate Shader');
     }
-    if (
-      this.data.light < 50 &&
-      this.data.net
-    ) {
+    if (this.data.light < 50 && this.data.net) {
       this.deactivateNet();
-      this.notiPush('Lighting Manager','Deactivate Shader');
+      this.notiPush('Lighting Manager', 'Deactivate Shader');
     }
-
   };
 
   activateNet() {

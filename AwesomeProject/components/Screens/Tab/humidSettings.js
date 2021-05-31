@@ -7,7 +7,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import {TextInput} from 'react-native';
-import {Divider} from 'react-native-elements';
 
 import {database, plantData} from '../../backend/service';
 
@@ -34,11 +33,10 @@ export default function App() {
     plantData.maxSoilHumid = maxSoil;
     plantData.minAirHumid = minAtmosphere;
     plantData.maxAirHumid = maxAtmosphere;
-    database.db
-      .executeSql(
-        'UPDATE plant SET (max_air_humidity, max_soil_humidity, min_soil_humidity, min_air_humidity) = (?, ?, ?, ?) WHERE user_id = ?;',
-        [maxAtmosphere, maxSoil, minSoil, minAtmosphere, database.userId],
-      );
+    database.db.executeSql(
+      'UPDATE plant SET (max_air_humidity, max_soil_humidity, min_soil_humidity, min_air_humidity) = (?, ?, ?, ?) WHERE user_id = ?;',
+      [maxAtmosphere, maxSoil, minSoil, minAtmosphere, database.userId],
+    );
   };
   return (
     <View style={styles.container}>
@@ -66,7 +64,7 @@ export default function App() {
             }}>
             <Text
               style={{
-                color: `rgba(255,49,49,255)`,
+                color: 'rgba(255,49,49,255)',
                 padding: 31,
                 marginBottom: 2,
                 marginRight: -5,
@@ -88,7 +86,7 @@ export default function App() {
             <TextInput
               //label = 'Min Humidity'
               placeholder="Enter"
-              placeholderTextColor={`rgba(255,49,49,255)`}
+              placeholderTextColor={'rgba(255,49,49,255)'}
               onChangeText={intSetter(setMinSoil)}
               value={minSoil.toString()}
               style={styles.textInput2}
@@ -168,7 +166,7 @@ export default function App() {
             }}>
             <Text
               style={{
-                color: `rgba(255,49,49,255)`,
+                color: 'rgba(255,49,49,255)',
                 padding: 30,
                 marginLeft: -6,
                 marginRight: -8,
@@ -190,7 +188,7 @@ export default function App() {
             </Text>
             <TextInput
               placeholder="Enter"
-              placeholderTextColor={`rgba(255,49,49,255)`}
+              placeholderTextColor={'rgba(255,49,49,255)'}
               onChangeText={intSetter(setMinAtmosphere)}
               value={minAtmosphere.toString()}
               style={styles.textInput2}
@@ -265,7 +263,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //justifyContent:'center',
     alignItems: 'center',
     backgroundColor: '#20222f',
   },
@@ -280,8 +277,6 @@ const styles = StyleSheet.create({
     height: 70,
     color: '#5634ec',
     marginLeft: -11,
-    //borderWidth:1,
-    //borderColor:'azure',
     textAlign: 'center',
     fontSize: 18,
   },
@@ -293,8 +288,6 @@ const styles = StyleSheet.create({
     height: 70,
     color: 'red',
     marginLeft: -10,
-    //borderWidth:1,
-    //borderColor:'azure',
     textAlign: 'center',
     marginBottom: 10,
     fontSize: 18,
