@@ -23,7 +23,6 @@ import Temperature from './components/Services/Temperature';
 import viewLight from './components/Services/viewLight';
 import tempSettings from './components/Screens/Tab/tempSettings';
 import humidSettings from './components/Screens/Tab/humidSettings';
-// import Settings from './components/Screens/Settings';
 import {service} from './components/backend/service';
 
 

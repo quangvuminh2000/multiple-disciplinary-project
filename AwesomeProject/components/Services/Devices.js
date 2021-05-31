@@ -17,7 +17,6 @@ export default function App({ navigation }) {
         const fetchData = async () => {
             let data = await database.fetchSensor()
             setsensorName(data);
-            console.log("HERE", data);
         };
         fetchData();
         let events = ['pumpActivated', 'sprayActivated', 'netActivated'];
@@ -32,8 +31,6 @@ export default function App({ navigation }) {
         return cleanup;
     }, []);
 
-    //console.log(list)
-    //const [devname, setDev] = useState();
     const Images = (text) => {
         switch (text) {
             case "DHT11":
@@ -168,7 +165,6 @@ const styles = StyleSheet.create({
     photo: {
         width: 60,
         height: 60,
-        //position:'relative',
         marginRight: 10,
         borderRadius: 30
     }

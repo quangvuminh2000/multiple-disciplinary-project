@@ -31,14 +31,11 @@ export default function Login({navigation}) {
     else {
       try {
         const doLogin = await auth().signInWithEmailAndPassword(email, password);
-        //setShowLoading(false);
-        console.log(doLogin);
         if (doLogin.user) {
           navigation.navigate('My App');
           emitter.emit('userLogin', doLogin.user.email);
         }
       } catch (e) {
-        //setShowLoading(false);
         Alert.alert(e.message);
       }
     }

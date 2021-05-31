@@ -38,8 +38,7 @@ export default function App() {
       .executeSql(
         'UPDATE plant SET (max_air_humidity, max_soil_humidity, min_soil_humidity, min_air_humidity) = (?, ?, ?, ?) WHERE user_id = ?;',
         [maxAtmosphere, maxSoil, minSoil, minAtmosphere, database.userId],
-      )
-      .then(results => console.log('update plant', results[0]));
+      );
   };
   return (
     <View style={styles.container}>

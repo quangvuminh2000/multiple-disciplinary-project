@@ -58,17 +58,12 @@ class MqttClient {
         channelId: '12', // (required)
         channelName: 'Group12', // (required)
       },
-      created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
     );
     //Notification setting
     PushNotification.configure({
-      onRegister: function (token) {
-        console.log('TOKEN:', token);
-      },
+      onRegister: function (token) {},
 
       onNotification: function (notification) {
-        console.log('NOTIFICATION:', notification);
-
         notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
 

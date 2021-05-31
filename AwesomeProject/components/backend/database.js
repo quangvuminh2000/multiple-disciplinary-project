@@ -33,18 +33,13 @@ export default class Database {
   }
 
   async init() {
-    // await SQLite.deleteDatabase({name: 'test4.db', location: 'default'});
     this.db = await SQLite.openDatabase(this.args);
-    // await this.db.transaction(this.populateDB);
-    // await this.updateData('soil', 50);
     this.cleanupOldData();
     this.fetchData();
-    this.#fetchIntervalID = setInterval(this.fetchData, 5000);
-    console.log('database', this.db);
+    this.#fetchIntervalID = setInterval(this.fetchData, 5000);  
   }
 
   async cleanup() {
-    console.log('close database');
     if (this.#fetchIntervalID) {
       clearInterval(this.#fetchIntervalID);
       this.#fetchIntervalID = undefined;
@@ -92,10 +87,7 @@ export default class Database {
       'SELECT max_air_humidity, max_soil_humidity, min_soil_humidity, min_air_humidity, max_temperature, min_temperature FROM plant WHERE user_id = ?',
       [this.userId],
     );
-    // let rows = result.rows;
-    // this.plants = range(rows.length).map(i => rows.item(i));
     let plant = results[0].rows.item(0);
-    console.log('query plant', plant);
     plantData.maxAirHumid = plant.max_air_humidity;
     plantData.maxSoilHumid = plant.max_soil_humidity;
     plantData.minSoilHumid = plant.min_soil_humidity;
@@ -108,7 +100,6 @@ export default class Database {
     let results = await this.db.executeSql(
       'SELECT * FROM ' + table + ' ORDER BY time DESC LIMIT 10',
     );
-    console.log('result query', results[0]);
     let rows = results[0].rows;
     let data = range(rows.length)
       .reverse()
@@ -125,43 +116,24 @@ export default class Database {
         .executeSql(
           'DELETE FROM ' + table + " WHERE date('now', '-7 day') >= date(time)",
         )
-        .then(results => {
-          if (results[0].rowsAffected > 0) {
-            console.log('Data cleaned!');
-          } else {
-            console.log('Cleaning Failed');
-          }
-        });
     }
   };
 
   updateData = async (table, value) => {
     try {
       let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-      // let date = new Date();
-      // let time = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
       let [result] = await this.db.executeSql(
         'INSERT INTO ' + table + '(time, value) VALUES (?,?)',
         [date, value],
       );
-      console.log('Results', result.rowsAffected);
-      if (result.rowsAffected > 0) {
-        console.log('Success');
-      } else {
-        console.log('Registration Failed');
-      }
     } catch (err) {
       console.error(err.message);
       let [result] = await this.db.executeSql('SELECT * FROM ' + table);
       let rows = result.rows;
       let data = range(rows.length).map(i => rows.item(i));
-      console.log('current data', data);
     }
   };
 
-  // updatePlant = async (param, value) => {
-  //   let [result] = await this.db.executeSql(
-  //     'UPDATE (
   async updateStatus(sensorname, value) {
     let [
       result,
@@ -169,19 +141,12 @@ export default class Database {
       'UPDATE sensor SET online = ? WHERE name = ?',
       [value, sensorname],
     );
-    console.log('Results', result.rowsAffected);
-    if (result.rowsAffected > 0) {
-      console.log('Update Success');
-    } else {
-      console.log('Update Failed');
-    }
   }
 
   fetchSensor = async () => {
     let [result] = await this.db.executeSql('SELECT name, online FROM sensor');
     var rows = result.rows;
     let dataList = range(rows.length).map(i => rows.item(i));
-    console.log('DATAFUCK: ', dataList);
     return dataList;
   };
 
@@ -198,7 +163,6 @@ export default class Database {
         .join('\n');
       let path = `${RNFS.DownloadDirectoryPath}/${table}.csv`;
       await RNFS.writeFile(path, content);
-      console.log('File written to ' + path);
     } catch (err) {
       console.error(err.message);
     }
