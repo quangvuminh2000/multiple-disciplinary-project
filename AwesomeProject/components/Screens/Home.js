@@ -4,7 +4,7 @@ import { Button, Icon } from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
 import emitter from 'tiny-emitter/instance';
 
-import {plantData} from '../backend/service';
+import {service, plantData} from '../backend/service';
 
 export default function Home({ navigation }) {
   const [initializing, setInitializing] = useState(true);
@@ -55,23 +55,23 @@ export default function Home({ navigation }) {
 
   const change1 = () => {
     if (pumpActivated) {
-      soilMonitor.deactivatePump();
+      service.soilMonitor.deactivatePump();
     } else {
-      soilMonitor.activatePump();
+      service.soilMonitor.activatePump();
     }
   };
   const change2 = () => {
     if (sprayActivated) {
-      airMonitor.deactivateSpray();
+      service.airMonitor.deactivateSpray();
     } else {
-      airMonitor.activateSpray();
+      service.airMonitor.activateSpray();
     }
   };
   const change3 = () => {
     if (netActivated) {
-      lightMonitor.deactivateNet();
+      service.lightMonitor.deactivateNet();
     } else {
-      lightMonitor.activateNet();
+      service.lightMonitor.activateNet();
     }
   };
   const Separator = () => {
