@@ -1,6 +1,7 @@
 import SQLite from 'react-native-sqlite-storage';
 import emitter from 'tiny-emitter/instance';
-var RNFS = require('react-native-fs');
+import RNFS from 'react-native-fs';
+
 // Like Python range function
 function range(end) {
   return [...Array(end).keys()];
@@ -185,21 +186,21 @@ export default class Database {
   };
 
   exportTable = async table => {
-    let content = 'time,value\n';
-    let results = await this.db.executeSql(
-      'SELECT * FROM ' + table + ' ORDER BY time',
-    );
-    let rows = results[0].rows;
-    content += range(rows.length)
-      .map(i => rows.item(i))
-      .map(row => row.time + ',' + row.value)
-      .join('\n');
-    let path = `${RNFS.DownloadDirectoryPath}/${table}.csv`;
-    RNFS.writeFile(path, content,'utf8').then((success) => {
-    console.log('FILE WRITTEN!');
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });;
+    try {
+      let content = 'time,value\n';
+      let results = await this.db.executeSql(
+        'SELECT * FROM ' + table + ' ORDER BY time',
+      );
+      let rows = results[0].rows;
+      content += range(rows.length)
+        .map(i => rows.item(i))
+        .map(row => row.time + ',' + row.value)
+        .join('\n');
+      let path = `${RNFS.DownloadDirectoryPath}/${table}.csv`;
+      await RNFS.writeFile(path, content);
+      console.log('File written to ' + path);
+    } catch (err) {
+      console.error(err.message);
+    }
   };
 }

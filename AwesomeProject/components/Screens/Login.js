@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   ActivityIndicator,
@@ -23,10 +23,10 @@ export default function Login({navigation}) {
   const [showLoading, setShowLoading] = useState(false);
   const login = async () => {
     if (!email) {
-      alert('Please enter email !');
+      Alert.alert('Please enter email !');
     }
     if (!password) {
-      alert('Please enter password !');
+      Alert.alert('Please enter password !');
     }
     else {
       try {

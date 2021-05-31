@@ -18,57 +18,7 @@ class MqttClient {
         Array(this.subscribedTopics.length).fill(1),
       );
     });
-    this.#client.on(Mqtt.Event.Message, (topic, message) => {
-      console.log('MQTT Message:', topic, message.toString());
-      const data = JSON.parse(message);
-      data.id = parseInt(data.id);
-      switch (parseInt(data.id)) {
-        case 7:
-          let temp, humid;
-          [temp, humid] = data.data.split('-');
-          this.temp = parseInt(temp);
-          emitter.emit('sensorDataReceived', 'temperature', this.temp);
-          this.airHumid = parseInt(humid);
-          emitter.emit('sensorDataReceived', 'air', this.airHumid);
-          break;
-        case 9:
-          this.soilHumid = Math.round(parseInt(data.data) / 1023 * 100);
-          emitter.emit('sensorDataReceived', 'soil', this.soilHumid);
-          break;
-        case 13:
-          this.light = Math.round(parseInt(data.data) / 1023 * 100);
-          emitter.emit('sensorDataReceived', 'light', this.light);
-          break;
-      }
-
-      PushNotification.createChannel(
-        {
-          channelId: '12', // (required)
-          channelName: 'Group12', // (required)
-        },
-        created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
-      );
-      //Notification setting
-      PushNotification.configure({
-        onRegister: function (token) {
-          console.log('TOKEN:', token);
-        },
-
-        onNotification: function (notification) {
-          console.log('NOTIFICATION:', notification);
-
-          notification.finish(PushNotificationIOS.FetchResult.NoData);
-        },
-
-        permissions: {
-          alert: true,
-          badge: true,
-          sound: true,
-        },
-        popInitialNotification: true,
-        requestPermissions: true,
-      });
-    });
+    this.#client.on(Mqtt.Event.Message, this.onMessageArrived);
 
     this.#client.on(Mqtt.Event.Error, error => {
       console.log('MQTT Error:', error);
@@ -79,6 +29,58 @@ class MqttClient {
     });
     this.client = this.#client;
   }
+
+  onMessageArrived = (topic, message) => {
+    console.log('MQTT Message:', topic, message.toString());
+    const data = JSON.parse(message);
+    data.id = parseInt(data.id);
+    switch (parseInt(data.id)) {
+      case 7:
+        let temp, humid;
+        [temp, humid] = data.data.split('-');
+        this.temp = parseInt(temp);
+        emitter.emit('sensorDataReceived', 'temperature', this.temp);
+        this.airHumid = parseInt(humid);
+        emitter.emit('sensorDataReceived', 'air', this.airHumid);
+        break;
+      case 9:
+        this.soilHumid = Math.round(parseInt(data.data) / 1023 * 100);
+        emitter.emit('sensorDataReceived', 'soil', this.soilHumid);
+        break;
+      case 13:
+        this.light = Math.round(parseInt(data.data) / 1023 * 100);
+        emitter.emit('sensorDataReceived', 'light', this.light);
+        break;
+    }
+
+    PushNotification.createChannel(
+      {
+        channelId: '12', // (required)
+        channelName: 'Group12', // (required)
+      },
+      created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
+    );
+    //Notification setting
+    PushNotification.configure({
+      onRegister: function (token) {
+        console.log('TOKEN:', token);
+      },
+
+      onNotification: function (notification) {
+        console.log('NOTIFICATION:', notification);
+
+        notification.finish(PushNotificationIOS.FetchResult.NoData);
+      },
+
+      permissions: {
+        alert: true,
+        badge: true,
+        sound: true,
+      },
+      popInitialNotification: true,
+      requestPermissions: true,
+    });
+  };
 
   get connected() {
     return this.#client.connected;
