@@ -146,10 +146,10 @@ class LightMonitor extends Monitor {
     this.data.net = true;
     this.interval = 1000;
 
-    let data = {id: '10', name: 'DRV_PWM', data: '255', unit: ''};
+    let data = {id: '17', name: 'SERVO', data: '180', unit: 'degree'};
 
-    //this.client.publish('CSE_BBC/feeds/bk-iot-drv', data);
-    this.client.publish('Group12/feeds/bk-iot-drv', data);
+    //this.client.publish('CSE_BBC1/feeds/bk-iot-servo', data);
+    this.client1.publish('Group121/feeds/bk-iot-servo', data);
     emitter.emit('netActivated', true);
   }
 
@@ -157,10 +157,10 @@ class LightMonitor extends Monitor {
     this.data.net = false;
     this.interval = 5000;
 
-    let data = {id: '10', name: 'DRV_PWM', data: '-255', unit: ''};
+    let data = {id: '17', name: 'SERVO', data: '0', unit: 'degree'};
 
-    //this.client.publish('CSE_BBC/feeds/bk-iot-drv', data);
-    this.client.publish('Group12/feeds/bk-iot-drv', data);
+    //this.client.publish('CSE_BBC1/feeds/bk-iot-servo', data);
+    this.client1.publish('Group121/feeds/bk-iot-servo', data);
     emitter.emit('netActivated', false);
   }
 }

@@ -32,7 +32,7 @@ const chartConfig4 = {
   backgroundGradientFromOpacity: 1,
   backgroundGradientTo: '#353c57',
   backgroundGradientToOpacity: 1,
-  color: (opacity = 1) => 'rgba(4,217,255,${opacity})',
+  color: (opacity = 1) => `rgba(4,217,255,${opacity})`,
   strokeWidth: 2,
   barPercentage: 0.5,
   useShadowColorFromDataset: false,
@@ -104,7 +104,7 @@ export default function App({navigation}) {
   }, []);
 
   const data3 = {
-    labels: ["20'", "15'", "10'", "5'", 'Now'],
+    labels: ["50'", "45'","40'", "35'", "30'", "25'","20'", "15'", "10'", "5'", 'Now'],
     datasets: [
       {
         data: val1,
@@ -114,7 +114,7 @@ export default function App({navigation}) {
     legend: ['Soil moisture'],
   };
   const data4 = {
-    labels: ["20'", "15'", "10'", "5'", 'Now'],
+    labels: ["50'", "45'","40'", "35'", "30'", "25'","20'", "15'", "10'", "5'", 'Now'],
     datasets: [
       {
         data: val2,

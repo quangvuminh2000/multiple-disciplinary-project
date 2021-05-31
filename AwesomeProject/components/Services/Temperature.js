@@ -79,7 +79,7 @@ export default function App({navigation}) {
     <Item title={item.title} source={item.source} />
   );
   const data2 = {
-    labels: ["20'", "15'", "10'", "5'", 'Now'],
+    labels: ["50'", "45'","40'", "35'", "30'", "25'","20'", "15'", "10'", "5'", 'Now'],
     datasets: [
       {
         data: temp,

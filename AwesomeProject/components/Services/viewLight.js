@@ -39,6 +39,11 @@ const data = [
     title: 'RC Servo',
     source: require('./rc.jpg'),
   },
+  {
+    id: '3',
+    title: 'Light Sensor',
+    source: require('./lightsensor.jpg'),
+  },
 ];
 const Item = ({source, title}) => (
   <View style={styles.item}>
@@ -77,7 +82,7 @@ export default function App({navigation}) {
   }, []);
 
   const data2 = {
-    labels: ["20'", "15'", "10'", "5'", 'Now'],
+    labels: ["50'", "45'","40'", "35'", "30'", "25'","20'", "15'", "10'", "5'", 'Now'],
     datasets: [
       {
         data: light,
@@ -137,7 +142,7 @@ export default function App({navigation}) {
             data={data}
             renderItem={renderItem}
             keyExtractor={item => item.id}
-            style={{height: 200}}
+            style={{height: 300}}
           />
         </View>
       </ScrollView>

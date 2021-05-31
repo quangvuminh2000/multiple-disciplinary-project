@@ -53,8 +53,6 @@ export default function App({navigation}) {
         return require('./pump.jpg');
       case 'Mini Pump 2':
         return require('./pump.jpg');
-      case 'DRV Circuit':
-        return require('./DRV.jpg');
     }
   };
   const Online = text => {

@@ -96,8 +96,6 @@ const testClient = new MqttClient(
   [
     'Group12/feeds/bk-iot-temp-humid',
     'Group12/feeds/bk-iot-soil',
-    'Group12/feeds/bk-iot-drv',
-    'Group12/feeds/test2',
   ],
 );
 
@@ -109,7 +107,7 @@ const testClient1 = new MqttClient(
   [
     'Group121/feeds/bk-iot-light',
     'Group121/feeds/bk-iot-relay',
-    'Group121/feeds/test',
+    'Group121/feeds/bk-iot-servo',
   ],
 );
 
@@ -121,7 +119,6 @@ const mqttClient = new MqttClient(
   [
     'CSE_BBC/feeds/bk-iot-temp-humid',
     'CSE_BBC/feeds/bk-iot-soil',
-    'CSE_BBC/feeds/bk-iot-drv',
   ],
 );
 
@@ -130,7 +127,11 @@ const mqttClient1 = new MqttClient(
     username: 'CSE_BBC1',
     password: 'aio_yqUQ00Ryi2liePf8ElzL3yq3dNij',
   },
-  ['CSE_BBC1/feeds/bk-iot-light', 'CSE_BBC1/feeds/bk-iot-relay'],
+  [
+    'CSE_BBC1/feeds/bk-iot-light', 
+    'CSE_BBC1/feeds/bk-iot-relay',
+    'CSE_BBC1/feeds/bk-iot-servo',
+  ],
 );
 
 export {MqttClient, testClient, testClient1, mqttClient, mqttClient1};
