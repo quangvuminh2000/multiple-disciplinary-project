@@ -67,11 +67,8 @@ const Item = ({source, title}) => (
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-export default function App({navigation}) {
-  const renderItem = ({item}) => (
-    <Item title={item.title} source={item.source} />
-  );
-
+const Header = () => {
+  
   const [val1, setVal1] = useState(plantData.soilList);
   const [val2, setVal2] = useState(plantData.airList);
   const [per1, setPercent1] = useState(plantData.soilHumid);
@@ -123,10 +120,9 @@ export default function App({navigation}) {
     ],
     legend: ['Atmosphere moisture'],
   };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
+  return(
+    <View style={styles.container}>
+      
         <View style={styles.progressContainer}>
           <View style={styles.soilProgress}>
             <ProgressCircle
@@ -189,7 +185,7 @@ export default function App({navigation}) {
         <TouchableOpacity style={styles.exportBtn} onPress={() => exp()}>
           <Text style={{fontWeight: 'bold'}}>Export</Text>
         </TouchableOpacity>
-        <Text style={{fontSize: 20, color: 'cyan', alignSelf: 'center'}}>
+        <Text style={{fontSize: 20, color: 'cyan'}}>
           Devices
         </Text>
         <Text
@@ -201,15 +197,24 @@ export default function App({navigation}) {
           }}>
           ____________________________________________________
         </Text>
+    </View>
+  )
+}
+export default function App({navigation}) {
+  const renderItem = ({item}) => (
+    <Item title={item.title} source={item.source} />
+  );
+  return (
+    <SafeAreaView style={styles.container}>
         <View style={styles.devices}>
           <FlatList
             data={data}
             renderItem={renderItem}
             keyExtractor={item => item.id}
+            ListHeaderComponent = {Header}
             style={{height: 270}}
           />
         </View>
-      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -244,11 +249,11 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center',
-    width: screenWidth / 1.2,
+    //alignSelf: 'center',
+    width: screenWidth / 2,
     marginTop: 20,
     marginBottom: 10,
-    marginLeft: 20,
+    marginLeft: 5,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -311,8 +316,8 @@ const styles = StyleSheet.create({
   },
   lineBackGround1: {
     borderRadius: 25,
-    marginLeft: 30,
-    marginRight: 25,
+    marginLeft: 15,
+    marginRight: 30,
     alignSelf: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -325,7 +330,7 @@ const styles = StyleSheet.create({
   },
   lineBackGround2: {
     borderRadius: 25,
-    marginLeft: 10,
+    marginLeft: 40,
     marginRight: 30,
     alignSelf: 'center',
     shadowColor: '#000',

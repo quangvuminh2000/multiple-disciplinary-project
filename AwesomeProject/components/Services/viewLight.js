@@ -52,11 +52,8 @@ const Item = ({source, title}) => (
   </View>
 );
 
-export default function App({navigation}) {
-  const renderItem = ({item}) => (
-    <Item title={item.title} source={item.source} />
-  );
-
+const Header = () => {
+  
   const [light, setLight] = useState(plantData.lightList);
   const [per4, setPercent4] = useState(plantData.light);
   const exp = async () => {
@@ -93,7 +90,6 @@ export default function App({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
         <View style={styles.progress}>
           <ProgressCircle
             percent={per4}
@@ -137,15 +133,25 @@ export default function App({navigation}) {
           }}>
           ____________________________________________________
         </Text>
+    </SafeAreaView>
+  );
+}
+export default function App({navigation}) {
+  const renderItem = ({item}) => (
+    <Item title={item.title} source={item.source} />
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
         <View style={styles.devices}>
           <FlatList
             data={data}
             renderItem={renderItem}
             keyExtractor={item => item.id}
             style={{height: 300}}
+            ListHeaderComponent = {Header}
           />
         </View>
-      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -172,7 +178,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    width: screenWidth / 1.2,
+    width: screenWidth / 2,
     marginTop: 20,
     shadowColor: '#000',
     shadowOffset: {

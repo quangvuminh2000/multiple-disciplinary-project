@@ -50,7 +50,7 @@ const Item = ({source, title}) => (
   </View>
 );
 
-export default function App({navigation}) {
+const Header = () => {
   const [temp, setTemp] = useState(plantData.tempList);
   const [per3, setPercent3] = useState(plantData.temp);
   const exp = async () => {
@@ -75,9 +75,7 @@ export default function App({navigation}) {
     return () => emitter.off('databaseFetched', callback);
   }, []);
 
-  const renderItem = ({item}) => (
-    <Item title={item.title} source={item.source} />
-  );
+ 
   const data2 = {
     labels: ["50'", "45'","40'", "35'", "30'", "25'","20'", "15'", "10'", "5'", 'Now'],
     datasets: [
@@ -89,8 +87,7 @@ export default function App({navigation}) {
     legend: ['Temperature'],
   };
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
+    <View style={styles.container}>
         <View style={styles.progress}>
           <ProgressCircle
             percent={per3}
@@ -135,15 +132,26 @@ export default function App({navigation}) {
           }}>
           ____________________________________________________
         </Text>
+    </View>
+  );
+}
+export default function App({navigation}) {
+  
+  const renderItem = ({item}) => (
+    <Item title={item.title} source={item.source} />
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
         <View style={styles.devices}>
           <FlatList
             data={data}
             renderItem={renderItem}
             keyExtractor={item => item.id}
             style={{height: 200}}
+            ListHeaderComponent = {Header}
           />
         </View>
-      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -169,7 +177,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    width: screenWidth / 1.2,
+    width: screenWidth / 2,
     alignSelf: 'center',
     marginTop: 20,
     shadowColor: '#000',
