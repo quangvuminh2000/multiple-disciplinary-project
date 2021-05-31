@@ -1,4 +1,5 @@
 import * as Mqtt from 'react-native-native-mqtt';
+import PushNotification from 'react-native-push-notification';
 import {Buffer} from 'buffer';
 import emitter from 'tiny-emitter/instance';
 
@@ -11,6 +12,7 @@ class MqttClient {
     this.#client = new Mqtt.Client('tcp://io.adafruit.com:1883');
     this.#client.on(Mqtt.Event.Connect, () => {
       console.log('MQTT Connect');
+      this.mqttPush('MQTT','Connected');
       this.#client.subscribe(
         this.subscribedTopics,
         Array(this.subscribedTopics.length).fill(1),
@@ -23,11 +25,28 @@ class MqttClient {
     });
 
     this.#client.on(Mqtt.Event.Disconnect, cause => {
+      this.mqttPush('MQTT','Disconnected');
       console.log('MQTT Disconnect:', cause);
     });
     this.client = this.#client;
   }
+  mqttPush = (manager, message) => {
+    PushNotification.localNotification({
+      /* Android Only Properties */
+      channelId: '12',
+      showWhen: true, // (optional) default: true
+      autoCancel: false, // (optional) default: true
+      ongoing: true,
+      vibrate: true, // (optional) default: true
+      vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+      //ignoreInForeground: true, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
+      timeoutAfter: 5000, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
+      invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
+      title: manager, // (optional)
+      message: message, // (required)
+    });
+  };
   onMessageArrived = (topic, message) => {
     console.log('MQTT Message:', topic, message.toString());
     const data = JSON.parse(message);
@@ -37,9 +56,9 @@ class MqttClient {
         let temp, humid;
         [temp, humid] = data.data.split('-');
         this.temp = parseInt(temp);
-        emitter.emit('sensorDataReceived', 'temperature', this.temp);
         this.airHumid = parseInt(humid);
         emitter.emit('sensorDataReceived', 'air', this.airHumid);
+        emitter.emit('sensorDataReceived', 'temperature', this.temp);
         break;
       case 9:
         this.soilHumid = Math.round((parseInt(data.data) / 1023) * 100);

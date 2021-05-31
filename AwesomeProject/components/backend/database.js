@@ -13,7 +13,7 @@ export default class Database {
   fetchCallbacks = [];
 
   constructor(args) {
-    SQLite.DEBUG(true);
+
     SQLite.enablePromise(true);
     this.args = args;
 
