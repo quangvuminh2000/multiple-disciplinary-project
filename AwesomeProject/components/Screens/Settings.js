@@ -19,7 +19,30 @@ export default function App({navigation}){
     const soilmonitor = MqttObj.soilmonitor;
     const airmonitor = MqttObj.airmonitor;
     const lightmonitor = MqttObj.lightmonitor;
+    useEffect(() => console.log('setting ok'));
     console.log(soilmonitor.maxSoil)
+    function reset(){
+        setMinTemp(32);
+        setMaxTemp(37);
+        setMinSoil(65);
+        setMaxSoil(70);
+        setMinAtmos(65);
+        setMaxAtmos(70);
+    }
+    const set = () => {
+        soilmonitor.minSoil = minSoil;
+        soilmonitor.maxSoil = maxSoil;
+        soilmonitor.minTemp = minTemp;
+        soilmonitor.maxTemp = maxTemp;
+
+        airmonitor.minAtmosphere = minAtmosphere;
+        airmonitor.maxAtmosphere = maxAtmosphere;
+        airmonitor.minTemp = minTemp;
+        airmonitor.maxTemp = maxTemp;
+
+        lightmonitor.minTemp = minTemp;
+        lightmonitor.maxTemp = maxTemp;
+    };
 
     return (
         <View style = {styles.container}>
@@ -86,28 +109,6 @@ export default function App({navigation}){
             </View>
         </View>
     )
-    function reset(){
-        setMinTemp(32);
-        setMaxTemp(37);
-        setMinSoil(65);
-        setMaxSoil(70);
-        setMinAtmosphere(65);
-        setMaxAtmosphere(70);
-    }
-    function set(){
-        soilmonitor.minSoil = minSoil;
-        soilmonitor.maxSoil = maxSoil;
-        soilmonitor.minTemp = minTemp;
-        soilmonitor.maxTemp = maxTemp;
-
-        airmonitor.minAtmosphere = minAtmosphere;
-        airmonitor.maxAtmosphere = maxAtmosphere;
-        airmonitor.minTemp = minTemp;
-        airmonitor.maxTemp = maxTemp;
-
-        lightmonitor.minTemp = minTemp;
-        lightmonitor.maxTemp = maxTemp;
-    }
 }
 
 const styles = StyleSheet.create({

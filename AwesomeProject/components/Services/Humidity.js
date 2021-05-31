@@ -1,18 +1,10 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet,Dimensions,SafeAreaView,ScrollView,FlatList,Image,SectionList} from 'react-native';
 import {LineChart} from 'react-native-chart-kit'
-import {openDatabase} from 'react-native-sqlite-storage'
 import ProgressCircle from 'react-native-progress-circle';
-import { AsyncStorage } from '@react-native-community/async-storage';
-import { AppStateContext } from '../../App';
-import { SoilMonitor,MqttClient,AirMonitor } from '../mqtt';
+import emitter from 'tiny-emitter/instance';
 
-
-const Separator = () => {
-    return(
-        <View style={styles.separator}/>
-    )
-}
+import {plantData,database} from '../backend/service';
 
 const chartConfig3 = {
     backgroundGradientFrom: '#353c57',
@@ -45,13 +37,13 @@ const data = [
     {
         id: "2",
         title: "Soil Moisture Sensor",
-        source: require('./soilsensor.png')
+        source: require('./soilsensor.jpg')
     },
     
     {
         id: "3",
         title: "Water Pumper",
-        source: require('./pumper.png')
+        source: require('./pump.jpg')
     }
 ]
 
@@ -59,7 +51,7 @@ const Item = ({source,title}) => (
     <View style={styles.item}>
     <Image 
         source={source}
-        style={{height:30,width:30}}/>
+        style={{height:30,width:30,borderRadius:15}}/>
     <Text style={styles.title}>{title}</Text>
     </View>
 );
@@ -68,66 +60,41 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 
-var SQLite = require('react-native-sqlite-storage');
-var db = SQLite.openDatabase({name:'test2.db',createFromLocation:'~test2.db'})
-
-
 export default function App({navigation}){
     const renderItem = ({item}) => (
         <Item title={item.title} source={item.source}/>
     );
-    const [val1,setVal1] = useState([0,0,0]);
-    const [val2,setVal2] = useState([0,0,0]);
-    const [per1,setPercent1] = useState(0);
-    const [per2,setPercent2] = useState(0);
 
-    const MqttObj = useContext(AppStateContext);
-    const client = MqttObj.client;
-    const soilmonitor = MqttObj.soilmonitor;
-    const airmonitor = MqttObj.airmonitor;
-    const lightmonitor = MqttObj.lightmonitor;
-
+    const [val1,setVal1] = useState(plantData.soilList);
+    const [val2,setVal2] = useState(plantData.airList);
+    const [per1,setPercent1] = useState(plantData.soilHumid);
+    const [per2,setPercent2] = useState(plantData.airHumid);
+    const exp = async () => {
+        database.exportTable('soil');
+        database.exportTable('air');
+        };
     useEffect(() => {
-        setInterval(() => {
-            if (client.client.connected) { soilmonitor.checkCondition(); }
-        }, 1000);
-
-        setPercent1(client.soilHumid);
-        // console.log("Soil Humid", client.soilHumid)
-        setPercent2(client.airHumid);
-        // console.log("Air Humid", client.airHumid)
-
-    }, [client.soilHumid, client.airHumid]);
-
-    db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM soil ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let soilList = [];
-                    for(let i = 0; i < len; i++){
-                        soilList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
-                    }
-                setVal1(soilList.reverse());
-                }
-            });
-        });
-
-    db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT value FROM air ORDER BY time DESC LIMIT 5', [], (_tx, results) => {
-                var len = results.rows.length;
-                if(len > 0){
-                    let airList = [];
-                    for(let i = 0; i < len; i++){
-                        airList.push(results.rows.item(i).value);
-                        //console.log(results.rows.item(i).value);
-                    }
-                setVal2(airList.reverse());
-                }
-            });
-        });
+        const callback = (dataType, data) => {
+            if (dataType === 'soil') {
+                setPercent1(data);
+            } else if (dataType === 'air') {
+                setPercent2(data);
+            }
+        };
+        emitter.on('sensorDataReceived', callback);
+        return () => emitter.off('sensorDataReceived', callback);
+    }, []);
+    useEffect(() => {
+        const callback = (table, data) => {
+            if (table === 'soil') {
+                setVal1(data);
+            } else if (table === 'air') {
+                setVal2(data);
+            }
+        };
+        emitter.on('databaseFetched', callback);
+        return () => emitter.off('databaseFetched', callback);
+    }, []);
 
     const data3 = { 
         labels: ["20'","15'","10'","5'","Now"],
@@ -153,7 +120,7 @@ export default function App({navigation}){
     
     return(
         <SafeAreaView style = {styles.container}>
-        
+        <ScrollView>
         <View style = {styles.progressContainer}>
         <View style={styles.soilProgress}>
         <ProgressCircle
@@ -182,7 +149,7 @@ export default function App({navigation}){
         <Text style={{color:'#04d9ff',marginTop:10}}>Atmosphere moisture</Text>
         </View>
         </View>
-        <Text style={{color:'lightgrey',marginBottom:10,fontWeight:'bold'}}>
+        <Text style={{color:'lightgrey',marginBottom:10,fontWeight:'bold',alignSelf:'center'}}>
             ____________________________________________________
         </Text>
         <View style = {styles.lineContainer}>
@@ -205,8 +172,11 @@ export default function App({navigation}){
             />
         </ScrollView>
         </View>
-        <Text style={styles.text}>Devices</Text>
-        <Text style={{color:'lightgrey',marginTop:-10,fontWeight:'bold'}}>
+        <TouchableOpacity style={styles.exportBtn} onPress={() => exp()}>
+            <Text style={{fontWeight: 'bold'}}>Export</Text>
+        </TouchableOpacity>
+        <Text style={{fontSize:20,color:'cyan',alignSelf:'center'}}>Devices</Text>
+        <Text style={{color:'lightgrey',marginTop:-10,fontWeight:'bold',alignSelf:'center'}}>
             ____________________________________________________
         </Text>
         <View style={styles.devices}>
@@ -214,10 +184,12 @@ export default function App({navigation}){
            data={data}
            renderItem={renderItem}
            keyExtractor={(item) => item.id}
+           style = {{height:270}}
         />
         </View>
+        </ScrollView>
         
-    </SafeAreaView>
+        </SafeAreaView>
     ) 
 }
 
@@ -245,6 +217,26 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 10
     },
+  exportBtn: {
+        height: 40,
+        backgroundColor: `rgba(0,200,170,255)`,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf:'center',
+        width: screenWidth / 1.2,
+        marginTop: 20,
+        marginBottom: 10,
+        marginLeft: 20,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.39,
+        shadowRadius: 8.30,
+        elevation: 14,
+  },
     soilProgress:{
         marginLeft:50,
         marginRight: 90,
@@ -266,20 +258,30 @@ const styles = StyleSheet.create({
     },
     devices:{
         flex: 1,
-        width:screenWidth/1.1
+        width:screenWidth/1.1,
+        alignSelf:'center'
     },
     item:{
         backgroundColor:'#353c57',
         padding: 20,
+        //alignSelf:'center',
         marginVertical: 8,
         marginHorizontal: 16,
         flexDirection:'row',
-        borderRadius:10
+        borderRadius:10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.39,
+        shadowRadius: 8.30,
+        elevation: 14,
     },
     title:{
         fontSize: 20,
         marginLeft:10,
-        color:`rgba(0,200,170,255)`
+        color:'cyan'
     },
     separator:{
         marginVertical: 8,
@@ -288,13 +290,33 @@ const styles = StyleSheet.create({
         marginBottom: 15
     },
     lineBackGround1:{
+        //backgroundColor:'#fff',
         borderRadius:25,
-        marginLeft:40,
-        marginRight:20
+        marginLeft:30,
+        marginRight:25,
+        alignSelf:'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.39,
+        shadowRadius: 8.30,
+        elevation: 14,
     },
     lineBackGround2:{
+        //backgroundColor:'#fff',
         borderRadius:25,
         marginLeft:10,
-        marginRight:15
+        marginRight:30,
+        alignSelf:'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.39,
+        shadowRadius: 8.30,
+        elevation: 14,
     }
 })
