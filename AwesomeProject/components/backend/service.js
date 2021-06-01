@@ -69,6 +69,12 @@ class ForegroundService {
     });
   }
 
+  getApiKeys = async () => {
+    let response = await fetch('http://dadn.esp32thanhdanh.link');
+    let json = await response.json();
+    return json.key.split(':');
+  };
+
   start = async () => {
     if (this.running) {
       return;
@@ -90,6 +96,9 @@ class ForegroundService {
     };
     try {
       await VIForegroundService.startService(notificationConfig);
+      let apiKeys = await this.getApiKeys();
+      this.client.options.password = apiKeys[0];
+      this.client1.options.password = apiKeys[1];
       this.client.start();
       this.client1.start();
       await this.database.init();
