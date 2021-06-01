@@ -133,7 +133,7 @@ const testClient1 = new MqttClient(
 const mqttClient = new MqttClient(
   {
     username: 'CSE_BBC',
-    password: 'aio_KXfp47zegx3CthMAEj6pB0ZeKoEm',
+    password: '',
   },
   [
     'CSE_BBC/feeds/bk-iot-temp-humid',
@@ -144,7 +144,7 @@ const mqttClient = new MqttClient(
 const mqttClient1 = new MqttClient(
   {
     username: 'CSE_BBC1',
-    password: 'aio_yqUQ00Ryi2liePf8ElzL3yq3dNij',
+    password: '',
   },
   [
     'CSE_BBC1/feeds/bk-iot-light', 

@@ -64,10 +64,10 @@ class SoilMonitor extends Monitor {
     this.interval = 1000;
     this.data.soilIrrigation = true;
 
-    //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
-    //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
-    let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
-    this.client1.publish('Group121/feeds/bk-iot-relay', data);
+    let data = {id: "11", name: "RELAY", data: "1", unit: ""};
+    this.client1.publish('CSE_BBC1/feeds/bk-iot-relay', data);
+    //let data = {id: '11', name: 'RELAY_SOIL', data: '1', unit: ''};
+    //this.client1.publish('Group121/feeds/bk-iot-relay', data);
     emitter.emit('pumpActivated', true);
   }
 
@@ -75,10 +75,10 @@ class SoilMonitor extends Monitor {
     this.interval = 5000;
     this.data.soilIrrigation = false;
 
-    //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
-    //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
-    let data = {id: '11', name: 'RELAY_SOIL', data: '0', unit: ''};
-    this.client1.publish('Group121/feeds/bk-iot-relay', data);
+    let data = {id: "11", name: "RELAY", data: "0", unit: ""};
+    this.client1.publish('CSE_BBC1/feeds/bk-iot-relay', data);
+    // let data = {id: '11', name: 'RELAY_SOIL', data: '0', unit: ''};
+    // this.client1.publish('Group121/feeds/bk-iot-relay', data);
     emitter.emit('pumpActivated', false);
   }
 }
@@ -107,10 +107,10 @@ class AirMonitor extends Monitor {
     this.data.mistSpray = true;
     this.interval = 1000;
 
-    //let data = {id: '11', name: 'RELAY', data: '1', unit: ''};
-    //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
-    let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
-    this.client1.publish('Group121/feeds/bk-iot-relay', data);
+    let data = {id: "11", name: "RELAY", data: "1", unit: ""};
+    this.client1.publish('CSE_BBC1/feeds/bk-iot-relay', data);
+    // let data = {id: '11', name: 'RELAY_AIR', data: '1', unit: ''};
+    // this.client1.publish('Group121/feeds/bk-iot-relay', data);
     emitter.emit('sprayActivated', true);
   }
 
@@ -118,10 +118,10 @@ class AirMonitor extends Monitor {
     this.data.mistSpray = false;
     this.interval = 5000;
 
-    //let data = {id: '11', name: 'RELAY', data: '0', unit: ''};
-    //this.client.publish('CSE_BBC1/feeds/bk-iot-relay', data);
-    let data = {id: '11', name: 'RELAY_AIR', data: '0', unit: ''};
-    this.client1.publish('Group121/feeds/bk-iot-relay', data);
+    let data = {id: "11", name: "RELAY", data: "0", unit: ""};
+    this.client1.publish('CSE_BBC1/feeds/bk-iot-relay', data);
+    // let data = {id: '11', name: 'RELAY_AIR', data: '0', unit: ''};
+    // this.client1.publish('Group121/feeds/bk-iot-relay', data);
     emitter.emit('sprayActivated', false);
   }
 }
@@ -146,10 +146,10 @@ class LightMonitor extends Monitor {
     this.data.net = true;
     this.interval = 1000;
 
-    let data = {id: '17', name: 'SERVO', data: '180', unit: 'degree'};
+    let data = {id: "17", name: "SERVO", data: "180", unit: "degree"};
 
-    //this.client.publish('CSE_BBC1/feeds/bk-iot-servo', data);
-    this.client1.publish('Group121/feeds/bk-iot-servo', data);
+    this.client1.publish('CSE_BBC1/feeds/bk-iot-servo', data);
+    // this.client1.publish('Group121/feeds/bk-iot-servo', data);
     emitter.emit('netActivated', true);
   }
 
@@ -159,8 +159,8 @@ class LightMonitor extends Monitor {
 
     let data = {id: '17', name: 'SERVO', data: '0', unit: 'degree'};
 
-    //this.client.publish('CSE_BBC1/feeds/bk-iot-servo', data);
-    this.client1.publish('Group121/feeds/bk-iot-servo', data);
+    this.client1.publish('CSE_BBC1/feeds/bk-iot-servo', data);
+    // this.client1.publish('Group121/feeds/bk-iot-servo', data);
     emitter.emit('netActivated', false);
   }
 }

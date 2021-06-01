@@ -4,7 +4,7 @@ import PushNotification from 'react-native-push-notification';
 import emitter from 'tiny-emitter/instance';
 
 import Database from './database';
-import {testClient, testClient1} from './mqtt';
+import {testClient, testClient1,mqttClient, mqttClient1} from './mqtt';
 import {SoilMonitor, AirMonitor, LightMonitor} from './monitor';
 
 PushNotification.createChannel({
@@ -50,8 +50,10 @@ class ForegroundService {
           break;
       }
     });
-    this.client = testClient;
-    this.client1 = testClient1;
+    //this.client = testClient;
+    //this.client1 = testClient1;
+    this.client = mqttClient;
+    this.client1 = mqttClient1;
     this.soilMonitor = new SoilMonitor(
       this.client,
       this.client1,
