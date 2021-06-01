@@ -61,7 +61,7 @@ class MqttClient {
         emitter.emit('sensorDataReceived', 'temperature', this.temp);
         break;
       case 9:
-        this.soilHumid = Math.round((parseInt(data.data) / 1023) * 100);
+        this.soilHumid = Math.round((parseInt(data.data) / 1023) * 100);//parseInt(data.data);
         emitter.emit('sensorDataReceived', 'soil', this.soilHumid);
         break;
       case 13:
