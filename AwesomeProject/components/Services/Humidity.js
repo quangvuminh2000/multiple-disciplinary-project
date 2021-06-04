@@ -23,8 +23,8 @@ const chartConfig3 = {
   backgroundGradientToOpacity: 1,
   color: (opacity = 1) => `rgba(0,200,170,${opacity})`,
   strokeWidth: 2,
-  barPercentage: 0.5,
-  useShadowColorFromDataset: false,
+  //barPercentage: 1,
+  //useShadowColorFromDataset: false,
 };
 
 const chartConfig4 = {
@@ -34,8 +34,8 @@ const chartConfig4 = {
   backgroundGradientToOpacity: 1,
   color: (opacity = 1) => `rgba(4,217,255,${opacity})`,
   strokeWidth: 2,
-  barPercentage: 0.5,
-  useShadowColorFromDataset: false,
+  //barPercentage: 0.5,
+  //useShadowColorFromDataset: false,
 };
 const data = [
   {
@@ -166,18 +166,20 @@ const Header = () => {
           <ScrollView horizontal={true}>
             <LineChart
               data={data3}
-              width={screenWidth / 1.1}
+              width={screenWidth / 1.2}
               height={screenHeight / 3.8}
               chartConfig={chartConfig3}
-              verticalLabelRotation={30}
+              //verticalLabelRotation={20}
+              segments = {5}
               style={styles.lineBackGround1}
             />
             <LineChart
               data={data4}
-              width={screenWidth / 1.1}
+              width={screenWidth / 1.2}
               height={screenHeight / 3.8}
               chartConfig={chartConfig4}
-              verticalLabelRotation={30}
+              //verticalLabelRotation={30}
+              segments = {5}
               style={styles.lineBackGround2}
             />
           </ScrollView>
@@ -317,7 +319,7 @@ const styles = StyleSheet.create({
   lineBackGround1: {
     borderRadius: 25,
     marginLeft: 15,
-    marginRight: 30,
+    //marginRight: 10,
     alignSelf: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -327,11 +329,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.39,
     shadowRadius: 8.3,
     elevation: 14,
+    width:screenWidth/1.2
   },
   lineBackGround2: {
     borderRadius: 25,
-    marginLeft: 40,
-    marginRight: 30,
+    marginLeft: 20,
+    //marginRight: 30,
     alignSelf: 'center',
     shadowColor: '#000',
     shadowOffset: {

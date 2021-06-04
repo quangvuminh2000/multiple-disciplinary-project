@@ -118,6 +118,7 @@ const Header = () => {
           strokeWidth={5}
           chartConfig={chartConfig}
           yAxisLabel="%"
+          segments = {5}
           style={styles.lineBackGround}
         />
         <TouchableOpacity style={styles.exportBtn} onPress={() => exp()}>

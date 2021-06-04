@@ -25,7 +25,7 @@ const chartConfig = {
   backgroundGradientTo: '#353c57',
   backgroundGradientToOpacity: 1,
   color: (opacity = 1) => `rgba(255,49,49,${opacity})`,
-  barPercentage: 0.5,
+  //barPercentage: 0.5,
   useShadowColorFromDataset: false,
 };
 
@@ -117,6 +117,7 @@ const Header = () => {
           width={screenWidth / 1.2}
           height={screenHeight / 3.8}
           chartConfig={chartConfig}
+          segments = {5}
           style={styles.lineBackGround}
         />
         <TouchableOpacity style={styles.exportBtn} onPress={() => exp()}>
