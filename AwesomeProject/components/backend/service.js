@@ -98,8 +98,8 @@ class ForegroundService {
     };
     try {
       await VIForegroundService.startService(notificationConfig);
-      let apiKeys = await this.getApiKeys();
-      this.client.options.password = apiKeys[0];
+      //let apiKeys = await this.getApiKeys();
+      this.client.options.password = apiKeys[0]; //change apiKeys into key string
       this.client1.options.password = apiKeys[1];
       this.client.start();
       this.client1.start();
